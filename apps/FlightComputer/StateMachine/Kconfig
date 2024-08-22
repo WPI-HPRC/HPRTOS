@@ -1,0 +1,40 @@
+config FLIGHTCOMPUTER_STATEMACHINE
+        tristate "Flight Computer State Machine"
+        default n
+        ---help---
+                Enable the Flight Computer
+
+if FLIGHTCOMPUTER_STATEMACHINE
+
+choice
+    prompt "Select Flight Computer Type"
+    default FLIGHTCOMPUTER_STATEMACHINE_POLARIS
+
+    config FLIGHTCOMPUTER_STATEMACHINE_POLARIS
+        bool "Polaris"
+        help
+            Select this option for Polaris-specific features.
+
+    config FLIGHTCOMPUTER_STATEMACHINE_STACK2024
+        bool "Stack2024"
+        help
+            Select this option for Stack-specific features.
+
+endchoice
+
+config FLIGHTCOMPUTER_STATEMACHINE_PROGNAME
+        string "Program name"
+        default "FC_StateMachine"
+        ---help---
+                This is the name of the program that will be used when the NSH ELF
+                program is installed.
+
+config FLIGHTCOMPUTER_STATEMACHINE_PRIORITY
+        int "State Machine task priority"
+        default 100
+
+config FLIGHTCOMPUTER_STATEMACHINE_STACKSIZE
+        int "State Machine stack size"
+        default 2048
+
+endif
