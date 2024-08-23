@@ -495,4 +495,3 @@ extern "C"
 #endif
 
 #endif /* __ASSEMBLY__ */
-#endif /* __BOARDS_ARM_STM32H7_LINUM_STM32H753BI_INCLUDE_BOARD_H */
