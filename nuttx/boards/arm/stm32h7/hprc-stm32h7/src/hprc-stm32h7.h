@@ -176,3 +176,15 @@ int stm32_pwm_setup(void);
 #ifdef CONFIG_SENSORS_QENCODER
 int stm32_qencoder_initialize(const char *devpath, int timer);
 #endif
+
+/****************************************************************************
+ * Name: stm32_spidev_initialize
+ *
+ * Description:
+ *   Called to configure SPI chip select GPIO pins for the board.
+ *
+ ****************************************************************************/
+
+#ifdef CONFIG_STM32H7_SPI
+void stm32_spidev_initialize(void);
+#endif

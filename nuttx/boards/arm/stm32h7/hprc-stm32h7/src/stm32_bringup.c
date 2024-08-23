@@ -272,3 +272,17 @@ void board_timerhook(void)
   (void)sem_post(&g_waitsem);
 }
 #endif
+
+
+#if defined(CONFIG_I2C) && defined(CONFIG_SYSTEM_I2CTOOL)
+stm32_i2ctool();
+#endif
+
+#ifdef CONFIG_I2C_EE_24XX
+ret = stm32_at24_init("/dev/eeprom");
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "Failed to initialize EEPROM HX24LCXXB: %d\n", ret);
+      return ret;
+    }
+#endif
