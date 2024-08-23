@@ -1,0 +1,3 @@
+if ARCH_BOARD_HPRC_STM32H7
+
+endif
