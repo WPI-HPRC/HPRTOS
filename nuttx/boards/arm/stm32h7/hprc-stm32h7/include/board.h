@@ -32,7 +32,7 @@
 
 /* Clocking *****************************************************************/
 
-/* The LINUM-STM32H753BI board provides the following clock sources:
+/* The Nucleo-144  board provides the following clock sources:
  *
  *   MCO: 8 MHz from MCO output of ST-LINK is used as input clock (default)
  *   X2:  32.768 KHz crystal for LSE
@@ -42,21 +42,29 @@
  *
  *   HSI: 16 MHz RC factory-trimmed
  *   LSI: 32 KHz RC
- *   HSE: 25 MHz oscillator X2
+ *   HSE: 8 MHz from MCO output of ST-LINK
  *   LSE: 32.768 kHz
  */
 
-#define STM32_HSI_FREQUENCY     16000000ul
-#define STM32_LSI_FREQUENCY     32000
-#define STM32_HSE_FREQUENCY     25000000ul
-#define STM32_LSE_FREQUENCY     32768
+#define STM32_BOARD_XTAL 8000000ul /* ST-LINK MCO */
+
+#define STM32_HSI_FREQUENCY 16000000ul
+#define STM32_LSI_FREQUENCY 32000
+#define STM32_HSE_FREQUENCY STM32_BOARD_XTAL
+#define SMT32_LSE_FREQUENCY 32768
+
 
 /* Main PLL Configuration.
  *
- * PLL source is HSE = 25,000,000
+ * PLL source is HSE = 8,000,000
+ *
+ * To use HSE, configure the solder bridges on the board:
+ *
+ *  - SB148, SB8 and SB9 OFF
+ *  - SB112 and SB149 ON
  *
  * When STM32_HSE_FREQUENCY / PLLM <= 2MHz VCOL must be selected.
- * VCOH otherwise.
+ * Otherwise you must select VCOH.
  *
  * PLL_VCOx = (STM32_HSE_FREQUENCY / PLLM) * PLLN
  * Subject to:
@@ -74,11 +82,10 @@
  *   PLLP2,3 = {2, 3, 4, ..., 128}
  *   CPUCLK <= 400 MHz
  */
-
 #define STM32_BOARD_USEHSE
+#define STM32_HSEBYP_ENABLE
 
-#define STM32_PLLCFG_PLLSRC      RCC_PLLCKSELR_PLLSRC_HSE
-
+#define STM32_PLLCFG_PLLSRC RCC_PLLCKSELR_PLLSRC_HSE
 
 /* PLL1, wide 4 - 8 MHz input, enable DIVP, DIVQ, DIVR
  *
@@ -135,17 +142,14 @@
 #define STM32_PLL3Q_FREQUENCY
 #define STM32_PLL3R_FREQUENCY
 
-/* SYSCLK = PLL1P = 400 MHz
- * CPUCLK = SYSCLK / 1 = 400 MHz
- */
-
 #define STM32_RCC_D1CFGR_D1CPRE  (RCC_D1CFGR_D1CPRE_SYSCLK)
 #define STM32_SYSCLK_FREQUENCY   (STM32_PLL1P_FREQUENCY)
 #define STM32_CPUCLK_FREQUENCY   (STM32_SYSCLK_FREQUENCY / 1)
 
+
 /* Configure Clock Assignments */
 
-/* AHB clock (HCLK) is SYSCLK/2 (480 MHz max)
+/* AHB clock (HCLK) is SYSCLK/2 (200 MHz max)
  * HCLK1 = HCLK2 = HCLK3 = HCLK4
  */
 
@@ -153,25 +157,27 @@
 #define STM32_ACLK_FREQUENCY    (STM32_SYSCLK_FREQUENCY / 2)    /* ACLK in D1, HCLK3 in D1 */
 #define STM32_HCLK_FREQUENCY    (STM32_SYSCLK_FREQUENCY / 2)    /* HCLK in D2, HCLK4 in D3 */
 
-/* APB1 clock (PCLK1) is HCLK/2 (120 MHz) */
 
-#define STM32_RCC_D2CFGR_D2PPRE1  RCC_D2CFGR_D2PPRE1_HCLKd2       /* PCLK1 = HCLK / 2 */
+/* APB1 clock (PCLK1) is HCLK/4 (54 MHz) */
+
+#define STM32_RCC_D2CFGR_D2PPRE1  RCC_D2CFGR_D2PPRE1_HCLKd4       /* PCLK1 = HCLK / 4 */
 #define STM32_PCLK1_FREQUENCY     (STM32_HCLK_FREQUENCY/4)
 
-/* APB2 clock (PCLK2) is HCLK/2 (120 MHz) */
+/* APB2 clock (PCLK2) is HCLK/4 (54 MHz) */
 
-#define STM32_RCC_D2CFGR_D2PPRE2  RCC_D2CFGR_D2PPRE2_HCLKd2       /* PCLK2 = HCLK / 2 */
+#define STM32_RCC_D2CFGR_D2PPRE2  RCC_D2CFGR_D2PPRE2_HCLKd4       /* PCLK2 = HCLK / 4 */
 #define STM32_PCLK2_FREQUENCY     (STM32_HCLK_FREQUENCY/4)
 
-/* APB3 clock (PCLK3) is HCLK/2 (120 MHz) */
+/* APB3 clock (PCLK3) is HCLK/4 (54 MHz) */
 
-#define STM32_RCC_D1CFGR_D1PPRE   RCC_D1CFGR_D1PPRE_HCLKd2        /* PCLK3 = HCLK / 2 */
+#define STM32_RCC_D1CFGR_D1PPRE   RCC_D1CFGR_D1PPRE_HCLKd4        /* PCLK3 = HCLK / 4 */
 #define STM32_PCLK3_FREQUENCY     (STM32_HCLK_FREQUENCY/4)
 
-/* APB4 clock (PCLK4) is HCLK/2 (120 MHz) */
+/* APB4 clock (PCLK4) is HCLK/4 (54 MHz) */
 
-#define STM32_RCC_D3CFGR_D3PPRE   RCC_D3CFGR_D3PPRE_HCLKd2       /* PCLK4 = HCLK / 2 */
+#define STM32_RCC_D3CFGR_D3PPRE   RCC_D3CFGR_D3PPRE_HCLKd4       /* PCLK4 = HCLK / 4 */
 #define STM32_PCLK4_FREQUENCY     (STM32_HCLK_FREQUENCY/4)
+
 
 /* Timer clock frequencies */
 
