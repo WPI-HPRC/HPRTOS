@@ -254,7 +254,7 @@ int stm32_bringup(void)
     {
       syslog(LOG_ERR, "ERROR: stm32_adc_setup failed: %d\n", ret);
     }
-#endif /* CONFIG_ADC */
+#endif
 
 #ifdef CONFIG_DEV_GPIO
   /* Register the GPIO driver */
@@ -324,7 +324,38 @@ int stm32_bringup(void)
     }
 #endif
 
+  // Initialize I2C
   stm32_i2ctool();
+
+#ifdef CONFIG_STM32_SPI1
+    /* Get the SPI port */
+
+  syslog(LOG_INFO, "Initializing SPI port 1\n");
+  spi = stm32_spibus_initialize(1);
+  if (!spi)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to initialize SPI port 1\n");
+      return -ENODEV;
+    }
+
+  syslog(LOG_INFO, "Successfully initialized SPI port 1\n");
+
+  /* Now bind the SPI interface to the M25P64/128 SPI FLASH driver */
+
+  syslog(LOG_INFO, "Bind SPI to the SPI flash driver\n");
+
+  mtd = m25p_initialize(spi);
+  if (!mtd)
+    {
+      syslog(LOG_ERR,
+             "ERROR: Failed to bind SPI port 0 to the SPI FLASH driver\n");
+      return -ENODEV;
+    }
+
+  syslog(LOG_INFO,
+         "Successfully bound SPI port 0 to the SPI FLASH driver\n");
+#warning "Now what are we going to do with this SPI FLASH driver?"
+#endif
 
   return OK;
 }
