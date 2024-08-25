@@ -1,10 +1,10 @@
 #include <nuttx/config.h>
 #include <nuttx/init.h>
-#include <cstdio>
+#include "stdio.h"
 #include <mqueue.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <cstdlib>
+#include "stdlib.h"
 #include <unistd.h>
 #include "../FlightLib/SensorData.h"
 #include "../FlightLib/FlightConfig.h"
@@ -23,8 +23,12 @@ static int initSensorBus() {
 
 #ifdef CONFIG_FLIGHTCOMPUTER_STATEMACHINE_POLARIS
     i2cBus = open("/dev/i2c1", O_WRONLY);
-#elif CONFIG_FLIGHTCOMPUTER_STATEMACHINE_STACK2024
+#endif
+#ifdef CONFIG_FLIGHTCOMPUTER_STATEMACHINE_STACK2024
     i2cBus = open("/dev/i2c0", O_WRONLY);
+#endif
+#ifdef CONFIG_FLIGHTCOMPUTER_STATEMACHINE_STMFC
+    i2cBus = open("/dev/i2c1", O_WRONLY);
 #endif
 
     if(i2cBus < 0) {
@@ -54,7 +58,7 @@ static int imuTask(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    auto accel = ICM42688();
+    ICM42688 accel = ICM42688();
 
     accel.init(i2cBus);
 
@@ -166,7 +170,12 @@ static int baroTask(int argc, char * argv[]) {
 #ifdef CONFIG_FLIGHTCOMPUTER_STATEMACHINE_POLARIS
     MS5611 baro = MS5611();
     baro.init(i2cBus);
-#elif CONFIG_FLIGHTCOMPUTER_STATEMACHINE_STACK2024
+#endif
+#ifdef CONFIG_FLIGHTCOMPUTER_STATEMACHINE_STACK2024
+    LPS25 baro = LPS25();
+    baro.init(i2cBus);
+#endif
+#ifdef CONFIG_FLIGHTCOMPUTER_STATEMACHINE_STMFC
     LPS25 baro = LPS25();
     baro.init(i2cBus);
 #endif

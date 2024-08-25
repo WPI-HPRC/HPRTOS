@@ -23,7 +23,7 @@
 #include <nuttx/config.h>
 
 #ifndef __ASSEMBLY__
-    #include <stdint.h>
+#include <stdint.h>
 #endif
 
 /****************************************************************************
@@ -46,25 +46,19 @@
  *   LSE: 32.768 kHz
  */
 
-#define STM32_BOARD_XTAL 8000000ul /* ST-LINK MCO */
+#define STM32_BOARD_XTAL        8000000ul /* ST-LINK MCO */
 
-#define STM32_HSI_FREQUENCY 16000000ul
-#define STM32_LSI_FREQUENCY 32000
-#define STM32_HSE_FREQUENCY STM32_BOARD_XTAL
-#define SMT32_LSE_FREQUENCY 32768
-
+#define STM32_HSI_FREQUENCY     16000000ul
+#define STM32_LSI_FREQUENCY     32000
+#define STM32_HSE_FREQUENCY     STM32_BOARD_XTAL
+#define STM32_LSE_FREQUENCY     32768
 
 /* Main PLL Configuration.
  *
  * PLL source is HSE = 8,000,000
  *
- * To use HSE, configure the solder bridges on the board:
- *
- *  - SB148, SB8 and SB9 OFF
- *  - SB112 and SB149 ON
- *
  * When STM32_HSE_FREQUENCY / PLLM <= 2MHz VCOL must be selected.
- * Otherwise you must select VCOH.
+ * VCOH otherwise.
  *
  * PLL_VCOx = (STM32_HSE_FREQUENCY / PLLM) * PLLN
  * Subject to:
@@ -82,10 +76,11 @@
  *   PLLP2,3 = {2, 3, 4, ..., 128}
  *   CPUCLK <= 400 MHz
  */
+
 #define STM32_BOARD_USEHSE
 #define STM32_HSEBYP_ENABLE
 
-#define STM32_PLLCFG_PLLSRC RCC_PLLCKSELR_PLLSRC_HSE
+#define STM32_PLLCFG_PLLSRC      RCC_PLLCKSELR_PLLSRC_HSE
 
 /* PLL1, wide 4 - 8 MHz input, enable DIVP, DIVQ, DIVR
  *
@@ -142,21 +137,28 @@
 #define STM32_PLL3Q_FREQUENCY
 #define STM32_PLL3R_FREQUENCY
 
+/* SYSCLK = PLL1P = 400 MHz
+ * M7 CPUCLK = SYSCLK / 1 = 400 MHz
+ * M4 CPUCLK = HCLK / 1 = 200 MHz
+ */
+
 #define STM32_RCC_D1CFGR_D1CPRE  (RCC_D1CFGR_D1CPRE_SYSCLK)
 #define STM32_SYSCLK_FREQUENCY   (STM32_PLL1P_FREQUENCY)
-#define STM32_CPUCLK_FREQUENCY   (STM32_SYSCLK_FREQUENCY / 1)
-
+#ifdef CONFIG_ARCH_CHIP_STM32H7_CORTEXM7
+#  define STM32_CPUCLK_FREQUENCY (STM32_SYSCLK_FREQUENCY / 1)
+#else
+#  define STM32_CPUCLK_FREQUENCY (STM32_HCLK_FREQUENCY / 1)
+#endif
 
 /* Configure Clock Assignments */
 
-/* AHB clock (HCLK) is SYSCLK/2 (200 MHz max)
+/* AHB clock (HCLK) is SYSCLK/2 (240 MHz max)
  * HCLK1 = HCLK2 = HCLK3 = HCLK4
  */
 
 #define STM32_RCC_D1CFGR_HPRE   RCC_D1CFGR_HPRE_SYSCLKd2        /* HCLK  = SYSCLK / 2 */
 #define STM32_ACLK_FREQUENCY    (STM32_SYSCLK_FREQUENCY / 2)    /* ACLK in D1, HCLK3 in D1 */
 #define STM32_HCLK_FREQUENCY    (STM32_SYSCLK_FREQUENCY / 2)    /* HCLK in D2, HCLK4 in D3 */
-
 
 /* APB1 clock (PCLK1) is HCLK/4 (54 MHz) */
 
@@ -177,7 +179,6 @@
 
 #define STM32_RCC_D3CFGR_D3PPRE   RCC_D3CFGR_D3PPRE_HCLKd4       /* PCLK4 = HCLK / 4 */
 #define STM32_PCLK4_FREQUENCY     (STM32_HCLK_FREQUENCY/4)
-
 
 /* Timer clock frequencies */
 
@@ -346,7 +347,7 @@
 /* UART4 */
 
 #ifdef CONFIG_UART4_RS485
-  /* Lets use for RS485 */
+/* Lets use for RS485 */
 
 #  define GPIO_UART4_TX        (GPIO_UART4_TX_3 | GPIO_SPEED_100MHz) /* PB9 */
 #  define GPIO_UART4_RX        (GPIO_UART4_RX_3 | GPIO_SPEED_100MHz) /* PB8 */
@@ -361,7 +362,7 @@
 /* USART6 */
 
 #ifdef CONFIG_USART6_RS485
-  /* Lets use for RS485 */
+/* Lets use for RS485 */
 
 #  define GPIO_USART6_TX        (GPIO_USART6_TX_1 | GPIO_SPEED_100MHz) /* PC6 */
 #  define GPIO_USART6_RX        (GPIO_USART6_RX_1 | GPIO_SPEED_100MHz) /* PC7 */

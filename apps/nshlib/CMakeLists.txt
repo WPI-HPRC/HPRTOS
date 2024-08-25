@@ -23,23 +23,23 @@ if(CONFIG_NSH_LIBRARY)
   set(CSRCS)
 
   list(
-    APPEND
-    CSRCS
-    nsh_init.c
-    nsh_parse.c
-    nsh_console.c
-    nsh_script.c
-    nsh_system.c
-    nsh_command.c
-    nsh_fscmds.c
-    nsh_ddcmd.c
-    nsh_proccmds.c
-    nsh_mmcmds.c
-    nsh_timcmds.c
-    nsh_envcmds.c
-    nsh_prompt.c
-    nsh_syscmds.c
-    nsh_dbgcmds.c)
+          APPEND
+          CSRCS
+          nsh_init.c
+          nsh_parse.c
+          nsh_console.c
+          nsh_script.c
+          nsh_system.c
+          nsh_command.c
+          nsh_fscmds.c
+          nsh_ddcmd.c
+          nsh_proccmds.c
+          nsh_mmcmds.c
+          nsh_timcmds.c
+          nsh_envcmds.c
+          nsh_prompt.c
+          nsh_syscmds.c
+          nsh_dbgcmds.c)
 
   list(APPEND CSRCS nsh_session.c)
 

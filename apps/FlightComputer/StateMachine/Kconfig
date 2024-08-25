@@ -15,10 +15,15 @@ choice
         help
             Select this option for Polaris-specific features.
 
-    config FLIGHTCOMPUTER_STATEMACHINE_STACK2024
+    config FLIGHTCOMPUTER_STATEMACHINE_STACK2023
         bool "Stack2024"
         help
             Select this option for Stack-specific features.
+
+    config FLIGHTCOMPUTER_STATEMACHINE_STMFC
+        bool "STMFC"
+        help
+            Select this option for the STM Flight Computer specific features.
 
 endchoice
 

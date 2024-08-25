@@ -1,10 +1,10 @@
 #include <nuttx/config.h>
 #include <nuttx/init.h>
-#include <cstdio>
+#include "stdio.h"
 #include <mqueue.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <cstdlib>
+#include "stdlib.h"
 #include <unistd.h>
 // #include "../FlightLib/FlightConfig.h"
 // #include "../FlightLib/SensorData.h"

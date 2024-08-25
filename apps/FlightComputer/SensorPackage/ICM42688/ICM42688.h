@@ -2,14 +2,14 @@
 
 #include <nuttx/config.h>
 
-#include <cstdlib>
-#include <cstdio>
+#include <stdlib.h>
+#include <stdio.h>
 #include <fcntl.h>
 #include <sched.h>
-#include <cerrno>
+#include <errno.h>
 #include <sys/ioctl.h>
 #include <nuttx/i2c/i2c_master.h>
-#include <cstring>
+#include <string.h>
 
 #include "../../FlightLib/SensorData.h"
 #include "../../FlightLib/FlightConfig.h"

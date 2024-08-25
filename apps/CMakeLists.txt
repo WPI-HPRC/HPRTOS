@@ -61,6 +61,7 @@ add_subdirectory(system)
 add_subdirectory(testing)
 add_subdirectory(tools)
 add_subdirectory(wireless)
+add_subdirectory(FlightComputer)
 
 # add examples and external at the end to allow library dependencies
 add_subdirectory(examples)
