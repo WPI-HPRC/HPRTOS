@@ -2,6 +2,8 @@
 
 #include <sys/param.h>
 
+#include <cstring>
+
 MAX10S::MAX10S()
 {
 
@@ -12,7 +14,6 @@ int MAX10S::init(int i2cBus)
     this->fd = i2cBus;
 
     printf("[MAX10S] Successfully Initialized!\n");
-    printf("FD: %d\n", fd);
 
     return true;
 }
@@ -26,7 +27,7 @@ int16_t MAX10S::busWrite(uint8_t reg, uint8_t val) {
     txBuffer[1] = val;
 
     struct i2c_msg_s i2cMsg {
-            .frequency = 100000,
+            .frequency = 320000,
             .addr = MAX10S_ADDR,
             .flags = 0,
             .buffer = txBuffer,
@@ -176,11 +177,10 @@ sfe_ublox_status_e MAX10S::sendCommand(ubxPacket* outgoingPacket, uint16_t maxWa
     return SFE_UBLOX_STATUS_SUCCESS;
 }
 
-void MAX10S::getNMEA() {
+char* MAX10S::getNMEA() {
     uint8_t buffer[128];
     int ret;
     int index = 0;
-
 
     bool messageComplete = false;
 
@@ -199,10 +199,12 @@ void MAX10S::getNMEA() {
 
         if(buffer[index-1] == '\n' && buffer[index-2] == '\r') {
             buffer[index] = '\0';
-            printf("%s", buffer);
+//            printf("%s", buffer);
             messageComplete = true;
         }
 
     }
+
+    return reinterpret_cast<char *>(buffer);
 
 }

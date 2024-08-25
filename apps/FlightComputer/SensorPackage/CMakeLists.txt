@@ -71,6 +71,9 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${APPDIR}/FlightComputer/FlightLib
             ${BASEDIR}
             ${NUTTX_INCLUDE_DIRS}
+
+            LINK_LIBRARIES
+            ${NUTTX_LIBRARIES}
     )
 
 

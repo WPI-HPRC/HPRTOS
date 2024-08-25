@@ -9,7 +9,6 @@
 #include <cerrno>
 #include <sys/ioctl.h>
 #include <nuttx/i2c/i2c_master.h>
-#include <cstring>
 
 #include "u-blox_config_keys.h"
 #include "u-blox_registers.h"
@@ -68,7 +67,7 @@ public:
 
     int setConfigurationParameter(uint32_t configKey, uint8_t value);
 
-    void getNMEA();
+    char* getNMEA();
 
 private:
     int16_t busWrite(uint8_t reg, uint8_t val);
