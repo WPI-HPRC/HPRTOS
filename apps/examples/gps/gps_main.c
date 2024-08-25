@@ -55,7 +55,7 @@ int main(int argc, FAR char *argv[])
 
   /* Open the GPS serial port */
 
-  fd = open("/dev/ttyS1", O_RDONLY);
+  fd = open("/dev/ttyS2", O_RDONLY);
   if (fd < 0)
     {
       printf("Unable to open file /dev/ttyS1\n");

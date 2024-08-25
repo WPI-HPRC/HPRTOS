@@ -1,4 +1,0 @@
-{
-    "cmake.sourceDirectory": "/Users/frostydev/workspace/HPRC/HPRTOS/nuttx",
-    "cmake.configureArgs" : ["-DBOARD_CONFIG=hprc-stm32h7:debug"]
-}

@@ -84,7 +84,7 @@ static int stateMachineTask(int argc, char *argv[]) {
         }
 
         // Print CSV Formatted String
-        printf("%f, %f, %f, %f, %f, %f, %f, %li\n", imuData.accel_x, imuData.accel_y, imuData.accel_z, imuData.gyro_x, imuData.gyro_y, imuData.gyro_z, baroData.pressure, timestamp);
+//        printf("%f, %f, %f, %f, %f, %f, %f, %li\n", imuData.accel_x, imuData.accel_y, imuData.accel_z, imuData.gyro_x, imuData.gyro_y, imuData.gyro_z, baroData.pressure, timestamp);
 
         // printf("Accel Z: %f\n", imuData.accel_z);
 //        printf("Gyro Y: %f\n", imuData.gyro_y);

@@ -53,7 +53,7 @@ int16_t ICM42688::busWrite(uint8_t reg, uint8_t val) {
     ex = ioctl(fd, I2CIOC_TRANSFER, (unsigned long)(uintptr_t) &i2cTransfer);
 
     if(ex < 0) {
-        printf("[LPS25] Error: Failed to set register -> %d\n", ex);
+        printf("[ICM42688] Error: Failed to set register -> %d\n", ex);
     }
 
     return ex;
@@ -87,7 +87,7 @@ int16_t ICM42688::busRead(uint8_t reg, uint8_t *val, int8_t len) {
     ex = ioctl(fd, I2CIOC_TRANSFER, (unsigned long)(uintptr_t) &i2cTransfer);
 
     if(ex < 0) {
-        printf("[LPS25] Read Error: %d\n", ex);
+        printf("[ICM42688] Read Error: %d\n", ex);
     }
 
     return ex;

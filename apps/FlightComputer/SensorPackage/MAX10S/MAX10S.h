@@ -2,15 +2,14 @@
 
 #include <nuttx/config.h>
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <fcntl.h>
 #include <sched.h>
-#include <errno.h>
+#include <cerrno>
 #include <sys/ioctl.h>
 #include <nuttx/i2c/i2c_master.h>
-#include <string.h>
-#include <math.h>
+#include <cstring>
 
 #include "u-blox_config_keys.h"
 #include "u-blox_registers.h"
@@ -69,7 +68,7 @@ public:
 
     int setConfigurationParameter(uint32_t configKey, uint8_t value);
 
-    void readSensor();
+    void getNMEA();
 
 private:
     int16_t busWrite(uint8_t reg, uint8_t val);
@@ -82,4 +81,8 @@ private:
     int fd = 0;
 
     constexpr static uint8_t MAX10S_ADDR = 0x42;
+
+    /* -- NMEA Constants -- */
+    constexpr static uint8_t START_DELIM = '$';
+    constexpr static uint8_t ENCAPSULATION_SENTENCE_START = '!';
 };

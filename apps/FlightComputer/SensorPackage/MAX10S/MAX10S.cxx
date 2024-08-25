@@ -2,7 +2,6 @@
 
 #include <sys/param.h>
 
-
 MAX10S::MAX10S()
 {
 
@@ -11,6 +10,9 @@ MAX10S::MAX10S()
 int MAX10S::init(int i2cBus)
 {
     this->fd = i2cBus;
+
+    printf("[MAX10S] Successfully Initialized!\n");
+    printf("FD: %d\n", fd);
 
     return true;
 }
@@ -24,22 +26,22 @@ int16_t MAX10S::busWrite(uint8_t reg, uint8_t val) {
     txBuffer[1] = val;
 
     struct i2c_msg_s i2cMsg {
-        .frequency = 320000,
-        .addr = MAX10S_ADDR,
-        .flags = 0,
-        .buffer = txBuffer,
-        .length = 2
+            .frequency = 100000,
+            .addr = MAX10S_ADDR,
+            .flags = 0,
+            .buffer = txBuffer,
+            .length = 2
     };
 
     struct i2c_transfer_s i2cTransfer {
-        .msgv = &i2cMsg,
-        .msgc = 1
+            .msgv = &i2cMsg,
+            .msgc = 1
     };
 
     ex = ioctl(fd, I2CIOC_TRANSFER, (unsigned long)(uintptr_t) &i2cTransfer);
 
     if(ex < 0) {
-        printf("[LPS25] Error: Failed to set register -> %d\n", ex);
+        printf("[MAX10S] Error: Failed to set register -> %d\n", ex);
     }
 
     return ex;
@@ -49,32 +51,32 @@ int16_t MAX10S::busRead(uint8_t reg, uint8_t *val, int8_t len) {
     int16_t ex;
 
     struct i2c_msg_s i2cMsg[2] = {
-        {
-            .frequency = 320000,
-            .addr = MAX10S_ADDR,
-            .flags = 0,
-            .buffer = &reg,
-            .length = 1
-        },
-        {
-            .frequency = 400000,
-            .addr = MAX10S_ADDR,
-            .flags = I2C_M_READ,
-            .buffer = val,
-            .length = len
-        }
+            {
+                    .frequency = 320000,
+                    .addr = MAX10S_ADDR,
+                    .flags = 0,
+                    .buffer = &reg,
+                    .length = 1
+            },
+            {
+                    .frequency = 320000,
+                    .addr = MAX10S_ADDR,
+                    .flags = I2C_M_READ,
+                    .buffer = val,
+                    .length = len
+            }
     };
 
-    struct i2c_transfer_s i2cTransfer {
-        .msgv = i2cMsg,
-        .msgc = 2
+    struct i2c_transfer_s i2cTransfer = {
+            .msgv = i2cMsg,
+            .msgc = 2
     };
 
     ex = ioctl(fd, I2CIOC_TRANSFER, (unsigned long)(uintptr_t) &i2cTransfer);
 
-    if(ex < 0) {
-        printf("[LPS25] Read Error: %d\n", ex);
-    }
+//    if(ex < 0) {
+//        printf("[MAX10S] Read Error: %d\n", ex);
+//    }
 
     return ex;
 }
@@ -151,16 +153,16 @@ sfe_ublox_status_e MAX10S::sendCommand(ubxPacket* outgoingPacket, uint16_t maxWa
         }
 
         struct i2c_msg_s i2cMsg {
-            .frequency = 320000,
-            .addr = MAX10S_ADDR,
-            .flags = 0,
-            .buffer = buffer,
-            .length = bufferIdx
+                .frequency = 320000,
+                .addr = MAX10S_ADDR,
+                .flags = 0,
+                .buffer = buffer,
+                .length = bufferIdx
         };
 
         struct i2c_transfer_s i2cTransfer {
-            .msgv = &i2cMsg,
-            .msgc = 1
+                .msgv = &i2cMsg,
+                .msgc = 1
         };
 
         int ex = ioctl(fd, I2CIOC_TRANSFER, (unsigned long)(uintptr_t) &i2cTransfer);
@@ -174,6 +176,33 @@ sfe_ublox_status_e MAX10S::sendCommand(ubxPacket* outgoingPacket, uint16_t maxWa
     return SFE_UBLOX_STATUS_SUCCESS;
 }
 
-void MAX10S::readSensor()
-{
+void MAX10S::getNMEA() {
+    uint8_t buffer[128];
+    int ret;
+    int index = 0;
+
+
+    bool messageComplete = false;
+
+    while(!messageComplete) {
+        ret = busRead(0xFF, &buffer[index], 1);
+
+        if(buffer[index] == START_DELIM || buffer[index] == ENCAPSULATION_SENTENCE_START) {
+            index = 0;
+        }
+
+        if(index < 128-1) {
+            index++;
+        } else {
+            index = 0;
+        }
+
+        if(buffer[index-1] == '\n' && buffer[index-2] == '\r') {
+            buffer[index] = '\0';
+            printf("%s", buffer);
+            messageComplete = true;
+        }
+
+    }
+
 }

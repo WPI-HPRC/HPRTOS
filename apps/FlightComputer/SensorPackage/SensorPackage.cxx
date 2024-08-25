@@ -129,6 +129,10 @@ static int gpsTask(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
+    MAX10S gps = MAX10S();
+
+    gps.init(i2cBus);
+
     gps_data_t gpsData;
 
     while(1) {
@@ -136,12 +140,17 @@ static int gpsTask(int argc, char *argv[]) {
             .gps_e_x = 1.0,
             .gps_e_y = 1.0,
             .gps_e_z = 1.0,
+            .gps_v_ned_x = 1.0,
+            .gps_v_ned_y = 1.0,
+            .gps_v_ned_z = 1.0,
             .gps_numSats = 31
         };
 
+        gps.getNMEA();
+
         mq_send(mqd, (const char*)&gpsData, sizeof(gpsData), 0);
 
-        usleep(1 / mag_looprate);
+        usleep(1 / gps_looprate);
     }
 
     mq_close(mqd);

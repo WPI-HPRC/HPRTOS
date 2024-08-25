@@ -21,6 +21,9 @@ typedef struct {
     float gps_e_x;
     float gps_e_y;
     float gps_e_z;
+    float gps_v_ned_x;
+    float gps_v_ned_y;
+    float gps_v_ned_z;
     uint8_t gps_numSats;
 } gps_data_t;
 

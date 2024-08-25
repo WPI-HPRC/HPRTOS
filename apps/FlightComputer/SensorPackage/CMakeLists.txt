@@ -71,8 +71,6 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${APPDIR}/FlightComputer/FlightLib
             ${BASEDIR}
             ${NUTTX_INCLUDE_DIRS}
-            ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}
-            ${CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES}
     )
 
 

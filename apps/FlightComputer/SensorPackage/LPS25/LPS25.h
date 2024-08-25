@@ -2,14 +2,14 @@
 
 #include <nuttx/config.h>
 
-#include "stdlib.h"
-#include "stdio.h"
+#include <cstdlib>
+#include <cstdio>
 #include <fcntl.h>
 #include <sched.h>
-#include "errno.h"
+#include <cerrno>
 #include <sys/ioctl.h>
 #include <nuttx/i2c/i2c_master.h>
-#include "string.h"
+#include <cstring>
 
 class LPS25 {
 
@@ -27,7 +27,7 @@ private:
 
     int16_t busRead(uint8_t reg, uint8_t *val, int8_t len);
 
-    constexpr static uint8_t LPS25_ADDR = 0x5c;
+    constexpr static uint8_t LPS25_ADDR = 0x5d;
     constexpr static uint8_t LPS25_WHOAMI = 0x0f;
     constexpr static uint8_t LPS25_WHO_ID = 0xBD;
 
