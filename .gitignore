@@ -2,3 +2,5 @@
 /**/build
 .idea
 .vscode
+**/.cache
+**/compile_commands
