@@ -199,7 +199,7 @@ char* MAX10S::getNMEA() {
 
         if(buffer[index-1] == '\n' && buffer[index-2] == '\r') {
             buffer[index] = '\0';
-//            printf("%s", buffer);
+            printf("%s", buffer);
             messageComplete = true;
         }
 

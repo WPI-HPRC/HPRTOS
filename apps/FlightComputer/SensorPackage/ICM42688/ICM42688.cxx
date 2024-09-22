@@ -12,13 +12,14 @@ bool ICM42688::init(int i2cBus) {
     // Check whoAmI Register
     busRead(WHO_AM_I, &dev_id, 1);
 
+    enableSensor();
+
     if(dev_id != 0x47)
     {
         printf("[ICM42688] Error: Failed to initialize...\n");
-        return false;
+//        return false;
     }
 
-    enableSensor();
     setFilters();
     setODR();
 

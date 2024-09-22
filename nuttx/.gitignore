@@ -70,3 +70,4 @@ tools/gdb/__pycache__
 .ccls-cache
 compile_commands.json
 imx9-sdimage.img
+.idea
