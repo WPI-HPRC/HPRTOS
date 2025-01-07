@@ -1,5 +1,0 @@
-ifneq ($(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE),)
-
-CONFIGURED_APPS += $(APPDIR)/FlightComputer/SensorPackage
-
-endif
