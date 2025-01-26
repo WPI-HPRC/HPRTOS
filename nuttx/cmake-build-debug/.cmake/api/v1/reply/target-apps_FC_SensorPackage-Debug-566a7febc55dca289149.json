@@ -46,7 +46,7 @@
 			{
 				"command" : 1,
 				"file" : 1,
-				"line" : 60,
+				"line" : 62,
 				"parent" : 0
 			},
 			{
@@ -689,7 +689,8 @@
 				1,
 				2,
 				3,
-				4
+				4,
+				5
 			]
 		}
 	],
@@ -736,7 +737,8 @@
 				1,
 				2,
 				3,
-				4
+				4,
+				5
 			]
 		}
 	],
@@ -770,6 +772,12 @@
 			"backtrace" : 2,
 			"compileGroupIndex" : 1,
 			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/MAX10S/MAX10S.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 1,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/ADXL375/ADXL375.cxx",
 			"sourceGroupIndex" : 0
 		}
 	],

@@ -103,19 +103,19 @@
 				"parent" : 3
 			},
 			{
-				"command" : 4,
-				"file" : 0,
-				"line" : 29,
-				"parent" : 3
-			},
-			{
 				"file" : 2
 			},
 			{
 				"command" : 4,
 				"file" : 2,
 				"line" : 127,
-				"parent" : 6
+				"parent" : 5
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 3
 			},
 			{
 				"file" : 7
@@ -412,7 +412,7 @@
 				"command" : 10,
 				"file" : 2,
 				"line" : 130,
-				"parent" : 6
+				"parent" : 5
 			},
 			{
 				"file" : 22
@@ -1558,12 +1558,12 @@
 	"dependencies" : 
 	[
 		{
-			"backtrace" : 5,
-			"id" : "nuttx_context::@6890427a1f51a3e7e1df"
+			"backtrace" : 6,
+			"id" : "always_rebuild_lib_utsname::@e89c20c8cb4f0c405ba7"
 		},
 		{
 			"backtrace" : 7,
-			"id" : "always_rebuild_lib_utsname::@e89c20c8cb4f0c405ba7"
+			"id" : "nuttx_context::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "c::@3c8528499dd8ccf27360",

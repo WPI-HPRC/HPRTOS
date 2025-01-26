@@ -13,6 +13,7 @@
 #include "ICM42688/ICM42688.h"
 #include "MS5611/MS5611.h"
 #include "MAX10S/MAX10S.h"
+#include "ADXL375/ADXL375.h"
 
 #include "SensorPackage.h"
 

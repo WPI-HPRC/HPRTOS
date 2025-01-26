@@ -4623,7 +4623,7 @@
 				{
 					"build" : "apps/FlightComputer/SensorPackage",
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-apps.FlightComputer.SensorPackage-Debug-1a5979e36f6c1031095d.json",
+					"jsonFile" : "directory-apps.FlightComputer.SensorPackage-Debug-09f3b5bc5c1142473c5c.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.16"
@@ -7561,7 +7561,7 @@
 				{
 					"directoryIndex" : 367,
 					"id" : "apps_FC_SensorPackage::@e767e487c09d84ed783f",
-					"jsonFile" : "target-apps_FC_SensorPackage-Debug-3ce49b0ba98aedcf2d3b.json",
+					"jsonFile" : "target-apps_FC_SensorPackage-Debug-566a7febc55dca289149.json",
 					"name" : "apps_FC_SensorPackage",
 					"projectIndex" : 0
 				},
@@ -7638,7 +7638,7 @@
 				{
 					"directoryIndex" : 111,
 					"id" : "c::@3c8528499dd8ccf27360",
-					"jsonFile" : "target-c-Debug-e217ad78957160fabcf8.json",
+					"jsonFile" : "target-c-Debug-5b84f903217742ed786a.json",
 					"name" : "c",
 					"projectIndex" : 0
 				},
@@ -7694,7 +7694,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "nuttx::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-nuttx-Debug-c91cff8e67273a9822a5.json",
+					"jsonFile" : "target-nuttx-Debug-246efb9fda69a7ec6439.json",
 					"name" : "nuttx",
 					"projectIndex" : 0
 				},

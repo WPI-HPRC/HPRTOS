@@ -74,6 +74,7 @@ uImage
 .DS_Store
 tools/gdb/__pycache__
 /build
+/cmake-build-debug
 .ccls-cache
 compile_commands.json
 imx9-sdimage.img

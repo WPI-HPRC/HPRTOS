@@ -37409,6 +37409,15 @@ build apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MAX
   OBJECT_FILE_DIR = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MAX10S
   RSP_FILE = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MAX10S/MAX10S.cxx.obj.rsp
 
+build apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ADXL375/ADXL375.cxx.obj: CXX_COMPILER__apps_FC_SensorPackage_unscanned_Debug /Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/ADXL375/ADXL375.cxx || cmake_object_order_depends_target_apps_FC_SensorPackage
+  DEFINES = -D__NuttX__
+  DEP_FILE = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ADXL375/ADXL375.cxx.obj.d
+  FLAGS = -g -fdiagnostics-color=always -mtune=cortex-m7 -march=armv7e-m -mfpu=fpv5-d16 -mfloat-abi=hard --param=min-pagesize=0 -fno-common -Wall -Wshadow -Wundef -nostdlib -fomit-frame-pointer -mthumb -Wa,-mthumb -Wa,-mimplicit-it=always -ffunction-sections -fdata-sections -g -Wno-attributes -Wno-unknown-pragmas -nostdinc++ -Wno-psabi -std=gnu++20 -fno-exceptions -fcheck-new -fno-rtti -fdiagnostics-color=always -DNDEBUG -fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx= -fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps= -fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/boards/arm/stm32h7/vanguard-fc= -fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/arch/arm/src/stm32h7=
+  INCLUDES = -I/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/include -I/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/cmake-build-debug/apps/include -I/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/include/cxx -I/FlightComputer/FlightLib -I/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage -I/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/LINK_LIBRARIES -isystem /Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/include -isystem /Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/cmake-build-debug/include
+  OBJECT_DIR = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir
+  OBJECT_FILE_DIR = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ADXL375
+  RSP_FILE = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ADXL375/ADXL375.cxx.obj.rsp
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target apps_FC_SensorPackage
@@ -37417,7 +37426,7 @@ build apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MAX
 #############################################
 # Link the static library apps/FlightComputer/SensorPackage/libapps_FC_SensorPackage.a
 
-build apps/FlightComputer/SensorPackage/libapps_FC_SensorPackage.a: CXX_STATIC_LIBRARY_LINKER__apps_FC_SensorPackage_Debug apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/SensorPackage.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ICM42688/ICM42688.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/LPS25/LPS25.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MS5611/MS5611.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MAX10S/MAX10S.cxx.obj || apps_context nuttx_context
+build apps/FlightComputer/SensorPackage/libapps_FC_SensorPackage.a: CXX_STATIC_LIBRARY_LINKER__apps_FC_SensorPackage_Debug apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/SensorPackage.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ICM42688/ICM42688.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/LPS25/LPS25.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MS5611/MS5611.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/MAX10S/MAX10S.cxx.obj apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir/ADXL375/ADXL375.cxx.obj || apps_context nuttx_context
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = apps/FlightComputer/SensorPackage/CMakeFiles/apps_FC_SensorPackage.dir
   POST_BUILD = :

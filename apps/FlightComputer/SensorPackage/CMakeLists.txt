@@ -48,6 +48,7 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
     file(GLOB_RECURSE LPSSRC ${BASEDIR}/LPS25/*.cxx)
     file(GLOB_RECURSE MAGSRC ${BASEDIR}/MS5611/*.cxx)
     file(GLOB_RECURSE GPSSRC ${BASEDIR}/MAX10S/*.cxx)
+    file(GLOB_RECURSE ADXLSRC ${BASEDIR}/ADXL375/*.cxx)
 
     # Collect sources
     set(SENSOR_SRCS
@@ -55,6 +56,7 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${LPSSRC}
             ${MAGSRC}
             ${GPSSRC}
+            ${ADXLSRC}
     )
 
     nuttx_add_application(

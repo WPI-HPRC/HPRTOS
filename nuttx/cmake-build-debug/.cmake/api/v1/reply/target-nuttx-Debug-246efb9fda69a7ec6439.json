@@ -403,6 +403,18 @@
 	[
 		{
 			"backtrace" : 13,
+			"id" : "libcxxmini::@56d7f448a84b40f4427c"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "mm::@909984b7e41a42fcdfa1"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "sched::@b3df5b860f3aa10485ec"
+		},
+		{
+			"backtrace" : 13,
 			"id" : "board::@5ccd2b68bc3b4a0754d8"
 		},
 		{
@@ -423,7 +435,11 @@
 		},
 		{
 			"backtrace" : 13,
-			"id" : "apps_builtin::@54258d57ec9fedbeef7c"
+			"id" : "apps_FC_SensorPackage::@e767e487c09d84ed783f"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_FC_StateMachine::@f9d43021fd1b6c437e9b"
 		},
 		{
 			"backtrace" : 13,
@@ -431,19 +447,7 @@
 		},
 		{
 			"backtrace" : 13,
-			"id" : "fs::@e534a4c92be520162126"
-		},
-		{
-			"backtrace" : 13,
-			"id" : "libcxxmini::@56d7f448a84b40f4427c"
-		},
-		{
-			"backtrace" : 13,
-			"id" : "mm::@909984b7e41a42fcdfa1"
-		},
-		{
-			"backtrace" : 13,
-			"id" : "sched::@b3df5b860f3aa10485ec"
+			"id" : "apps_builtin::@54258d57ec9fedbeef7c"
 		},
 		{
 			"backtrace" : 14,
@@ -467,15 +471,11 @@
 		},
 		{
 			"backtrace" : 13,
+			"id" : "fs::@e534a4c92be520162126"
+		},
+		{
+			"backtrace" : 13,
 			"id" : "c::@3c8528499dd8ccf27360"
-		},
-		{
-			"backtrace" : 13,
-			"id" : "apps_FC_SensorPackage::@e767e487c09d84ed783f"
-		},
-		{
-			"backtrace" : 13,
-			"id" : "apps_FC_StateMachine::@f9d43021fd1b6c437e9b"
 		}
 	],
 	"id" : "nuttx::@6890427a1f51a3e7e1df",
