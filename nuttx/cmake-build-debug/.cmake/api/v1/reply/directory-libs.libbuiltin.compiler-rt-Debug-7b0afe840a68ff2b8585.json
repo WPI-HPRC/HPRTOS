@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "libs/libbuiltin/compiler-rt",
+		"source" : "libs/libbuiltin/compiler-rt"
+	}
+}

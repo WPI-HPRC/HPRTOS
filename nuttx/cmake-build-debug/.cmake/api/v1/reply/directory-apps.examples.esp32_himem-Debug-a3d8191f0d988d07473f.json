@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/examples/esp32_himem",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/esp32_himem"
+	}
+}

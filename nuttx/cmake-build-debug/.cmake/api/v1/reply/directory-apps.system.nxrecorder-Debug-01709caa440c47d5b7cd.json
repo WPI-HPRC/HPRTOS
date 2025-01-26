@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/system/nxrecorder",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/nxrecorder"
+	}
+}

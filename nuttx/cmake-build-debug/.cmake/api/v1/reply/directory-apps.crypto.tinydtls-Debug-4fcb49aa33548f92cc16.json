@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/crypto/tinydtls",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/tinydtls"
+	}
+}

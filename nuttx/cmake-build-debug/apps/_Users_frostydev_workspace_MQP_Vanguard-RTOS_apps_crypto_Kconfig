@@ -1,0 +1,8 @@
+menu "Cryptography Library Support"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/controlse/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/libsodium/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/libtomcrypt/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/mbedtls/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/tinycrypt/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/tinydtls/Kconfig"
+endmenu # Cryptography Library Support

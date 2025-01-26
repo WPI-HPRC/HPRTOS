@@ -1,0 +1,2302 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"path" : "cmake/nuttx_kconfig.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_sethost.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_kconfig.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_parse_function_args.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_subdirectory.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_create_symlink.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_generate_headers.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_mkconfig.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_mkversion.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_generate_outputs.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_library.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_parse_function_args.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_extensions.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_parse_function_args.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_application.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_parse_function_args.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_romfs.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_symtab.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_module.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_add_dependencies.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_parse_function_args.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_export_header.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_parse_function_args.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseArguments.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_remove_compile_options.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_source_file_properties.cmake"
+		},
+		{
+			"path" : "cmake/menuconfig.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/ExternalProject.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/ExternalProject/shared_internal_commands.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/FetchContent.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/ExternalProject/shared_internal_commands.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeSystem.cmake"
+		},
+		{
+			"path" : "arch/arm/src/cmake/Toolchain.cmake"
+		},
+		{
+			"path" : "arch/arm/src/cmake/armv7-m.cmake"
+		},
+		{
+			"path" : "arch/arm/src/cmake/armv7-m_gcc.cmake"
+		},
+		{
+			"path" : "arch/arm/src/cmake/gcc.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeCCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "cmake-build-debug/CMakeFiles/3.27.8/CMakeASMCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Platform/Generic.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/GNU-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Platform/Generic.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/GNU-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Platform/Generic.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeASMInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/GNU-ASM.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"path" : "cmake/nuttx_toolchain.cmake"
+		},
+		{
+			"path" : "arch/arm/src/cmake/platform.cmake"
+		},
+		{
+			"path" : "openamp/CMakeLists.txt"
+		},
+		{
+			"path" : "arch/CMakeLists.txt"
+		},
+		{
+			"path" : "arch/arm/CMakeLists.txt"
+		},
+		{
+			"path" : "arch/arm/src/CMakeLists.txt"
+		},
+		{
+			"path" : "arch/arm/src/armv7-m/CMakeLists.txt"
+		},
+		{
+			"path" : "arch/arm/src/stm32h7/CMakeLists.txt"
+		},
+		{
+			"path" : "arch/arm/src/common/CMakeLists.txt"
+		},
+		{
+			"path" : "audio/CMakeLists.txt"
+		},
+		{
+			"path" : "binfmt/CMakeLists.txt"
+		},
+		{
+			"path" : "binfmt/libnxflat/CMakeLists.txt"
+		},
+		{
+			"path" : "crypto/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/1wire/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/analog/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/audio/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/bch/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/can/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/clk/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/contactless/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/coresight/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/crypto/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/devicetree/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/dummy/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/eeprom/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/efuse/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/i2c/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/i2s/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/i3c/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/input/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/ioexpander/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/ipcc/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/lcd/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/leds/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/loop/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/math/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/misc/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/mmcsd/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/modem/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/motor/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/mtd/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/net/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/note/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/pci/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/pinctrl/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/pipes/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/power/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/power/battery/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/power/pm/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/power/relay/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/power/supply/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/rc/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/reset/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/rf/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/rmt/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/rpmsg/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/rptun/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/segger/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/sensors/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/serial/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/spi/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/syslog/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/thermal/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/timers/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/usbdev/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/usbhost/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/usbmisc/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/usbmonitor/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/usrsock/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/vhost/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/video/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/virtio/CMakeLists.txt"
+		},
+		{
+			"path" : "drivers/wireless/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/aio/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/binfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/cromfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/driver/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/event/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/fat/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/hostfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/inode/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/littlefs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/mmap/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/mnemofs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/mount/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/mqueue/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/nfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/notify/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/nxffs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/partition/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/procfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/romfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/rpmsgfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/semaphore/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/shm/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/smartfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/socket/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/spiffs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/spiffs/src/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/tmpfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/unionfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/userfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/v9fs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/vfs/CMakeLists.txt"
+		},
+		{
+			"path" : "fs/zipfs/CMakeLists.txt"
+		},
+		{
+			"path" : "graphics/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libbuiltin/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libbuiltin/compiler-rt/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libbuiltin/libgcc/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/aio/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/assert/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/audio/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/builtin/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/ctype/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/dirent/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/dlfcn/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/errno/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/eventfd/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/fdt/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/fixedmath/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/gdbstub/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/gnssutils/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/grp/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/hex2bin/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/inttypes/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/libgen/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/locale/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/lzf/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/machine/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/machine/arm/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/machine/arm/armv7-m/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/misc/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/modlib/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/net/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/netdb/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/obstack/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/pthread/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/pwd/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/queue/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/regex/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/sched/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/search/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/semaphore/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/signal/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/spawn/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/stdio/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/stdlib/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/stream/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/string/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/symtab/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/syslog/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/termios/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/time/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/tls/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/uio/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/unistd/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/userfs/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/uuid/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/wchar/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/wctype/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/wqueue/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libc/zoneinfo/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libdsp/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/libm/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/libm/arm/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/libm/arm/armv7-m/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/libm/arm/armv8-m/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/libmcs/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/newlib/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libm/openlibm/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libnx/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libxx/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libxx/libcxx/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libxx/libcxxabi/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libxx/libcxxmini/CMakeLists.txt"
+		},
+		{
+			"path" : "libs/libxx/uClibc++/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/iob/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/kasan/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/kmap/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/kmm_heap/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/map/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/mempool/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/mm_gran/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/mm_heap/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/shm/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/tlsf/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/ubsan/CMakeLists.txt"
+		},
+		{
+			"path" : "mm/umm_heap/CMakeLists.txt"
+		},
+		{
+			"path" : "net/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/addrenv/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/clock/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/environ/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/event/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/group/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/init/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/instrument/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/irq/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/misc/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/module/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/mqueue/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/paging/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/pthread/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/sched/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/semaphore/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/signal/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/task/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/timer/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/tls/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/wdog/CMakeLists.txt"
+		},
+		{
+			"path" : "sched/wqueue/CMakeLists.txt"
+		},
+		{
+			"path" : "syscall/CMakeLists.txt"
+		},
+		{
+			"path" : "wireless/CMakeLists.txt"
+		},
+		{
+			"path" : "boards/CMakeLists.txt"
+		},
+		{
+			"path" : "boards/arm/stm32h7/vanguard-fc/CMakeLists.txt"
+		},
+		{
+			"path" : "boards/arm/stm32h7/vanguard-fc/src/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/cachespeed/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/coremark/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/spinlock_bench/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/boot/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/boot/mcuboot/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/boot/miniboot/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/candump/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/canlib/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/cansend/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/lely-canopen/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/libcanutils/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/libdronecan/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/libobd2/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/libopencyphal/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/slcan/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/controlse/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/libsodium/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/libtomcrypt/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/mbedtls/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/tinycrypt/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/crypto/tinydtls/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/flash_eraseall/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/inifile/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/inih/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/ipcfg/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/libtinycbor/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/mkfatfs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/mkgpt/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/mkmbr/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/mksmartfs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/passwd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/games/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/graphics/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/graphics/lvgl/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/industry/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/industry/foc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/interpreters/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/logging/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/logging/embedlog/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/logging/nxscope/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/lte/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/math/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/math/libtommath/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/mlearning/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/modbus/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/chat/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/cjson/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/codecs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/connectedhomeip/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/dhcp6c/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/dhcpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/dhcpd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/discover/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/esp8266/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/ftpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/ftpd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/iperf/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/jsoncpp/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/libcoap/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/libcurl4nx/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/netcat/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/netinit/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/netlib/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/ntpclient/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/ping/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/pppd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/rexec/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/rexecd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/smtp/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/telnetc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/telnetd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/tftpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/thttpd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/wakaama/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/wakeonlan/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/webclient/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/webserver/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/xmlrpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/nshlib/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/platform/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/sdr/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/argtable3/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/cdcacm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/cle/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/composite/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/critmon/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/cu/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/dhcp6c/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/dhcpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/dumpstack/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/flash_eraseall/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/hex2bin/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/hexed/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/hostname/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/i2c/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/lm75/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/lzf/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/mdio/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/netdb/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/nsh/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/ntpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/nxplayer/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/nxrecorder/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/ping/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/ping6/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/popen/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/readline/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/sched_note/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/setlogmask/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/stackmonitor/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/system/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/taskset/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/tee/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/telnet/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/ubloxmodem/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/uorb/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/usbmsc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/vi/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/zmodem/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/fstest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/getprime/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/nxffs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/ostest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/ramtest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/smp/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/unity/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/tools/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/bluetooth/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/bluetooth/btsak/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/bluetooth/nimble/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/i8sak/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/i8shark/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/libmac/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/libutils/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/wapi/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/StateMachine/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/abntcodi/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/adc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/adjtime/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/adxl372_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ajoystick/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/alarm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/apa102/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/apds9960/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/audio_rttl/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/bastest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/battery/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/bme680/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/bmi160/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/bmp180/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/bmp280/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/bridge/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/buttons/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/calib_udelay/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/camera/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/can/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/capture/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/cbortest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/cctype/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/charger/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/chat/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/chrono/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/configdata/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/cordic/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/cpuhog/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/cromfs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/dac/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/dhcpd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/dhtxx/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/discover/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/djoystick/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/dronecan/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/elf/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/embedlog/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/esp32_himem/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/etl/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/fb/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/fboverlay/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/flash_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/flowc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/fmsynth/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/foc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ft80x/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ftpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ftpd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/fxos8700cq_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/gpio/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/gps/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hall/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hdc1008_demo/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hello/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hello_wasm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/helloxx/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hidkbd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hts221_reader/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/hx711/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/i2schar/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/i2sloop/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/igmp/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ina219/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ina226/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ini_dumper/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ipcfg/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ipforward/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/isl29023/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/json/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/leds/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/libtest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lis3dsh_reader/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lp503x/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lsm303_reader/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lsm330spi_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lsm6dsl_reader/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ltr308/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lvgldemo/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/lvglterm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/max31855/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/slot_confirm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/swap_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/update_agent/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/media/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mld/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mlx90614/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mml_parser/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/modbus/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/modbusmaster/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/module/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mount/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mqttc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mtdpart/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mtdrwb/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/netlink_route/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/netloop/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/netpkt/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nettest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nimble/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nng_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/noteprintf/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nrf24l01_btle/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nrf24l01_term/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/null/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nunchuck/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nx/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxdemo/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxflat/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxhello/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nximage/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxlines/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxscope/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxterm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxtext/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/obd2/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/oneshot/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/opencyphal/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pca9635/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pdcurses/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pf_ieee802154/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pipe/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/poll/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/popen/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/posix_spawn/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/powerled/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/powermonitor/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pppd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pty_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pwfb/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pwlines/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/pwm/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/qencoder/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/random/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/relays/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/rfid_readuid/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/rgbled/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/rmtchar/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/romfs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/rpmsgsocket/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/scd41/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/sendmail/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/serialblaster/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/serialrx/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/serloop/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/shm_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/sht3x/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/slcd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/smps/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/sotest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/stat/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/stepper/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/sx127x_demo/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/system/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/tcp_ipc_client/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/tcp_ipc_server/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/tcpblaster/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/tcpecho/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/telnetd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/termios/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/thttpd/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/tiff/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/timer/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/timer_gpio/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/touchscreen/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/udgram/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/udp/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/udpblaster/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/uid/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/unionfs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/usbserial/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/userfs/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/usrsocktest/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ustream/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/veml6070/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/watchdog/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/watched/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/watcher/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/webserver/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/wget/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/wgetjson/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ws2812/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/ws2812esp32rmt/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/xbc_test/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/xmlrpc/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/zerocross/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/builtin/CMakeLists.txt"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/builtin/builtin_proto.h.in"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/builtin/builtin_list.h.in"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/cmake-build-debug",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

@@ -1,0 +1,5 @@
+menu "Benchmark Applications"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/cachespeed/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/coremark/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/benchmarks/spinlock_bench/Kconfig"
+endmenu # Benchmark Applications

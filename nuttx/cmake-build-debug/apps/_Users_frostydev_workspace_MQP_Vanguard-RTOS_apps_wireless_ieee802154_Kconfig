@@ -1,0 +1,6 @@
+menu "IEEE 802.15.4 applications"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/i8sak/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/i8shark/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/libmac/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/ieee802154/libutils/Kconfig"
+endmenu # IEEE 802.15.4 applications

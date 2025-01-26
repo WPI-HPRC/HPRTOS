@@ -1,0 +1,61 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"nuttx_add_library_internal",
+			"nuttx_add_application"
+		],
+		"files" : 
+		[
+			"cmake/nuttx_add_library.cmake",
+			"cmake/nuttx_add_application.cmake",
+			"/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/StateMachine/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 30,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 175,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 2
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"apps/FlightComputer/StateMachine/libapps_FC_StateMachine.a"
+			],
+			"targetId" : "apps_FC_StateMachine::@f9d43021fd1b6c437e9b",
+			"targetIndex" : 3,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "apps/FlightComputer/StateMachine",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/StateMachine"
+	}
+}

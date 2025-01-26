@@ -1,0 +1,91 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"nuttx_add_library_internal",
+			"nuttx_add_application"
+		],
+		"files" : 
+		[
+			"cmake/nuttx_add_library.cmake",
+			"cmake/nuttx_add_application.cmake",
+			"/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/nsh/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 22,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 175,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 24,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 175,
+				"parent" : 4
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 5
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"apps/system/nsh/libapps_nsh.a"
+			],
+			"targetId" : "apps_nsh::@413d3d848feac137a2fe",
+			"targetIndex" : 8,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 6,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"apps/system/nsh/libapps_sh.a"
+			],
+			"targetId" : "apps_sh::@413d3d848feac137a2fe",
+			"targetIndex" : 9,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "apps/system/nsh",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/system/nsh"
+	}
+}

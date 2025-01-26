@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/netutils/jsoncpp",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/netutils/jsoncpp"
+	}
+}

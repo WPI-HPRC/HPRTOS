@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "boards/exclude_board",
+		"source" : "boards/arm/stm32h7/vanguard-fc"
+	}
+}

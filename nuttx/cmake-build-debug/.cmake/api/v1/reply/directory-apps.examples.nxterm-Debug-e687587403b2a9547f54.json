@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/examples/nxterm",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nxterm"
+	}
+}

@@ -1,0 +1,5 @@
+menu "MCUboot Examples"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/slot_confirm/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/swap_test/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/update_agent/Kconfig"
+endmenu # MCUboot Examples

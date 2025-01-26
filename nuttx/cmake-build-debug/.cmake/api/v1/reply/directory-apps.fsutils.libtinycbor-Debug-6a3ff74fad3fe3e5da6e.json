@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/fsutils/libtinycbor",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/libtinycbor"
+	}
+}

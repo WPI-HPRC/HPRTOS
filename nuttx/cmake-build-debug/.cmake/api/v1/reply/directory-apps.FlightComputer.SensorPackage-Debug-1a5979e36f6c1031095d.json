@@ -1,0 +1,61 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install",
+			"nuttx_add_library_internal",
+			"nuttx_add_application"
+		],
+		"files" : 
+		[
+			"cmake/nuttx_add_library.cmake",
+			"cmake/nuttx_add_application.cmake",
+			"/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 60,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 175,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 2
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 3,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"apps/FlightComputer/SensorPackage/libapps_FC_SensorPackage.a"
+			],
+			"targetId" : "apps_FC_SensorPackage::@e767e487c09d84ed783f",
+			"targetIndex" : 2,
+			"type" : "target"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "apps/FlightComputer/SensorPackage",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage"
+	}
+}

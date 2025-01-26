@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "libs/libm/libm/arm/armv7-m",
+		"source" : "libs/libm/libm/arm/armv7-m"
+	}
+}

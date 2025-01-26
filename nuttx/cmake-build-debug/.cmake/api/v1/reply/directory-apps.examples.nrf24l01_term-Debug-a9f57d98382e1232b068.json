@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/examples/nrf24l01_term",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/nrf24l01_term"
+	}
+}

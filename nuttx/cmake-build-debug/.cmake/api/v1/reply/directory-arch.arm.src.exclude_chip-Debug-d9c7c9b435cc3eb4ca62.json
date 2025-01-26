@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "arch/arm/src/exclude_chip",
+		"source" : "arch/arm/src/stm32h7"
+	}
+}

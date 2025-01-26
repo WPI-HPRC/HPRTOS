@@ -1,0 +1,9 @@
+menu "Testing"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/fstest/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/getprime/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/nxffs/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/ostest/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/ramtest/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/smp/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/testing/unity/Kconfig"
+endmenu # Testing

@@ -1,0 +1,774 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "nuttx"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"add_link_options",
+			"include",
+			"project",
+			"target_link_libraries",
+			"add_dependencies",
+			"add_compile_options",
+			"add_definitions",
+			"target_sources"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"arch/arm/src/cmake/gcc.cmake",
+			"arch/arm/src/cmake/Toolchain.cmake",
+			"cmake-build-debug/CMakeFiles/3.27.8/CMakeSystem.cmake",
+			"arch/arm/src/cmake/armv7-m_gcc.cmake",
+			"arch/arm/src/cmake/armv7-m.cmake",
+			"cmake/nuttx_toolchain.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 432,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 407,
+				"parent" : 0
+			},
+			{
+				"file" : 3,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 6,
+				"parent" : 3
+			},
+			{
+				"file" : 2,
+				"parent" : 4
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 62,
+				"parent" : 5
+			},
+			{
+				"file" : 1,
+				"parent" : 6
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 70,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 108,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 109,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 223,
+				"parent" : 7
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 236,
+				"parent" : 7
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 644,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 444,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 605,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 46,
+				"parent" : 5
+			},
+			{
+				"file" : 5,
+				"parent" : 16
+			},
+			{
+				"command" : 2,
+				"file" : 5,
+				"line" : 41,
+				"parent" : 17
+			},
+			{
+				"file" : 4,
+				"parent" : 18
+			},
+			{
+				"command" : 6,
+				"file" : 4,
+				"line" : 99,
+				"parent" : 19
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 71,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 110,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 125,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 206,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 212,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 217,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 224,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 240,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 243,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 253,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 256,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 260,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 265,
+				"parent" : 7
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 410,
+				"parent" : 0
+			},
+			{
+				"file" : 6,
+				"parent" : 34
+			},
+			{
+				"command" : 6,
+				"file" : 6,
+				"line" : 29,
+				"parent" : 35
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 525,
+				"parent" : 0
+			},
+			{
+				"command" : 8,
+				"file" : 0,
+				"line" : 617,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "-mtune=cortex-m7"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "-march=armv7e-m"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "-mfpu=fpv5-d16"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "-mfloat-abi=hard"
+				},
+				{
+					"backtrace" : 21,
+					"fragment" : "--param=min-pagesize=0"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-fno-common"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wshadow"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wundef"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-nostdlib"
+				},
+				{
+					"backtrace" : 23,
+					"fragment" : "-fomit-frame-pointer"
+				},
+				{
+					"backtrace" : 24,
+					"fragment" : "-mthumb"
+				},
+				{
+					"backtrace" : 25,
+					"fragment" : "-Wa,-mthumb"
+				},
+				{
+					"backtrace" : 26,
+					"fragment" : "-Wa,-mimplicit-it=always"
+				},
+				{
+					"backtrace" : 27,
+					"fragment" : "-ffunction-sections"
+				},
+				{
+					"backtrace" : 27,
+					"fragment" : "-fdata-sections"
+				},
+				{
+					"backtrace" : 28,
+					"fragment" : "-g"
+				},
+				{
+					"backtrace" : 29,
+					"fragment" : "-Wno-attributes"
+				},
+				{
+					"backtrace" : 29,
+					"fragment" : "-Wno-unknown-pragmas"
+				},
+				{
+					"backtrace" : 29,
+					"fragment" : "-nostdinc++"
+				},
+				{
+					"backtrace" : 30,
+					"fragment" : "-Wno-psabi"
+				},
+				{
+					"backtrace" : 31,
+					"fragment" : "-std=gnu++20"
+				},
+				{
+					"backtrace" : 32,
+					"fragment" : "-fno-exceptions"
+				},
+				{
+					"backtrace" : 32,
+					"fragment" : "-fcheck-new"
+				},
+				{
+					"backtrace" : 33,
+					"fragment" : "-fno-rtti"
+				},
+				{
+					"backtrace" : 36,
+					"fragment" : "-fdiagnostics-color=always"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 37,
+					"define" : "__NuttX__"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 13,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/arch/arm/src/stm32h7"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/arch/arm/src/common"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/arch/arm/src/armv7-m"
+				},
+				{
+					"backtrace" : 13,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/sched"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 13,
+			"id" : "board::@5ccd2b68bc3b4a0754d8"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps::@9e189ee61a034fc9b705"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_i2c::@9a0403b39e4c2dc81798"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_nsh::@413d3d848feac137a2fe"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_sh::@413d3d848feac137a2fe"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_builtin::@54258d57ec9fedbeef7c"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_alarm::@9421100b51a50b76c94b"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "fs::@e534a4c92be520162126"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "libcxxmini::@56d7f448a84b40f4427c"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "mm::@909984b7e41a42fcdfa1"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "sched::@b3df5b860f3aa10485ec"
+		},
+		{
+			"backtrace" : 14,
+			"id" : "nuttx_context::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 15,
+			"id" : "ldscript_tmp::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "arch::@b33adfcde0d04d10fdac"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "binfmt::@d04bd41612893e3304b4"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "drivers::@1d7df37e8e284987ec01"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "c::@3c8528499dd8ccf27360"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_FC_SensorPackage::@e767e487c09d84ed783f"
+		},
+		{
+			"backtrace" : 13,
+			"id" : "apps_FC_StateMachine::@f9d43021fd1b6c437e9b"
+		}
+	],
+	"id" : "nuttx::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-g",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "--specs=nosys.specs -L/opt/homebrew/opt/openblas/lib",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 8,
+				"fragment" : "-Wl,--print-memory-usage",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 9,
+				"fragment" : "-Wl,--entry=__start",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "-nostdlib",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "-Wl,--gc-sections",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "-Wl,--cref",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "-Wl,-Map=nuttx.map",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-mtune=cortex-m7",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-march=armv7e-m",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-mfpu=fpv5-d16",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-mfloat-abi=hard",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "--param=min-pagesize=0",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-fno-common",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wall",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wshadow",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wundef",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-nostdlib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-fomit-frame-pointer",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-mthumb",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wa,-mthumb",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wa,-mimplicit-it=always",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-ffunction-sections",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-fdata-sections",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-g",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wno-attributes",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wno-unknown-pragmas",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wstrict-prototypes",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wno-psabi",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-fdiagnostics-color=always",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-T",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "flash.ld.tmp",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wl,--start-group",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "arch/libarch.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "binfmt/libbinfmt.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "drivers/libdrivers.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "fs/libfs.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "libs/libc/libc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "mm/libmm.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "sched/libsched.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "boards/libboard.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "libs/libxx/libcxxmini/liblibcxxmini.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/libapps.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/builtin/libapps_builtin.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/system/i2c/libapps_i2c.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/system/nsh/libapps_nsh.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/system/nsh/libapps_sh.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/FlightComputer/SensorPackage/libapps_FC_SensorPackage.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/FlightComputer/StateMachine/libapps_FC_StateMachine.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "apps/examples/alarm/libapps_alarm.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "/Applications/ArmGNUToolchain/14.2.rel1/arm-none-eabi/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v7e-m+dp/hard/libgcc.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "-Wl,--end-group",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "nuttx",
+	"nameOnDisk" : "nuttx",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 38,
+			"compileGroupIndex" : 0,
+			"path" : "cmake-build-debug/empty.cxx",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "EXECUTABLE"
+}

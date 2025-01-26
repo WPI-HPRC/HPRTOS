@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/wireless/bluetooth/nimble",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/bluetooth/nimble"
+	}
+}

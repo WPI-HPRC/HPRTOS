@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/examples/mcuboot/swap_test",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/mcuboot/swap_test"
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/examples/max31855",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/examples/max31855"
+	}
+}

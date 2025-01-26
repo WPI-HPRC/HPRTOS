@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/fsutils/flash_eraseall",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/fsutils/flash_eraseall"
+	}
+}

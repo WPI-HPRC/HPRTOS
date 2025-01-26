@@ -1,0 +1,4 @@
+menu "Bootloader Utilities"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/boot/mcuboot/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/boot/miniboot/Kconfig"
+endmenu # Bootloader Utilities

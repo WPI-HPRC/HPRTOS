@@ -1,0 +1,4 @@
+menu "Bluetooth applications"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/bluetooth/btsak/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/bluetooth/nimble/Kconfig"
+endmenu # Bluetooth applications

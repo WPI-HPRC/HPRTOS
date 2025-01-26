@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "apps/canutils/canlib",
+		"source" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/canutils/canlib"
+	}
+}

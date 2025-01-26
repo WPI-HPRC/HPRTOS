@@ -1,0 +1,4 @@
+menu "FlightComputer"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/SensorPackage/Kconfig"
+source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/FlightComputer/StateMachine/Kconfig"
+endmenu # FlightComputer

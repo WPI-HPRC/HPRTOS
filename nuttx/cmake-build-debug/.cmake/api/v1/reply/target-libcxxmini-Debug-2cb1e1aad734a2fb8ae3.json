@@ -1,0 +1,551 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "libs/libxx/libcxxmini/liblibcxxmini.a"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"nuttx_add_system_library",
+			"install",
+			"nuttx_add_library_internal",
+			"add_dependencies",
+			"add_compile_options",
+			"include",
+			"project",
+			"add_definitions",
+			"target_include_directories",
+			"target_sources"
+		],
+		"files" : 
+		[
+			"cmake/nuttx_add_library.cmake",
+			"libs/libxx/libcxxmini/CMakeLists.txt",
+			"arch/arm/src/cmake/armv7-m_gcc.cmake",
+			"arch/arm/src/cmake/armv7-m.cmake",
+			"arch/arm/src/cmake/Toolchain.cmake",
+			"cmake-build-debug/CMakeFiles/3.27.8/CMakeSystem.cmake",
+			"CMakeLists.txt",
+			"arch/arm/src/cmake/gcc.cmake",
+			"cmake/nuttx_toolchain.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 25,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 101,
+				"parent" : 1
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 104,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 3
+			},
+			{
+				"file" : 6
+			},
+			{
+				"command" : 7,
+				"file" : 6,
+				"line" : 407,
+				"parent" : 6
+			},
+			{
+				"file" : 5,
+				"parent" : 7
+			},
+			{
+				"command" : 6,
+				"file" : 5,
+				"line" : 6,
+				"parent" : 8
+			},
+			{
+				"file" : 4,
+				"parent" : 9
+			},
+			{
+				"command" : 6,
+				"file" : 4,
+				"line" : 46,
+				"parent" : 10
+			},
+			{
+				"file" : 3,
+				"parent" : 11
+			},
+			{
+				"command" : 6,
+				"file" : 3,
+				"line" : 41,
+				"parent" : 12
+			},
+			{
+				"file" : 2,
+				"parent" : 13
+			},
+			{
+				"command" : 5,
+				"file" : 2,
+				"line" : 99,
+				"parent" : 14
+			},
+			{
+				"command" : 6,
+				"file" : 4,
+				"line" : 62,
+				"parent" : 10
+			},
+			{
+				"file" : 7,
+				"parent" : 16
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 71,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 110,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 125,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 206,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 212,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 217,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 224,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 240,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 243,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 253,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 256,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 260,
+				"parent" : 17
+			},
+			{
+				"command" : 5,
+				"file" : 7,
+				"line" : 265,
+				"parent" : 17
+			},
+			{
+				"command" : 6,
+				"file" : 6,
+				"line" : 410,
+				"parent" : 6
+			},
+			{
+				"file" : 8,
+				"parent" : 31
+			},
+			{
+				"command" : 5,
+				"file" : 8,
+				"line" : 29,
+				"parent" : 32
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 506,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 518,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 519,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 520,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 6,
+				"line" : 521,
+				"parent" : 6
+			},
+			{
+				"command" : 8,
+				"file" : 6,
+				"line" : 525,
+				"parent" : 6
+			},
+			{
+				"command" : 9,
+				"file" : 0,
+				"line" : 32,
+				"parent" : 3
+			},
+			{
+				"command" : 9,
+				"file" : 0,
+				"line" : 39,
+				"parent" : 3
+			},
+			{
+				"command" : 10,
+				"file" : 1,
+				"line" : 31,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 15,
+					"fragment" : "-mtune=cortex-m7"
+				},
+				{
+					"backtrace" : 15,
+					"fragment" : "-march=armv7e-m"
+				},
+				{
+					"backtrace" : 15,
+					"fragment" : "-mfpu=fpv5-d16"
+				},
+				{
+					"backtrace" : 15,
+					"fragment" : "-mfloat-abi=hard"
+				},
+				{
+					"backtrace" : 18,
+					"fragment" : "--param=min-pagesize=0"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "-fno-common"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "-Wshadow"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "-Wundef"
+				},
+				{
+					"backtrace" : 19,
+					"fragment" : "-nostdlib"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : "-fomit-frame-pointer"
+				},
+				{
+					"backtrace" : 21,
+					"fragment" : "-mthumb"
+				},
+				{
+					"backtrace" : 22,
+					"fragment" : "-Wa,-mthumb"
+				},
+				{
+					"backtrace" : 23,
+					"fragment" : "-Wa,-mimplicit-it=always"
+				},
+				{
+					"backtrace" : 24,
+					"fragment" : "-ffunction-sections"
+				},
+				{
+					"backtrace" : 24,
+					"fragment" : "-fdata-sections"
+				},
+				{
+					"backtrace" : 25,
+					"fragment" : "-g"
+				},
+				{
+					"backtrace" : 26,
+					"fragment" : "-Wno-attributes"
+				},
+				{
+					"backtrace" : 26,
+					"fragment" : "-Wno-unknown-pragmas"
+				},
+				{
+					"backtrace" : 26,
+					"fragment" : "-nostdinc++"
+				},
+				{
+					"backtrace" : 27,
+					"fragment" : "-Wno-psabi"
+				},
+				{
+					"backtrace" : 28,
+					"fragment" : "-std=gnu++20"
+				},
+				{
+					"backtrace" : 29,
+					"fragment" : "-fno-exceptions"
+				},
+				{
+					"backtrace" : 29,
+					"fragment" : "-fcheck-new"
+				},
+				{
+					"backtrace" : 30,
+					"fragment" : "-fno-rtti"
+				},
+				{
+					"backtrace" : 33,
+					"fragment" : "-fdiagnostics-color=always"
+				},
+				{
+					"backtrace" : 34,
+					"fragment" : "-DNDEBUG"
+				},
+				{
+					"backtrace" : 35,
+					"fragment" : "-fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx="
+				},
+				{
+					"backtrace" : 36,
+					"fragment" : "-fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps="
+				},
+				{
+					"backtrace" : 37,
+					"fragment" : "-fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/boards/arm/stm32h7/vanguard-fc="
+				},
+				{
+					"backtrace" : 38,
+					"fragment" : "-fmacro-prefix-map=/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/arch/arm/src/stm32h7="
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 39,
+					"define" : "__NuttX__"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 40,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/include/cxx"
+				},
+				{
+					"backtrace" : 41,
+					"isSystem" : true,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/include"
+				},
+				{
+					"backtrace" : 41,
+					"isSystem" : true,
+					"path" : "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/cmake-build-debug/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 5,
+			"id" : "nuttx_context::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "libcxxmini::@56d7f448a84b40f4427c",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 4,
+				"path" : "lib"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/usr/local"
+		}
+	},
+	"name" : "libcxxmini",
+	"nameOnDisk" : "liblibcxxmini.a",
+	"paths" : 
+	{
+		"build" : "libs/libxx/libcxxmini",
+		"source" : "libs/libxx/libcxxmini"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_cxa_guard.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_cxapurevirtual.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_delete.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_deletea.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_new.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_newa.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_dynamic_cast.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 42,
+			"compileGroupIndex" : 0,
+			"path" : "libs/libxx/libcxxmini/libxx_typeinfo.cxx",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}
