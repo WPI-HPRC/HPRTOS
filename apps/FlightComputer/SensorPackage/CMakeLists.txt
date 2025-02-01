@@ -44,18 +44,10 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
     set(BASEDIR ${CMAKE_CURRENT_SOURCE_DIR})
 
     # Collect source files from sensor libraries
-    file(GLOB_RECURSE ICMSRC ${BASEDIR}/ICM42688/*.cxx)
-    file(GLOB_RECURSE LPSSRC ${BASEDIR}/LPS25/*.cxx)
-    file(GLOB_RECURSE MAGSRC ${BASEDIR}/MS5611/*.cxx)
-    file(GLOB_RECURSE GPSSRC ${BASEDIR}/MAX10S/*.cxx)
     file(GLOB_RECURSE ADXLSRC ${BASEDIR}/ADXL375/*.cxx)
 
     # Collect sources
     set(SENSOR_SRCS
-            ${ICMSRC}
-            ${LPSSRC}
-            ${MAGSRC}
-            ${GPSSRC}
             ${ADXLSRC}
     )
 

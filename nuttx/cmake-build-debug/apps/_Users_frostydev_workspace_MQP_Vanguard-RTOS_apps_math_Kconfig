@@ -1,3 +1,0 @@
-menu "Math Library Support"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/math/libtommath/Kconfig"
-endmenu # Math Library Support

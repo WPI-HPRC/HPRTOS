@@ -1,4 +1,0 @@
-menu "Logging Utilities"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/logging/embedlog/Kconfig"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/logging/nxscope/Kconfig"
-endmenu # Logging Utilities

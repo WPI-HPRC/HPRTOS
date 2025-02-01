@@ -1,6 +1,8 @@
 #pragma once
 
 #include <nuttx/config.h>
+#include <nuttx/i2c/i2c_master.h>
+#include <mqueue.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -8,7 +10,6 @@
 #include <sched.h>
 #include <cerrno>
 #include <sys/ioctl.h>
-#include <nuttx/i2c/i2c_master.h>
 #include <cstring>
 
 #include "../../FlightLib/SensorData.h"
@@ -43,6 +44,8 @@ public:
     void packData(adxl375_data_t *adxl_data);
 
     float adxl_sensitivity_factor = 0.049; // [mg/LSB]
+
+    static int readTask(int argc, char **argv);
 
 private:
 

@@ -1,5 +1,7 @@
 /****************************************************************************
- * boards/arm/stm32h7/nucleo-h743zi2/src/stm32_qencoder.c
+ * boards/arm/stm32h7/nucleo-h743zi/src/stm32_usbmsc.c
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -24,42 +26,36 @@
 
 #include <nuttx/config.h>
 
+#include <stdio.h>
+#include <syslog.h>
 #include <errno.h>
-#include <debug.h>
 
-#include <nuttx/sensors/qencoder.h>
-#include <arch/board/board.h>
-
-#include "chip.h"
-#include "arm_internal.h"
-#include "stm32_qencoder.h"
-#include "vanguard-stm32h7.h"
+#include <nuttx/board.h>
 
 /****************************************************************************
  * Public Functions
  ****************************************************************************/
 
 /****************************************************************************
- * Name: qe_devinit
+ * Name: board_usbmsc_initialize
  *
  * Description:
- *   All STM32H7 architectures must provide the following interface to work
- *   with examples/qencoder.
+ *   Perform architecture specific initialization as needed to establish
+ *   the mass storage device that will be exported by the USB MSC device.
  *
  ****************************************************************************/
 
-int stm32_qencoder_initialize(const char *devpath, int timer)
+int board_usbmsc_initialize(int port)
 {
-  int ret;
+    /* If system/usbmsc is built as an NSH command, then SD slot should
+     * already have been initialized in board_app_initialize()
+     * (see stm32_appinit.c).
+     * In this case, there is nothing further to be done here.
+     */
 
-  /* Initialize a quadrature encoder interface. */
-
-  sninfo("Initializing the quadrature encoder using TIM%d\n", timer);
-  ret = stm32_qeinitialize(devpath, timer);
-  if (ret < 0)
-    {
-      snerr("ERROR: stm32_qeinitialize failed: %d\n", ret);
-    }
-
-  return ret;
+#ifndef CONFIG_NSH_BUILTIN_APPS
+    stm32_mmcsd_initialize(0);
+#else
+    return OK;
+#endif
 }

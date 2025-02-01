@@ -1,5 +1,0 @@
-menu "Wireless Libraries and NSH Add-Ons"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/cmake-build-debug/apps/_Users_frostydev_workspace_MQP_Vanguard-RTOS_apps_wireless_bluetooth_Kconfig"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/cmake-build-debug/apps/_Users_frostydev_workspace_MQP_Vanguard-RTOS_apps_wireless_ieee802154_Kconfig"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/wireless/wapi/Kconfig"
-endmenu # Wireless Libraries and NSH Add-Ons

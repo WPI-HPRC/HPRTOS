@@ -146,3 +146,61 @@ void ADXL375::packData(adxl375_data_t *adxl_data) {
     adxl_data->accel_y = _accelZ;
 
 }
+
+int ADXL375::readTask(int argc, char **argv) {
+
+    ADXL375 adxl = ADXL375();
+
+    if (argc < 1 || argv == nullptr) {
+        printf("[ADXL375]: Error: Missing I2C bus argument.\n");
+        return EXIT_FAILURE;
+    }
+
+    // Extract the I2C bus from argv
+    int i2cBus = atoi(argv[0]); // Assumes argv[0] contains the bus number as a string
+    printf("[ADXL375]: Starting with I2C bus %d...\n", i2cBus);
+
+    // Initialize the sensor
+    if (adxl.init(1) != 0) {
+        printf("[ADXL375]: Error: Failed to initialize the sensor.\n");
+        return EXIT_FAILURE;
+    }
+
+    // Message queue setup
+    struct mq_attr attr = {
+            .mq_maxmsg = 1,
+            .mq_msgsize = sizeof(adxl375_data_t),
+            .mq_flags = 0
+    };
+
+    mqd_t mqd = mq_open("/ADXL375_queue", O_CREAT | O_WRONLY, 0644, &attr);
+    if (mqd == (mqd_t)-1) {
+        printf("[ADXL375]: Error: Failed to create message queue.\n");
+        return EXIT_FAILURE;
+    }
+
+    // Main loop
+    adxl375_data_t adxlData;
+    struct timespec sleep_time = {
+            .tv_sec = 0,
+            .tv_nsec = (1000000000 / 400) // Example polling rate: 100 Hz
+    };
+
+    while (true) {
+        // Read accelerometer data
+//        read(&adxlData.accel_x, &adxlData.accel_y, &adxlData.accel_z);
+
+        // Send data to the message queue
+        if (mq_send(mqd, (const char *)&adxlData, sizeof(adxlData), 0) == -1) {
+            printf("[ADXL375]: Error: Failed to send data to the queue.\n");
+        }
+
+        // Sleep for the polling interval
+        nanosleep(&sleep_time, nullptr);
+    }
+
+    // Clean up (unreachable in this example)
+    mq_close(mqd);
+    return EXIT_SUCCESS;
+
+}

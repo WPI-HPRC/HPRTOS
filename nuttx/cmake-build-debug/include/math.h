@@ -1,1 +1,0 @@
-/Users/frostydev/workspace/MQP/Vanguard-RTOS/nuttx/include/nuttx/lib/math.h

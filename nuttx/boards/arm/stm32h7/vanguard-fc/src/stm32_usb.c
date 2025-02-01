@@ -1,5 +1,7 @@
 /****************************************************************************
- * boards/arm/stm32h7/nucleo-h743zi2/src/stm32_usb.c
+ * boards/arm/stm32h7/nucleo-h743zi/src/stm32_usb.c
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -41,7 +43,7 @@
 #include "chip.h"
 #include "stm32_gpio.h"
 #include "stm32_otg.h"
-#include "hprc-stm32h7.h"
+#include "vanguard-stm32h7.h"
 
 #ifdef CONFIG_STM32H7_OTGFS
 
@@ -56,12 +58,12 @@
 #  undef HAVE_USB
 #endif
 
-#ifndef CONFIG_USBHOST_DEFPRIO
-#  define CONFIG_USBHOST_DEFPRIO 100
+#ifndef CONFIG_NUCLEOH743ZI_USBHOST_PRIO
+#  define CONFIG_NUCLEOH743ZI_USBHOST_PRIO 100
 #endif
 
-#ifndef CONFIG_USBHOST_STACKSIZE
-#  define CONFIG_USBHOST_STACKSIZE 2048
+#ifndef CONFIG_NUCLEOH743ZI_USBHOST_STACKSIZE
+#  define CONFIG_NUCLEOH743ZI_USBHOST_STACKSIZE 1024
 #endif
 
 /****************************************************************************
@@ -128,18 +130,18 @@ static int usbhost_waiter(int argc, char *argv[])
 
 void stm32_usbinitialize(void)
 {
-  /* The OTG FS has an internal soft pull-up.
-   * No GPIO configuration is required
-   */
+    /* The OTG FS has an internal soft pull-up.
+     * No GPIO configuration is required
+     */
 
-  /* Configure the OTG FS VBUS sensing GPIO,
-   * Power On, and Overcurrent GPIOs
-   */
+    /* Configure the OTG FS VBUS sensing GPIO,
+     * Power On, and Overcurrent GPIOs
+     */
 
 #ifdef CONFIG_STM32H7_OTGFS
-  stm32_configgpio(GPIO_OTGFS_VBUS);
-  stm32_configgpio(GPIO_OTGFS_PWRON);
-  stm32_configgpio(GPIO_OTGFS_OVER);
+    stm32_configgpio(GPIO_OTGFS_VBUS);
+    stm32_configgpio(GPIO_OTGFS_PWRON);
+    stm32_configgpio(GPIO_OTGFS_OVER);
 #endif
 }
 
@@ -225,8 +227,8 @@ int stm32_usbhost_initialize(void)
 
       uinfo("Start usbhost_waiter\n");
 
-      ret = kthread_create("usbhost", CONFIG_USBHOST_DEFPRIO,
-                           CONFIG_USBHOST_STACKSIZE,
+      ret = kthread_create("usbhost", CONFIG_NUCLEOH743ZI_USBHOST_PRIO,
+                           CONFIG_NUCLEOH743ZI_USBHOST_STACKSIZE,
                            usbhost_waiter, NULL);
       return ret < 0 ? -ENOEXEC : OK;
     }
@@ -269,9 +271,9 @@ void stm32_usbhost_vbusdrive(int iface, bool enable)
 {
   DEBUGASSERT(iface == 0);
 
-  /* Set the Power Switch by driving the active low enable pin */
+  /* Set the Power Switch by driving the active high enable pin */
 
-  stm32_gpiowrite(GPIO_OTGFS_PWRON, !enable);
+  stm32_gpiowrite(GPIO_OTGFS_PWRON, enable);
 }
 #endif
 
@@ -313,7 +315,7 @@ int stm32_setup_overcurrent(xcpt_t handler, void *arg)
 #ifdef CONFIG_USBDEV
 void stm32_usbsuspend(struct usbdev_s *dev, bool resume)
 {
-  uinfo("resume: %d\n", resume);
+            uinfo("resume: %d\n", resume);
 }
 #endif
 

@@ -34,7 +34,7 @@
 #include "chip.h"
 #include "arm_internal.h"
 #include "stm32_pwm.h"
-#include "hprc-stm32h7.h"
+#include "vanguard-stm32h7.h"
 
 /****************************************************************************
  * Pre-processor Definitions

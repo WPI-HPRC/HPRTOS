@@ -1,3 +1,0 @@
-menu "Interpreters"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/interpreters/wamr/Kconfig"
-endmenu # Interpreters

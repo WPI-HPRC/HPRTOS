@@ -45,7 +45,7 @@
 #include <semaphore.h>
 #endif
 
-#include "hprc-stm32h7.h"
+#include "vanguard-stm32h7.h"
 
 #include "stm32_gpio.h"
 #include "stm32_i2c.h"

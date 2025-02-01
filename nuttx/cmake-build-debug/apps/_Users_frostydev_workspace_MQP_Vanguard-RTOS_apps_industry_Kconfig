@@ -1,3 +1,0 @@
-menu "Industrial Applications"
-source "/Users/frostydev/workspace/MQP/Vanguard-RTOS/apps/industry/foc/Kconfig"
-endmenu # Industrial Applications
