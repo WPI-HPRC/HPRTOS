@@ -2,8 +2,6 @@
 
 #include <sys/param.h>
 
-#include <cstring>
-
 MAX10S::MAX10S()
 {
 
@@ -207,4 +205,58 @@ char* MAX10S::getNMEA() {
 
     return reinterpret_cast<char *>(buffer);
 
+}
+
+int MAX10S::readTask(int argc, char **argv) {
+
+    MAX10S gps = MAX10S();
+
+    if(argc < 1 || argv == nullptr) {
+        printf("[MAX10S]: Error: Missing I2C bus argument...\n");
+        return EXIT_FAILURE;
+    }
+
+    int i2cBus = atoi(argv[0]);
+    printf("[MAX10S]: Starting with I2C bus %d!\n", i2cBus);
+
+    if(gps.init(i2cBus) == 0) {
+        printf("[MAX10S]: Error: Failed to initialize sensor...\n");
+
+        return EXIT_FAILURE;
+    }
+
+    struct mq_attr attr = {
+            .mq_maxmsg = 1,
+            .mq_msgsize = sizeof(gps_data_t),
+            .mq_flags = 0
+    };
+
+    mqd_t mqd = mq_open("/M10S_queue", O_CREAT | O_WRONLY, 0644, &attr);
+
+    if(mqd == (mqd_t)-1) {
+        printf("[MAX10S]: Error: Failed to create message queue...\n");
+        return EXIT_FAILURE;
+    }
+
+    gps_data_t gpsData;
+    struct timespec sleep_time = {
+            .tv_sec = 0,
+            .tv_nsec = (1000000000 / 10)
+    };
+
+    while(true) {
+
+        if(mq_send(mqd, (const char *)&gpsData, sizeof(gpsData), 0) == -1) {
+            printf("[MAX10S]: Error: Failed to send data to the queue...\n");
+        }
+
+        gps.getNMEA();
+        printf("Looking for GPS data...\n");
+
+        nanosleep(&sleep_time, nullptr);
+    }
+
+    mq_close(mqd);
+
+    return EXIT_SUCCESS;
 }

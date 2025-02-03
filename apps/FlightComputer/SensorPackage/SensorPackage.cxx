@@ -9,10 +9,7 @@
 #include "../FlightLib/SensorData.h"
 #include "../FlightLib/FlightConfig.h"
 
-#include "LPS25/LPS25.h"
 #include "MAX10S/MAX10S.h"
-#include "ADXL375/ADXL375.h"
-
 #include "SensorPackage.h"
 
 static int i2cBus = 0;
@@ -33,53 +30,49 @@ static int initSensorBus() {
 
     return ret;
 }
-
-static int adxlTask(int argc, char *argv[]) {
-    ADXL375 adxl = ADXL375();
-
-    // Initialize the sensor
-    if (adxl.init(i2cBus) != 0) {
-        printf("[ADXL375]: Error: Failed to initialize the sensor.\n");
-        return EXIT_FAILURE;
-    }
-
-    // Message queue setup
-    struct mq_attr attr = {
-            .mq_maxmsg = 1,
-            .mq_msgsize = sizeof(adxl375_data_t),
-            .mq_flags = 0
-    };
-
-    mqd_t mqd = mq_open("/ADXL375_queue", O_CREAT | O_WRONLY, 0644, &attr);
-    if (mqd == (mqd_t)-1) {
-        printf("[ADXL375]: Error: Failed to create message queue.\n");
-        return EXIT_FAILURE;
-    }
-
-    // Main loop
-    adxl375_data_t adxlData;
-    struct timespec sleep_time = {
-            .tv_sec = 0,
-            .tv_nsec = (1000000000 / 400) // Example polling rate: 100 Hz
-    };
-
-    while (true) {
-        // Read accelerometer data
-//        read(&adxlData.accel_x, &adxlData.accel_y, &adxlData.accel_z);
-
-        // Send data to the message queue
-        if (mq_send(mqd, (const char *)&adxlData, sizeof(adxlData), 0) == -1) {
-            printf("[ADXL375]: Error: Failed to send data to the queue.\n");
-        }
-
-        // Sleep for the polling interval
-        nanosleep(&sleep_time, nullptr);
-    }
-
-    // Clean up (unreachable in this example)
-    mq_close(mqd);
-    return EXIT_SUCCESS;
-}
+//
+//static int adxlTask(int argc, char *argv[]) {
+//    ADXL375 adxl = ADXL375();
+//
+//    adxl.init(i2cBus);
+//
+//    // Message queue setup
+//    struct mq_attr attr = {
+//            .mq_maxmsg = 1,
+//            .mq_msgsize = sizeof(adxl375_data_t),
+//            .mq_flags = 0
+//    };
+//
+//    mqd_t mqd = mq_open("/ADXL375_queue", O_CREAT | O_WRONLY, 0644, &attr);
+//    if (mqd == (mqd_t)-1) {
+//        printf("[ADXL375]: Error: Failed to create message queue.\n");
+//        return EXIT_FAILURE;
+//    }
+//
+//    // Main loop
+//    adxl375_data_t adxlData;
+//    struct timespec sleep_time = {
+//            .tv_sec = 0,
+//            .tv_nsec = (1000000000 / 400) // Example polling rate: 100 Hz
+//    };
+//
+//    while (true) {
+//        // Read accelerometer data
+////        read(&adxlData.accel_x, &adxlData.accel_y, &adxlData.accel_z);
+//
+//        // Send data to the message queue
+//        if (mq_send(mqd, (const char *)&adxlData, sizeof(adxlData), 0) == -1) {
+//            printf("[ADXL375]: Error: Failed to send data to the queue.\n");
+//        }
+//
+//        // Sleep for the polling interval
+//        nanosleep(&sleep_time, nullptr);
+//    }
+//
+//    // Clean up (unreachable in this example)
+//    mq_close(mqd);
+//    return EXIT_SUCCESS;
+//}
 
 extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
 	printf("Starting Flight Sensor Package...\n");
@@ -88,22 +81,29 @@ extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
 
     char i2cBusStr[8]; // Enough to hold the I2C bus number as a string
     snprintf(i2cBusStr, sizeof(i2cBusStr), "%d", i2cBus);
-
     char *threadArgv[] = {i2cBusStr, nullptr};
 
-    ret &= task_create("adxlTask",
-                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
-                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
-                       adxlTask,
-                       nullptr);
+    printf("%s", (char*) threadArgv);
 
-    if(ret <= 0) {
-        const int errcode = errno;
+    ret &= task_create("max10Task",
+                       CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
+                       CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
+                       MAX10S::readTask,
+                       threadArgv);
 
-        printf("[Sensor Package] ERROR: Failed to start State Machine task: %d\n", errcode);
+//    ret &= task_create("adxlTask",
+//                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
+//                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
+//                       ADXL375::readTask,
+//                       threadArgv);
 
-        return EXIT_FAILURE;
-    }
+//    if(ret <= 0) {
+//        const int errcode = errno;
+//
+//        printf("[Sensor Package] ERROR: Failed to start State Machine task: %d\n", errcode);
+//
+//        return EXIT_FAILURE;
+//    }
 
     /*int ret = task_create("SensorPackageTask",
                           CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,

@@ -47,7 +47,7 @@ int ADXL375::busWrite(uint8_t reg, uint8_t val) {
 
     // Configure I2C message
     struct i2c_msg_s i2cMsg {
-        .frequency = adxl_i2c_freq,
+        .frequency = 400000,
         .addr = ADXL_ADDR,
         .flags = 0,
         .buffer = txBuffer,
@@ -75,17 +75,19 @@ int ADXL375::busRead(uint8_t reg, uint8_t *val, int8_t len) {
 
     int ex;
 
+    fd = open("/dev/i2c1", O_WRONLY);
+
     // Prepare to configure I2C driver into read mode on selected register
     struct i2c_msg_s i2cMsg[2] = {
             {
-                .frequency = adxl_i2c_freq,
+                .frequency = 400000,
                 .addr = ADXL_ADDR,
                 .flags = 0,
                 .buffer = &reg,
                 .length = 1
             },
             {
-                .frequency = adxl_i2c_freq,
+                .frequency = 400000,
                 .addr = ADXL_ADDR,
                 .flags = I2C_M_READ,
                 .buffer = val,

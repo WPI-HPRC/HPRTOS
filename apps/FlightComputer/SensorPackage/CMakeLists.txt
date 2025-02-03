@@ -45,10 +45,12 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
 
     # Collect source files from sensor libraries
     file(GLOB_RECURSE ADXLSRC ${BASEDIR}/ADXL375/*.cxx)
+    file(GLOB_RECURSE GPSSRC ${BASEDIR}/MAX10S/*.cxx)
 
     # Collect sources
     set(SENSOR_SRCS
             ${ADXLSRC}
+            ${GPSSRC}
     )
 
     nuttx_add_application(
