@@ -1,6 +1,8 @@
 #pragma once
 
 #include <nuttx/config.h>
+#include <nshlib/nshlib.h>
+#include <nuttx/i2c/i2c_master.h>
 
 #include <cstdlib>
 #include <cstdio>
@@ -8,7 +10,6 @@
 #include <sched.h>
 #include <cerrno>
 #include <sys/ioctl.h>
-#include <nuttx/i2c/i2c_master.h>
 #include <mqueue.h>
 
 #include "../../FlightLib/SensorData.h"
@@ -16,11 +17,10 @@
 #include "u-blox_config_keys.h"
 #include "u-blox_registers.h"
 
-#include <nshlib/nshlib.h>
-
-
-
 #define I2C_TRANSACTION_SIZE 32
+
+// Tiny GPS
+#include <TinyGPS++.h>
 
 
 typedef enum
@@ -70,7 +70,9 @@ public:
 
     int setConfigurationParameter(uint32_t configKey, uint8_t value);
 
-    char* getNMEA();
+    int getNMEA(uint8_t *buffer);
+
+    int parseMessage(char *msg, gps_data_t *gpsData);
 
     static int readTask(int argc, char **argv);
 
@@ -89,4 +91,7 @@ private:
     /* -- NMEA Constants -- */
     constexpr static uint8_t START_DELIM = '$';
     constexpr static uint8_t ENCAPSULATION_SENTENCE_START = '!';
+
+    /* -- TINYGPS -- */
+    TinyGPSPlus tinyGps;
 };

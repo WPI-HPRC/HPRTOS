@@ -47,10 +47,14 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
     file(GLOB_RECURSE ADXLSRC ${BASEDIR}/ADXL375/*.cxx)
     file(GLOB_RECURSE GPSSRC ${BASEDIR}/MAX10S/*.cxx)
 
+    # Add NMEA Library
+    file(GLOB_RECURSE NMEASRC ${BASEDIR}/Libs/TinyGPS/*.cxx)
+
     # Collect sources
     set(SENSOR_SRCS
             ${ADXLSRC}
             ${GPSSRC}
+            ${NMEASRC}
     )
 
     nuttx_add_application(
@@ -67,6 +71,7 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${APPDIR}/FlightComputer/FlightLib
             ${BASEDIR}
             ${NUTTX_INCLUDE_DIRS}
+            ${BASEDIR}/Libs/TinyGPS/
 
             LINK_LIBRARIES
             ${NUTTX_LIBRARIES}

@@ -181,6 +181,8 @@ int ADXL375::readTask(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+    struct timespec ts;
+
     // Main loop
     adxl375_data_t adxlData;
     struct timespec sleep_time = {

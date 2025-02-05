@@ -1,10 +1,10 @@
 #include <nuttx/config.h>
 #include <nuttx/init.h>
-#include "stdio.h"
+#include <cstdio>
 #include <mqueue.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include "stdlib.h"
+#include <cstdlib>
 #include <unistd.h>
 #include "../FlightLib/SensorData.h"
 #include "../FlightLib/FlightConfig.h"
@@ -30,7 +30,7 @@ static int initSensorBus() {
 
     return ret;
 }
-//
+
 //static int adxlTask(int argc, char *argv[]) {
 //    ADXL375 adxl = ADXL375();
 //
@@ -74,6 +74,62 @@ static int initSensorBus() {
 //    return EXIT_SUCCESS;
 //}
 
+
+static int gpsTask(int argc, char *argv[]) {
+    printf("[GPS] Spawning GPS process...\n");
+
+    mq_attr attr = {
+            .mq_maxmsg = 1,
+            .mq_msgsize = sizeof(gps_data_t),
+            .mq_flags = 0
+    };
+
+    mqd_t mqd = mq_open("/gpsQueue", O_CREAT | O_WRONLY, 0644, &attr);
+    if(mqd == (mqd_t)-1) {
+        printf("[GPS] Error creating GPS queue...\n");
+        return EXIT_FAILURE;
+    }
+
+    MAX10S gps = MAX10S();
+
+    gps.init(i2cBus);
+
+    gps_data_t gpsData;
+
+    struct timespec sleep_time = {
+            .tv_sec = 0,
+            .tv_nsec = (1000000000 / 400)
+    };
+
+    while(1) {
+        gpsData = {
+                .gps_e_x = 1.0,
+                .gps_e_y = 1.0,
+                .gps_e_z = 1.0,
+                .gps_v_ned_x = 1.0,
+                .gps_v_ned_y = 1.0,
+                .gps_v_ned_z = 1.0,
+                .gps_numSats = 31
+        };
+
+        uint8_t nmeaMsg[128];
+
+        int res = gps.getNMEA(nmeaMsg);
+
+        gps.parseMessage((char *) nmeaMsg, &gpsData);
+
+//        printf("%s\n", nmeaMsg);
+
+//        mq_send(mqd, (const char*)&gpsData, sizeof(gpsData), 0);
+        nanosleep(&sleep_time, nullptr);
+    }
+
+    mq_close(mqd);
+    mq_unlink("/gpsQueue");
+
+    return EXIT_SUCCESS;
+}
+
 extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
 	printf("Starting Flight Sensor Package...\n");
 
@@ -85,11 +141,19 @@ extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
 
     printf("%s", (char*) threadArgv);
 
-    ret &= task_create("max10Task",
+    ret &= task_create("gpsTask",
                        CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
                        CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
-                       MAX10S::readTask,
-                       threadArgv);
+                       gpsTask,
+                       nullptr);
+
+    if(ret < 0) {
+        int errcode = errno;
+
+        printf("[State Machine] ERROR: Failed to start State Machine task: %d\n", errcode);
+
+        return EXIT_FAILURE;
+    }
 
 //    ret &= task_create("adxlTask",
 //                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
