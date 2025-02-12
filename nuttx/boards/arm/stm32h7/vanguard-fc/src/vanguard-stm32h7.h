@@ -101,6 +101,18 @@
 int stm32_bringup(void);
 
 /****************************************************************************
+ * Name: stm32_sdio_initialize
+ *
+ * Description:
+ *   Initialize SDIO-based MMC/SD card support
+ *
+ ****************************************************************************/
+
+#ifdef CONFIG_STM32H7_SDMMC
+int stm32_sdio_initialize(void);
+#endif
+
+/****************************************************************************
  * Name: stm32_usbinitialize
  *
  * Description:

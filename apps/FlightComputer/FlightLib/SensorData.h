@@ -8,6 +8,15 @@ typedef struct {
 } adxl375_data_t;
 
 typedef struct {
+    float accel_x; // [g]
+    float accel_y; // [g]
+    float accel_z; // [g]
+    float gyro_x;  // [dps]
+    float gyro_y;  // [dps]
+    float gyro_z;  // [dps]
+} asm_data_t;
+
+typedef struct {
     // IMU Readings
     float accel_x; // [g]
     float accel_y; // [g]

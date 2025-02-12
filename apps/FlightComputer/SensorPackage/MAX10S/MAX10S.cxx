@@ -191,7 +191,7 @@ int MAX10S::getNMEA(uint8_t *buffer) {
 
         if(buffer[index-1] == '\n' && buffer[index-2] == '\r') {
             buffer[index] = '\0';
-//            printf("%s", buffer);
+            printf("%s", buffer);
             messageComplete = true;
         }
 
@@ -207,7 +207,7 @@ int MAX10S::parseMessage(char *msg, gps_data_t *gpsData) {
 
     printf("%i/%i/%i\n", tinyGps.date.month(), tinyGps.date.day(), tinyGps.date.year());
     printf("%i:%i:%i\n", tinyGps.time.hour(), tinyGps.time.minute(), tinyGps.time.second());
-    printf("Satellites: %i\n", tinyGps.satellites.value());
+    printf("Satellites: %li\n", tinyGps.satellites.value());
 
     return true;
 }

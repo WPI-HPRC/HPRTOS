@@ -10,6 +10,9 @@
 #include "../FlightLib/FlightConfig.h"
 
 #include "MAX10S/MAX10S.h"
+#include "ASM330/ASM330.h"
+#include "LSM303/LSM303.h"
+
 #include "SensorPackage.h"
 
 static int i2cBus = 0;
@@ -114,11 +117,11 @@ static int gpsTask(int argc, char *argv[]) {
 
         uint8_t nmeaMsg[128];
 
-        int res = gps.getNMEA(nmeaMsg);
+        gps.getNMEA(nmeaMsg);
 
         gps.parseMessage((char *) nmeaMsg, &gpsData);
 
-//        printf("%s\n", nmeaMsg);
+        printf("%s\n", nmeaMsg);
 
 //        mq_send(mqd, (const char*)&gpsData, sizeof(gpsData), 0);
         nanosleep(&sleep_time, nullptr);
@@ -126,6 +129,53 @@ static int gpsTask(int argc, char *argv[]) {
 
     mq_close(mqd);
     mq_unlink("/gpsQueue");
+
+    return EXIT_SUCCESS;
+}
+
+static int lsmTask(int argc, char *argv[]) {
+    printf("[IMU_1] Spawning IMU_1 process...\n");
+
+    mq_attr attr = {
+            .mq_maxmsg = 1,
+            .mq_msgsize = sizeof(gps_data_t),
+            .mq_flags = 0
+    };
+
+    mqd_t mqd = mq_open("/lsmQueue", O_CREAT | O_WRONLY, 0644, &attr);
+    if(mqd == (mqd_t)-1) {
+        printf("[IMU_1] Error creating IMU_1 queue...\n");
+        return EXIT_FAILURE;
+    }
+
+    LSM303 lsm303 = LSM303();
+
+    lsm303.init(i2cBus);
+
+//    gps_data_t gpsData;
+    asm_data_t lsmData;
+
+    struct timespec sleep_time = {
+            .tv_sec = 0,
+            .tv_nsec = (1000000000 / 400)
+    };
+
+    while(1) {
+        lsmData = {
+                .accel_x = 0.0,
+                .accel_y = 0.0,
+                .accel_z = 0.0,
+                .gyro_x = 0.0,
+                .gyro_y = 0.0,
+                .gyro_z = 0.0
+        };
+
+//        mq_send(mqd, (const char*)&gpsData, sizeof(gpsData), 0);
+        nanosleep(&sleep_time, nullptr);
+    }
+
+    mq_close(mqd);
+    mq_unlink("/lsmQueue");
 
     return EXIT_SUCCESS;
 }
@@ -145,6 +195,12 @@ extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
                        CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
                        CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
                        gpsTask,
+                       nullptr);
+
+    ret &= task_create("lsmTask",
+                       CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
+                       CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
+                       lsmTask,
                        nullptr);
 
     if(ret < 0) {
