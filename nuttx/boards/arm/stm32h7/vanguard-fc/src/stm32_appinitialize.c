@@ -26,7 +26,7 @@
 #include <nuttx/board.h>
 #include <sys/types.h>
 
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 /****************************************************************************
  * Pre-processor Definitions

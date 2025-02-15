@@ -33,7 +33,7 @@
 #include <arch/board/board.h>
 
 #include "stm32_gpio.h"
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 #ifndef CONFIG_ARCH_LEDS
 

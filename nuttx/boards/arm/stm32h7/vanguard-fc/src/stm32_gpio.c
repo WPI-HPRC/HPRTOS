@@ -36,7 +36,7 @@
 
 #include "chip.h"
 #include "stm32_gpio.h"
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 #if defined(CONFIG_DEV_GPIO) && !defined(CONFIG_GPIO_LOWER_HALF)
 

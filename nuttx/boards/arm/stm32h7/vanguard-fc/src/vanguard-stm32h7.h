@@ -1,5 +1,7 @@
 /****************************************************************************
- * boards/arm/stm32h7/hprc-stm32h7/src/hprc-stm32h7.h
+ * boards/arm/stm32h7/stm32h747i-disco/src/stm32h747i-disco.h
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -20,72 +22,50 @@
 
 #pragma once
 
+/****************************************************************************
+ * Included Files
+ ****************************************************************************/
+
 #include <nuttx/config.h>
 #include <nuttx/compiler.h>
 
 #include <stdint.h>
 
-/* BOARD LED's */
+#include "stm32_i2c.h"
+#include "stm32_spi.h"
+#include "stm32_gpio.h"
 
-#define GPIO_LD1       (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                        GPIO_OUTPUT_CLEAR | GPIO_PORTB | GPIO_PIN0)
-#define GPIO_LD2       (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                        GPIO_OUTPUT_CLEAR | GPIO_PORTE | GPIO_PIN1)
-#define GPIO_LD3       (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                        GPIO_OUTPUT_CLEAR | GPIO_PORTB | GPIO_PIN14)
+/****************************************************************************
+ * Pre-processor Definitions
+ ****************************************************************************/
 
-#define BOARD_NGPIOIN 4 /* Amount of GPIO Input Pins */
-#define BOARD_NGPIOOUT 8 /* Amount of GPIO Output Pins*/
-#define BOARD_NGPIOINT 1 /* Amount of GPIO Input w/ Interrupt Pins */
+/* Configuration ************************************************************/
 
-/* Example, used free Ports on the board */
+/* procfs File System */
 
-#define GPIO_IN1          (GPIO_INPUT | GPIO_FLOAT | GPIO_PORTE | GPIO_PIN7)
-#define GPIO_IN2          (GPIO_INPUT | GPIO_FLOAT | GPIO_PORTE | GPIO_PIN12)
-#define GPIO_IN3          (GPIO_INPUT | GPIO_FLOAT | GPIO_PORTE | GPIO_PIN14)
-#define GPIO_IN4          (GPIO_INPUT | GPIO_FLOAT | GPIO_PORTE | GPIO_PIN15)
-
-
-#define GPIO_OUT1         (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                           GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN4)
-#define GPIO_OUT2         (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                           GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN5)
-#define GPIO_OUT3         (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                           GPIO_OUTPUT_SET | GPIO_PORTE | GPIO_PIN6)
-#define GPIO_OUT4         (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                           GPIO_OUTPUT_SET | GPIO_PORTA| GPIO_PIN5)
-#define GPIO_OUT5         (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
-                           GPIO_OUTPUT_SET | GPIO_PORTF | GPIO_PIN3)
-#define GPIO_INT1         (GPIO_INPUT | GPIO_FLOAT | GPIO_PORTE | GPIO_PIN3)
-
-/* PWM */
-#if defined(CONFIG_STM32H7_TIM1_PWM)
-    #define HPRCSTM32H7_PWMTIMER 1
-#else
-    #define HPRCSTM32H7_PWMTIMER 3
+#ifdef CONFIG_FS_PROCFS
+#  ifdef CONFIG_NSH_PROC_MOUNTPOINT
+#    define STM32_PROCFS_MOUNTPOINT CONFIG_NSH_PROC_MOUNTPOINT
+#  else
+#    define STM32_PROCFS_MOUNTPOINT "/proc"
+#  endif
 #endif
 
-/* USB OTG FS
- *
- * PA9  OTG_FS_VBUS VBUS sensing (also connected to the green LED)
- * PG6  OTG_FS_PowerSwitchOn
- * PG7  OTG_FS_Overcurrent
- */
+/* SD/TF Card'detected pin */
 
-#define GPIO_OTGFS_VBUS   (GPIO_INPUT|GPIO_FLOAT|GPIO_SPEED_100MHz| \
-                           GPIO_OPENDRAIN|GPIO_PORTA|GPIO_PIN9)
-
-#define GPIO_OTGFS_PWRON  (GPIO_OUTPUT|GPIO_FLOAT|GPIO_SPEED_100MHz|  \
-                           GPIO_PUSHPULL|GPIO_PORTA|GPIO_PIN4)
-
-#ifdef CONFIG_USBHOST
-#  define GPIO_OTGFS_OVER (GPIO_INPUT|GPIO_EXTI|GPIO_FLOAT| \
-                           GPIO_SPEED_100MHz|GPIO_PUSHPULL| \
-                           GPIO_PORTA|GPIO_PIN9)
-#else
-#  define GPIO_OTGFS_OVER (GPIO_INPUT|GPIO_FLOAT|GPIO_SPEED_100MHz| \
-                           GPIO_PUSHPULL|GPIO_PORTA|GPIO_PIN4)
+#if defined(CONFIG_STM32H7_SDMMC1)
+#  define HAVE_SDIO
 #endif
+
+#if defined(CONFIG_DISABLE_MOUNTPOINT) || !defined(CONFIG_MMCSD_SDIO)
+#  undef HAVE_SDIO
+#endif
+
+#define GPIO_SDIO_NCD      (GPIO_INPUT|GPIO_FLOAT|GPIO_EXTI|GPIO_PORTI|GPIO_PIN8)
+
+#define SDIO_SLOTNO        0
+#define SDIO_MINOR         0
+
 
 /****************************************************************************
  * Name: stm32_bringup
@@ -96,33 +76,25 @@
  *   CONFIG_BOARD_LATE_INITIALIZE=y :
  *     Called from board_late_initialize().
  *
+ *   CONFIG_BOARD_LATE_INITIALIZE=n && CONFIG_BOARDCTL=y &&
+ *   CONFIG_NSH_ARCHINIT:
+ *     Called from the NSH library
+ *
  ****************************************************************************/
+
 
 int stm32_bringup(void);
 
 /****************************************************************************
- * Name: stm32_sdio_initialize
+ * Name: stm32_spidev_initialize
  *
  * Description:
- *   Initialize SDIO-based MMC/SD card support
+ *   Called to configure SPI chip select GPIO pins for the board.
  *
  ****************************************************************************/
 
-#ifdef CONFIG_STM32H7_SDMMC
-int stm32_sdio_initialize(void);
-#endif
-
-/****************************************************************************
- * Name: stm32_usbinitialize
- *
- * Description:
- *   Called from stm32_usbinitialize very early in inialization to setup
- *   USB-related GPIO pins for the NUCLEO-H743ZI board.
- *
- ****************************************************************************/
-
-#ifdef CONFIG_STM32H7_OTGFS
-void weak_function stm32_usbinitialize(void);
+#ifdef CONFIG_STM32H7_SPI
+void stm32_spidev_initialize(void);
 #endif
 
 /****************************************************************************
@@ -138,65 +110,35 @@ int stm32_adc_setup(void);
 #endif
 
 /****************************************************************************
- * Name: stm32_gpio_initialize
+ * Name: stm32_dma_alloc_init
  *
  * Description:
- *   Initialize GPIO-Driver.
+ *   Called to create a FAT DMA allocator
+ *
+ * Returned Value:
+ *   0 on success or -ENOMEM
  *
  ****************************************************************************/
 
-#if defined(CONFIG_DEV_GPIO) && !defined(CONFIG_GPIO_LOWER_HALF)
-int stm32_gpio_initialize(void);
-#endif
-
-
-/****************************************************************************
- * Name: stm32_usbhost_initialize
- *
- * Description:
- *   Called at application startup time to initialize the USB host
- *   functionality. This function will start a thread that will monitor for
- *   device connection/disconnection events.
- *
- ****************************************************************************/
-
-#if defined(CONFIG_STM32H7_OTGFS) && defined(CONFIG_USBHOST)
-int stm32_usbhost_initialize(void);
+#if defined (CONFIG_FAT_DMAMEMORY)
+int stm32_dma_alloc_init(void);
 #endif
 
 /****************************************************************************
- * Name: stm32_pwm_setup
+ * Name: stm32_sdio_initialize
  *
  * Description:
- *   Initialize PWM and register the PWM device.
+ *   Initialize SDIO-based MMC/SD card support
  *
  ****************************************************************************/
 
-#ifdef CONFIG_PWM
-int stm32_pwm_setup(void);
+#ifdef HAVE_SDIO
+int stm32_sdio_initialize(void);
 #endif
 
+/* MMC/SD
+ * CS - PA4
+*/
 
-/****************************************************************************
- * Name: stm32_qencoder_initialize
- *
- * Description:
- *   Initialize and register a qencoder
- *
- ****************************************************************************/
-
-#ifdef CONFIG_SENSORS_QENCODER
-int stm32_qencoder_initialize(const char *devpath, int timer);
-#endif
-
-/****************************************************************************
- * Name: stm32_spidev_initialize
- *
- * Description:
- *   Called to configure SPI chip select GPIO pins for the board.
- *
- ****************************************************************************/
-
-#ifdef CONFIG_STM32H7_SPI
-void stm32_spidev_initialize(void);
-#endif
+#define GPIO_MMCSD_CS    (GPIO_OUTPUT | GPIO_PUSHPULL | GPIO_SPEED_50MHz | \
+                          GPIO_OUTPUT_SET | GPIO_PORTA | GPIO_PIN4)

@@ -31,7 +31,7 @@
 
 #include "arm_internal.h"
 #include "stm32_start.h"
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 /****************************************************************************
  * Public Functions

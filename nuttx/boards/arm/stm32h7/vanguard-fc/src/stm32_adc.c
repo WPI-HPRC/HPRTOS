@@ -34,7 +34,7 @@
 #include "chip.h"
 #include "stm32_gpio.h"
 #include "stm32_adc.h"
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 #ifdef CONFIG_ADC
 

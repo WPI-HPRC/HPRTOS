@@ -33,7 +33,7 @@
 #include "chip.h"
 #include "arm_internal.h"
 #include "stm32_qencoder.h"
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 /****************************************************************************
  * Public Functions

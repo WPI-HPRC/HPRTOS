@@ -43,7 +43,7 @@
 #include "chip.h"
 #include "stm32_gpio.h"
 #include "stm32_otg.h"
-#include "vanguard-stm32h7.h"
+#include "vanguard-stm32h7.h.old"
 
 #ifdef CONFIG_STM32H7_OTGFS
 

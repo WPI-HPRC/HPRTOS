@@ -62,6 +62,14 @@ void stm32_spidev_initialize(void)
    *       Here, we only initialize chip select pins unique to the board
    *       architecture.
    */
+#ifdef CONFIG_STM32H7_SPI1
+  spiinfo("Configure GPIO for SPI1/CS\n");
+
+#ifdef CONFIG_MMCSD_SPI
+  stm32_configgpio(GPIO_MMCSD_CS);
+  stm32_gpiowrite(GPIO_MMCSD_CS, true);
+#endif
+#endif
 
 #ifdef CONFIG_STM32H7_SPI3
   spiinfo("Configure GPIO for SPI3/CS\n");
@@ -80,6 +88,7 @@ void stm32_spidev_initialize(void)
   stm32_configgpio(GPIO_MMCSD_NCD);
 #endif
 #endif
+
 }
 
 /****************************************************************************
