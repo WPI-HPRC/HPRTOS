@@ -102,7 +102,7 @@ static int gpsTask(int argc, char *argv[]) {
 
     struct timespec sleep_time = {
             .tv_sec = 0,
-            .tv_nsec = (1000000000 / 10)
+            .tv_nsec = (1000000000 / gps_looprate)
     };
 
     while(1) {
@@ -153,7 +153,7 @@ static int lsmTask(int argc, char *argv[]) {
 
     lsm303.setAccelODR(LSM303_ODR_A::HZ_400);
     lsm303.setAccelMode(LSM303_MODE_A::MODE_HIGH_RES);
-    lsm303.setAccelRange(LSM303_RANGE_A::RANGE_4G);
+    lsm303.setAccelRange(LSM303_RANGE_A::RANGE_8G);
 
     lsm303.init(i2cBus);
 
@@ -207,13 +207,19 @@ static int lpsTask(int argc, char *argv[]) {
             .tv_nsec = (1000000000 / lps_looprate)
     };
 
+    timespec ts{};
+
     while(1) {
+
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+
+        uint32_t timestamp = (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
 
         lpsData.pressure = barometer.getPressure();
         lpsData.temperature = barometer.getTemperature();
         lpsData.altitude = barometer.getAltitude();
 
-        printf("%f, %f, %hu\n", lpsData.pressure, lpsData.altitude, lpsData.temperature);
+        printf("%f, %f, %hu, %lu\n", lpsData.pressure, lpsData.altitude, lpsData.temperature, timestamp);
 
 //        mq_send(mqd, (const char*)&lsmData, sizeof(lsmData), 0);
         nanosleep(&sleep_time, nullptr);
