@@ -17,6 +17,15 @@ typedef struct {
 } asm_data_t;
 
 typedef struct {
+    float accel_x; // [g]
+    float accel_y; // [g]
+    float accel_z; // [g]
+    float mag_x;  // [Gauss]
+    float mag_y;  // [Gauss]
+    float mag_z;  // [Gauss]
+} lsm_data_t;
+
+typedef struct {
     // IMU Readings
     float accel_x; // [g]
     float accel_y; // [g]
@@ -45,5 +54,6 @@ typedef struct {
 
 typedef struct {
     float pressure; // [hPa]
-    uint16_t temperature; // [C] ?
-} baro_data_t;
+    float altitude; // [m]
+    uint16_t temperature; // [C]
+} lps_data_t;

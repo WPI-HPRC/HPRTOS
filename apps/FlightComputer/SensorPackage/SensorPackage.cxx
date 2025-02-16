@@ -12,6 +12,7 @@
 #include "MAX10S/MAX10S.h"
 #include "ASM330/ASM330.h"
 #include "LSM303/LSM303.h"
+#include "LPS22/LPS22.h"
 
 #include "SensorPackage.h"
 
@@ -101,7 +102,7 @@ static int gpsTask(int argc, char *argv[]) {
 
     struct timespec sleep_time = {
             .tv_sec = 0,
-            .tv_nsec = (1000000000 / 400)
+            .tv_nsec = (1000000000 / 10)
     };
 
     while(1) {
@@ -119,9 +120,9 @@ static int gpsTask(int argc, char *argv[]) {
 
         gps.getNMEA(nmeaMsg);
 
-        gps.parseMessage((char *) nmeaMsg, &gpsData);
+//        gps.parseMessage((char *) nmeaMsg, &gpsData);
 
-        printf("%s\n", nmeaMsg);
+//        printf("%s\n", nmeaMsg);
 
 //        mq_send(mqd, (const char*)&gpsData, sizeof(gpsData), 0);
         nanosleep(&sleep_time, nullptr);
@@ -150,27 +151,25 @@ static int lsmTask(int argc, char *argv[]) {
 
     LSM303 lsm303 = LSM303();
 
+    lsm303.setAccelODR(LSM303_ODR_A::HZ_400);
+    lsm303.setAccelMode(LSM303_MODE_A::MODE_HIGH_RES);
+    lsm303.setAccelRange(LSM303_RANGE_A::RANGE_4G);
+
     lsm303.init(i2cBus);
 
-//    gps_data_t gpsData;
-    asm_data_t lsmData;
+    lsm_data_t lsmData{};
 
     struct timespec sleep_time = {
             .tv_sec = 0,
-            .tv_nsec = (1000000000 / 400)
+            .tv_nsec = (1000000000 / lsm_looprate)
     };
 
     while(1) {
-        lsmData = {
-                .accel_x = 0.0,
-                .accel_y = 0.0,
-                .accel_z = 0.0,
-                .gyro_x = 0.0,
-                .gyro_y = 0.0,
-                .gyro_z = 0.0
-        };
+        lsm303.packData(&lsmData);
 
-//        mq_send(mqd, (const char*)&gpsData, sizeof(gpsData), 0);
+//        printf("%f, %f, %f, %lu\n", lsmData.accel_x, lsmData.accel_y, lsmData.accel_z, timestamp);
+
+//        mq_send(mqd, (const char*)&lsmData, sizeof(lsmData), 0);
         nanosleep(&sleep_time, nullptr);
     }
 
@@ -180,16 +179,56 @@ static int lsmTask(int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
+static int lpsTask(int argc, char *argv[]) {
+    printf("[Barometer] Spawning Barometer process...\n");
+
+    mq_attr attr = {
+            .mq_maxmsg = 1,
+            .mq_msgsize = sizeof(gps_data_t),
+            .mq_flags = 0
+    };
+
+    mqd_t mqd = mq_open("/lpsQueue", O_CREAT | O_WRONLY, 0644, &attr);
+    if(mqd == (mqd_t)-1) {
+        printf("[Barometer] Error creating Barometer queue...\n");
+        return EXIT_FAILURE;
+    }
+
+    LPS22 barometer = LPS22();
+
+    barometer.setODR(LPS22_ODR::HZ_75);
+
+    barometer.init(i2cBus);
+
+    lps_data_t lpsData{};
+
+    struct timespec sleep_time = {
+            .tv_sec = 0,
+            .tv_nsec = (1000000000 / lps_looprate)
+    };
+
+    while(1) {
+
+        lpsData.pressure = barometer.getPressure();
+        lpsData.temperature = barometer.getTemperature();
+        lpsData.altitude = barometer.getAltitude();
+
+        printf("%f, %f, %hu\n", lpsData.pressure, lpsData.altitude, lpsData.temperature);
+
+//        mq_send(mqd, (const char*)&lsmData, sizeof(lsmData), 0);
+        nanosleep(&sleep_time, nullptr);
+    }
+
+    mq_close(mqd);
+    mq_unlink("/lpsQueue");
+
+    return EXIT_SUCCESS;
+}
+
 extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
 	printf("Starting Flight Sensor Package...\n");
 
     int ret = initSensorBus();
-
-    char i2cBusStr[8]; // Enough to hold the I2C bus number as a string
-    snprintf(i2cBusStr, sizeof(i2cBusStr), "%d", i2cBus);
-    char *threadArgv[] = {i2cBusStr, nullptr};
-
-    printf("%s", (char*) threadArgv);
 
     ret &= task_create("gpsTask",
                        CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
@@ -203,6 +242,12 @@ extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
                        lsmTask,
                        nullptr);
 
+    ret &= task_create("lpsTask",
+                       CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
+                       CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
+                       lpsTask,
+                       nullptr);
+
     if(ret < 0) {
         int errcode = errno;
 
@@ -210,34 +255,6 @@ extern "C" int FC_SensorPackage_main(int argc, char *argv[]) {
 
         return EXIT_FAILURE;
     }
-
-//    ret &= task_create("adxlTask",
-//                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
-//                      CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
-//                       ADXL375::readTask,
-//                       threadArgv);
-
-//    if(ret <= 0) {
-//        const int errcode = errno;
-//
-//        printf("[Sensor Package] ERROR: Failed to start State Machine task: %d\n", errcode);
-//
-//        return EXIT_FAILURE;
-//    }
-
-    /*int ret = task_create("SensorPackageTask",
-                          CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_PRIORITY,
-                          CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE_STACKSIZE,
-                          sensorPackageTask,
-                          nullptr);
-
-    if(ret < 0) {
-        int errcode = errno;
-
-        printf("[State Machine] ERROR: Failed to start State Machine task: %d\n", errcode);
-
-        return EXIT_FAILURE;
-    }*/
 
     return EXIT_SUCCESS;
 }

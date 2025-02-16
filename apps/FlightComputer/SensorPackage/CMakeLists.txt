@@ -49,6 +49,7 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
     file(GLOB_RECURSE GPSSRC ${BASEDIR}/MAX10S/*.cxx)
     file(GLOB_RECURSE ASMSRC ${BASEDIR}/ASM330/*.cxx)
     file(GLOB_RECURSE LSMSRC ${BASEDIR}/LSM303/*.cxx)
+    file(GLOB_RECURSE LPSSRC ${BASEDIR}/LPS22/*.cxx)
 
     # Add NMEA Library
     file(GLOB_RECURSE NMEASRC ${BASEDIR}/Libs/TinyGPS/*.cxx)
@@ -60,6 +61,7 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${NMEASRC}
             ${ASMSRC}
             ${LSMSRC}
+            ${LPSSRC}
     )
 
     nuttx_add_application(
@@ -77,6 +79,7 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${BASEDIR}
             ${NUTTX_INCLUDE_DIRS}
             ${BASEDIR}/Libs/TinyGPS/
+
 
             LINK_LIBRARIES
             ${NUTTX_LIBRARIES}

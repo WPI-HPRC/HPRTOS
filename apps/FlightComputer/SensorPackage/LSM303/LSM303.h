@@ -16,12 +16,22 @@
 #include "../../FlightLib/FlightConfig.h"
 
 #include "LSM303_registers.h"
+#include "LSM303_configs.h"
+
 
 class LSM303 {
 public:
     LSM303();
 
     bool init(int i2cBus);
+
+    void packData(lsm_data_t *lsm_data);
+
+    void setAccelODR(LSM303_ODR_A odr);
+
+    void setAccelMode(LSM303_MODE_A mode);
+
+    void setAccelRange(LSM303_RANGE_A range);
 
 private:
     int busWrite(uint8_t reg, uint8_t val, char sensorSelect);
@@ -42,5 +52,17 @@ private:
     float _magY = 0.0f;
     float _magZ = 0.0f;
 
-    int readSensor();
+    int readAccelerometer(int16_t &x, int16_t &y, int16_t &z);
+
+    int readMagnetometer();
+
+    // Sensor Configurations
+    LSM303_ODR_A _odr_a;
+    LSM303_MODE_A _mode_a;
+    LSM303_RANGE_A _range_a;
+
+    // Shift and LSB
+
+    void getLsbShift(uint8_t &shift, float &lsb);
+
 };
