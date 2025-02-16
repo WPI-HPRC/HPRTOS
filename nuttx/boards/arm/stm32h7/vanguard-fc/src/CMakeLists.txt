@@ -31,6 +31,10 @@ else()
   list(APPEND SRCS stm32_userleds.c)
 endif()
 
+if(CONFIG_STM32H7_SPI)
+  list(APPEND SRCS stm32_spi.c)
+endif()
+
 if(CONFIG_STM32H7_OTGFS)
   list(APPEND SRCS stm32_usb.c)
 endif()
