@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/mtd/mx35.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -839,7 +841,7 @@ static int mx35_ioctl(FAR struct mtd_dev_s *dev, int cmd, unsigned long arg)
 
       case MTDIOC_ECCSTATUS:
         {
-          uint8_t *result = (uint8_t *)arg;
+          FAR uint8_t *result = (FAR uint8_t *)arg;
           *result =
               (priv->eccstatus & MX35_FEATURE_ECC_MASK) >>
                MX35_FEATURE_ECC_OFFSET;

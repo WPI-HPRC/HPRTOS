@@ -1,15 +1,11 @@
 /****************************************************************************
  * include/nuttx/net/can.h
- * Macros and definitions for the CAN link layer.
  *
- *   Copyright (C) 2007, 2009-2012, 2015 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
- *
- * Derived from uIP with has a similar BSD-styple license:
- *
- *   Author: Adam Dunkels <adam@dunkels.com>
- *   Copyright (c) 2001-2003, Adam Dunkels.
- *   All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-FileCopyrightText: 2007, 2009-2012, 2015 Gregory Nutt. All rights reserved.
+ * SPDX-FileCopyrightText: 2001-2003, Adam Dunkels. All rights reserved.
+ * SPDX-FileContributor: Gregory Nutt <gnutt@nuttx.org>
+ * SPDX-FileContributor: Adam Dunkels <adam@dunkels.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,10 +48,11 @@
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
+
 #ifdef CONFIG_NET_CAN_CANFD
-#define NET_CAN_PKTSIZE sizeof(struct canfd_frame)
+#  define NET_CAN_PKTSIZE sizeof(struct canfd_frame)
 #else
-#define NET_CAN_PKTSIZE sizeof(struct can_frame)
+#  define NET_CAN_PKTSIZE sizeof(struct can_frame)
 #endif
 
 /****************************************************************************
@@ -70,8 +67,8 @@
 
 /* Lookup tables convert can_dlc <-> payload len */
 
-extern const uint8_t can_dlc_to_len[16];
-extern const uint8_t len_to_can_dlc[65];
+extern const uint8_t g_can_dlc_to_len[16];
+extern const uint8_t g_len_to_can_dlc[65];
 
 #endif
 

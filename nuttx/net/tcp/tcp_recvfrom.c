@@ -1,6 +1,8 @@
 /****************************************************************************
  * net/tcp/tcp_recvfrom.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -31,6 +33,7 @@
 #include <assert.h>
 
 #include <nuttx/semaphore.h>
+#include <nuttx/tls.h>
 #include <nuttx/net/net.h>
 #include <nuttx/mm/iob.h>
 #include <nuttx/net/netdev.h>
@@ -390,6 +393,7 @@ static uint16_t tcp_recvhandler(FAR struct net_driver_s *dev,
                                 FAR void *pvpriv, uint16_t flags)
 {
   FAR struct tcp_recvfrom_s *pstate = pvpriv;
+  FAR struct iob_s *iob = NULL;
 
   ninfo("flags: %04x\n", flags);
 
@@ -405,11 +409,36 @@ static uint16_t tcp_recvhandler(FAR struct net_driver_s *dev,
 
           tcp_sender(dev, pstate);
 
+          if ((flags & TCP_ACKDATA) != 0)
+            {
+              iob = iob_tryalloc(false);
+              if (iob == NULL)
+                {
+                  nerr("ERROR: IOB alloc failed !\n");
+                  return flags;
+                }
+
+              iob_reserve(iob, CONFIG_NET_LL_GUARDSIZE);
+              int ret = iob_clone_partial(dev->d_iob, dev->d_iob->io_pktlen,
+                                          0, iob, 0, false, false);
+              if (ret < 0)
+                {
+                  iob_free_chain(iob);
+                  nerr("ERROR: IOB clone failed ret=%d!\n", ret);
+                  return flags;
+                }
+            }
+
           /* Copy the data from the packet (saving any unused bytes from the
            * packet in the read-ahead buffer).
            */
 
           flags = tcp_newdata(dev, pstate, flags);
+
+          if (iob != NULL)
+            {
+              netdev_iob_replace(dev, iob);
+            }
 
           /* Indicate that the data has been consumed and that an ACK
            * should be sent.
@@ -584,6 +613,51 @@ static ssize_t tcp_recvfrom_result(int result, struct tcp_recvfrom_s *pstate)
 }
 
 /****************************************************************************
+ * Name: tcp_notify_recvcpu
+ *
+ * Description:
+ *   This function will check current cpu id with conn->rcvcpu, if
+ *   not same, then use netdev_notify_recvcpu to notify the new cpu id
+ *
+ * Input Parameters:
+ *   conn    - The TCP connection of interest
+ *
+ * Returned Value:
+ *   None
+ *
+ * Assumptions:
+ *   conn is not NULL.
+ *
+ ****************************************************************************/
+
+#ifdef CONFIG_NETDEV_RSS
+static void tcp_notify_recvcpu(FAR struct tcp_conn_s *conn)
+{
+  int cpu = this_cpu();
+
+  if (cpu != conn->rcvcpu)
+    {
+      conn->rcvcpu = cpu;
+
+      if (conn->domain == PF_INET)
+        {
+          netdev_notify_recvcpu(conn->dev, cpu, conn->domain,
+                                &(conn->u.ipv4.laddr), conn->lport,
+                                &(conn->u.ipv4.raddr), conn->rport);
+        }
+      else
+        {
+          netdev_notify_recvcpu(conn->dev, cpu, conn->domain,
+                                &(conn->u.ipv6.laddr), conn->lport,
+                                &(conn->u.ipv6.raddr), conn->rport);
+        }
+    }
+}
+#else
+#  define tcp_notify_recvcpu(c)
+#endif /* CONFIG_NETDEV_RSS */
+
+/****************************************************************************
  * Public Functions
  ****************************************************************************/
 
@@ -615,6 +689,7 @@ ssize_t psock_tcp_recvfrom(FAR struct socket *psock, FAR struct msghdr *msg,
   size_t                 len     = msg->msg_iov->iov_len;
   struct tcp_recvfrom_s  state;
   FAR struct tcp_conn_s *conn;
+  struct tcp_callback_s  info;
   int                    ret;
 
   net_lock();
@@ -722,6 +797,15 @@ ssize_t psock_tcp_recvfrom(FAR struct socket *psock, FAR struct msghdr *msg,
           state.ir_cb->priv    = (FAR void *)&state;
           state.ir_cb->event   = tcp_recvhandler;
 
+          /* Push a cancellation point onto the stack.  This will be
+           * called if the thread is canceled.
+           */
+
+          info.tc_conn = conn;
+          info.tc_cb   = state.ir_cb;
+          info.tc_sem  = &state.ir_sem;
+          tls_cleanup_push(tls_get_info(), tcp_callback_cleanup, &info);
+
           /* Wait for either the receive to complete or for an error/timeout
            * to occur.  net_sem_timedwait will also terminate if a signal is
            * received.
@@ -729,6 +813,7 @@ ssize_t psock_tcp_recvfrom(FAR struct socket *psock, FAR struct msghdr *msg,
 
           ret = net_sem_timedwait(&state.ir_sem,
                                _SO_TIMEOUT(conn->sconn.s_rcvtimeo));
+          tls_cleanup_pop(tls_get_info(), 0);
           if (ret == -ETIMEDOUT)
             {
               ret = -EAGAIN;
@@ -756,6 +841,8 @@ ssize_t psock_tcp_recvfrom(FAR struct socket *psock, FAR struct msghdr *msg,
     {
       netdev_txnotify_dev(conn->dev);
     }
+
+  tcp_notify_recvcpu(conn);
 
   net_unlock();
   tcp_recvfrom_uninitialize(&state);

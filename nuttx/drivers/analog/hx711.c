@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/analog/hx711.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -336,7 +338,7 @@ static int hx711_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
     case HX711_GET_AVERAGE:
         {
-          unsigned *ptr = (unsigned *)((uintptr_t)arg);
+          FAR unsigned *ptr = (FAR unsigned *)((uintptr_t)arg);
           if (ptr == NULL)
             {
               ret = -EINVAL;
@@ -349,7 +351,7 @@ static int hx711_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
     case HX711_GET_CHANNEL:
         {
-          char *ptr = (char *)((uintptr_t)arg);
+          FAR char *ptr = (FAR char *)((uintptr_t)arg);
           if (ptr == NULL)
             {
               ret = -EINVAL;
@@ -362,7 +364,7 @@ static int hx711_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
     case HX711_GET_GAIN:
         {
-          unsigned char *ptr = (unsigned char *)((uintptr_t)arg);
+          FAR unsigned char *ptr = (FAR unsigned char *)((uintptr_t)arg);
           if (ptr == NULL)
             {
               ret = -EINVAL;
@@ -375,7 +377,7 @@ static int hx711_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
     case HX711_GET_VAL_PER_UNIT:
         {
-          unsigned *ptr = (unsigned *)((uintptr_t)arg);
+          FAR unsigned *ptr = (FAR unsigned *)((uintptr_t)arg);
           if (ptr == NULL)
             {
               ret = -EINVAL;
@@ -388,7 +390,7 @@ static int hx711_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
     case HX711_TARE:
         {
-          float *precision = (float *)((uintptr_t)arg);
+          FAR float *precision = (FAR float *)((uintptr_t)arg);
           if (precision == NULL)
             {
               ret = -EINVAL;
@@ -401,7 +403,7 @@ static int hx711_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
     case HX711_SET_SIGN:
         {
-          int *sign = (int *)((uintptr_t)arg);
+          FAR int *sign = (FAR int *)((uintptr_t)arg);
           if (sign == NULL || (*sign != 1 && *sign != -1))
             {
               ret = EINVAL;
@@ -946,7 +948,7 @@ int hx711_register(unsigned char minor, FAR struct hx711_lower_s *lower)
       return -ENOMEM;
     }
 
-  snprintf(devname, DEVNAME_FMTLEN, DEVNAME_FMT, minor);
+  snprintf(devname, sizeof(devname), DEVNAME_FMT, minor);
   ret = register_driver(devname, &g_hx711_fops, 0666, dev);
   if (ret)
     {

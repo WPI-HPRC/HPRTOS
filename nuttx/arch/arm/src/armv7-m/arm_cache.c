@@ -1,14 +1,11 @@
 /****************************************************************************
  * arch/arm/src/armv7-m/arm_cache.c
  *
- *   Copyright (C) 2015, 2018-2019 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
- *           Bob Feretich <bob.feretich@rafresearch.com>
- *
- * Some logic in this header file derives from the ARM CMSIS core_cm7.h
- * header file which has a compatible 3-clause BSD license:
- *
- *   Copyright (c) 2009 - 2014 ARM LIMITED.  All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-FileCopyrightText: 2015, 2018-2019 Gregory Nutt. All rights reserved.
+ * SPDX-FileCopyrightText: 2009 - 2014 ARM LIMITED.  All rights reserved.
+ * SPDX-FileContributor: Gregory Nutt <gnutt@nuttx.org>
+ * SPDX-FileContributor: Bob Feretich <bob.feretich@rafresearch.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -496,12 +493,12 @@ void up_enable_dcache(void)
   uint32_t sets;
   uint32_t ways;
 
-  /* If dcache is already enabled, disable it first. */
+  /* If dcache is already enabled, return. */
 
   ccr = getreg32(NVIC_CFGCON);
   if ((ccr & NVIC_CFGCON_DC) != 0)
     {
-      up_disable_dcache();
+      return;
     }
 
   /* Get the characteristics of the D-Cache */

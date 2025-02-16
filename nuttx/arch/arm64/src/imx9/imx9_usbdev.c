@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm64/src/imx9/imx9_usbdev.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -40,6 +42,7 @@
 #include <nuttx/usb/usbdev_trace.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <arch/board/board.h>
 
 #include <imx9_usbdev.h>
@@ -60,7 +63,7 @@
 #endif
 
 #define DCACHE_LINEMASK (ARMV8A_DCACHE_LINESIZE - 1)
-
+#define DCACHE_ALIGN_UP(a)   (((a) + DCACHE_LINEMASK) & ~DCACHE_LINEMASK)
 #if !defined(CONFIG_ARM64_DCACHE_DISABLE)
 #  define cache_aligned_alloc(s) kmm_memalign(ARMV8A_DCACHE_LINESIZE,(s))
 #  define CACHE_ALIGNED_DATA     aligned_data(ARMV8A_DCACHE_LINESIZE)
@@ -68,6 +71,11 @@
 #  define cache_aligned_alloc    kmm_malloc
 #  define CACHE_ALIGNED_DATA
 #endif
+
+/* Check that both start and length are cache-aligned */
+
+#define IS_CACHE_ALIGNED(x,y) (((uintptr_t)(x) & DCACHE_LINEMASK) == 0 &&        \
+                               ((y) & DCACHE_LINEMASK) == 0)
 
 /* Configuration ************************************************************/
 
@@ -218,6 +226,10 @@ const struct trace_msg_t g_usb_trace_strings_intdecode[] =
 };
 #endif
 
+/* Length of allocated EP0 buffer (DCACHE aligned) */
+
+#define EP0_MAXBUFLEN 64
+
 /* Hardware interface *******************************************************/
 
 /* This represents a Endpoint Transfer Descriptor dQH overlay (32 bytes) */
@@ -349,6 +361,7 @@ struct imx9_ep_s
    */
 
   struct usbdev_ep_s ep;           /* Standard endpoint structure */
+  spinlock_t         spinlock;     /* Spinlock */
 
   /* IMX9XX-specific fields */
 
@@ -379,6 +392,7 @@ struct imx9_usb_s
    */
 
   struct usbdev_s              usbdev;
+  spinlock_t                   spinlock;      /* Spinlock */
 
   /* The bound device class driver */
 
@@ -528,20 +542,20 @@ static int         imx9_pullup(struct usbdev_s *dev, bool enable);
  */
 
 #ifdef CONFIG_IMX9_USBDEV_USBC1
-static uint8_t g_usb0_ep0buf[64] CACHE_ALIGNED_DATA;
+static uint8_t g_usb0_ep0buf[EP0_MAXBUFLEN] CACHE_ALIGNED_DATA;
 static struct imx9_dqh_s g_usb0_qh[IMX9_NPHYSENDPOINTS] aligned_data(2048);
 static struct imx9_dtd_s g_usb0_td[IMX9_NPHYSENDPOINTS];
 #endif
 
 #ifdef CONFIG_IMX9_USBDEV_USBC2
-static uint8_t g_usb1_ep0buf[64] CACHE_ALIGNED_DATA;
+static uint8_t g_usb1_ep0buf[EP0_MAXBUFLEN] CACHE_ALIGNED_DATA;
 static struct imx9_dqh_s g_usb1_qh[IMX9_NPHYSENDPOINTS] aligned_data(2048);
 static struct imx9_dtd_s g_usb1_td[IMX9_NPHYSENDPOINTS];
 #endif
 
 static struct imx9_usb_s g_usbdev[] =
 {
-#ifdef CONFIG_IMX9_USBDEV_USBC1 
+#ifdef CONFIG_IMX9_USBDEV_USBC1
   {
     .id = 0,
     .base = IMX9_USB_OTG1_BASE,
@@ -692,10 +706,7 @@ static void imx9_putreg(struct imx9_usb_s *priv, off_t offset, uint32_t val)
 static inline void imx9_modifyreg(struct imx9_usb_s *priv, off_t offset,
                                   uint32_t clear, uint32_t set)
 {
-  uint32_t reg = imx9_getreg(priv, offset);
-  reg &= ~clear;
-  reg |= set;
-  imx9_putreg(priv, offset, reg);
+  modifyreg32(priv->base + offset, clear, set);
 }
 
 /****************************************************************************
@@ -764,6 +775,8 @@ static inline void imx9_writedtd(struct imx9_dtd_s *dtd,
                                   const uint8_t *data,
                                   uint32_t nbytes)
 {
+  DEBUGASSERT(IS_CACHE_ALIGNED(dtd, sizeof(*dtd)));
+
   dtd->nextdesc  = DTD_NEXTDESC_INVALID;
   dtd->config    = DTD_CONFIG_LENGTH(nbytes) | DTD_CONFIG_IOC |
       DTD_CONFIG_ACTIVE;
@@ -776,8 +789,18 @@ static inline void imx9_writedtd(struct imx9_dtd_s *dtd,
 
   up_clean_dcache((uintptr_t)dtd,
                   (uintptr_t)dtd + sizeof(struct imx9_dtd_s));
-  up_clean_dcache((uintptr_t)data,
-                  (uintptr_t)data + nbytes);
+
+  /* the pointer is NULL for EP0 NAK IN/OUT */
+
+  if (data != NULL)
+    {
+      DEBUGASSERT(IS_CACHE_ALIGNED(data, DCACHE_ALIGN_UP(nbytes)));
+      DEBUGASSERT(nbytes <= 0x5000);
+
+      /* Data needs to be clean before TX, clean or invalid before RX */
+
+      up_clean_dcache((uintptr_t)data, (uintptr_t)data + nbytes);
+    }
 }
 
 /****************************************************************************
@@ -803,7 +826,7 @@ static void imx9_queuedtd(struct imx9_usb_s *priv, uint8_t epphy,
   dqh->overlay.nextdesc = (uint32_t)(uintptr_t)dtd;
   dqh->overlay.config  &= ~(DTD_CONFIG_ACTIVE | DTD_CONFIG_HALTED);
 
-  up_flush_dcache((uintptr_t)dqh,
+  up_clean_dcache((uintptr_t)dqh,
                   (uintptr_t)dqh + sizeof(struct imx9_dqh_s));
 
   uint32_t bit = IMX9_ENDPTMASK(epphy);
@@ -845,21 +868,20 @@ static void imx9_readsetup(struct imx9_usb_s *priv, uint8_t epphy,
   struct imx9_dqh_s *dqh = &priv->qh[epphy];
   int i;
 
-  do
+  /* Set the trip wire */
+
+  imx9_modifyreg(priv, IMX9_USBDEV_USBCMD_OFFSET, 0, USBDEV_USBCMD_SUTW);
+  ARM64_DSB();
+
+  DEBUGASSERT(IS_CACHE_ALIGNED(dqh, sizeof(struct imx9_dqh_s)));
+  up_invalidate_dcache((uintptr_t)dqh,
+                       (uintptr_t)dqh + sizeof(struct imx9_dqh_s));
+
+  /* Copy the request... */
+
+  for (i = 0; i < 8; i++)
     {
-      /* Set the trip wire */
-
-      imx9_modifyreg(priv, IMX9_USBDEV_USBCMD_OFFSET, 0, USBDEV_USBCMD_SUTW);
-
-      up_invalidate_dcache((uintptr_t)dqh,
-                           (uintptr_t)dqh + sizeof(struct imx9_dqh_s));
-
-      /* Copy the request... */
-
-      for (i = 0; i < 8; i++)
-        {
-          ((uint8_t *) ctrl)[i] = ((uint8_t *) dqh->setup)[i];
-        }
+      ((uint8_t *) ctrl)[i] = ((uint8_t *) dqh->setup)[i];
     }
 
   while (!(imx9_getreg(priv,
@@ -869,13 +891,11 @@ static void imx9_readsetup(struct imx9_usb_s *priv, uint8_t epphy,
 
   imx9_modifyreg(priv, IMX9_USBDEV_USBCMD_OFFSET, USBDEV_USBCMD_SUTW, 0);
 
-  up_clean_dcache((uintptr_t)dqh,
-                  (uintptr_t)dqh + sizeof(struct imx9_dqh_s));
-
   /* Clear the Setup Interrupt */
 
   imx9_putreg(priv, IMX9_USBDEV_ENDPTSETUPSTAT_OFFSET,
               IMX9_ENDPTMASK(IMX9_EP0_OUT));
+  ARM64_DSB();
 }
 
 /****************************************************************************
@@ -1120,8 +1140,9 @@ static void imx9_dispatchrequest(struct imx9_usb_s *priv,
     {
       /* Invalidate buffer data cache */
 
+      DEBUGASSERT(IS_CACHE_ALIGNED(priv->ep0.buf, EP0_MAXBUFLEN));
       up_invalidate_dcache((uintptr_t)priv->ep0.buf,
-                           (uintptr_t)priv->ep0.buf + sizeof(priv->ep0.buf));
+                           (uintptr_t)priv->ep0.buf + EP0_MAXBUFLEN);
 
       /* Forward to the control request to the class driver implementation */
 
@@ -1162,7 +1183,7 @@ static void imx9_ep0configure(struct imx9_usb_s *priv)
   priv->qh[IMX9_EP0_IN].currdesc = DTD_NEXTDESC_INVALID;
 
   up_clean_dcache((uintptr_t)priv->qh,
-                  (uintptr_t)priv->qh + (sizeof(struct imx9_dqh_s) * 2));
+                  (uintptr_t)priv->qh + (sizeof(struct imx9_dqh_s)));
 
   /* Enable EP0 */
 
@@ -1303,6 +1324,8 @@ static inline void imx9_ep0state(struct imx9_usb_s *priv,
       imx9_putreg(priv, IMX9_USBDEV_ENDPTNAKEN_OFFSET, 0);
       break;
     }
+
+  ARM64_DSB();
 }
 
 /****************************************************************************
@@ -1347,7 +1370,9 @@ static inline void imx9_ep0setup(struct imx9_usb_s *priv)
   index = GETUINT16(ctrl->index);
   len   = GETUINT16(ctrl->len);
 
-  priv->ep0.buf_len = len;
+  /* Limit the ep0 length to maximum */
+
+  priv->ep0.buf_len = len <= EP0_MAXBUFLEN ? len : EP0_MAXBUFLEN;
 
   uinfo("type=%02x req=%02x value=%04x index=%04x len=%04x\n",
         ctrl->type, ctrl->req, value, index, len);
@@ -1868,10 +1893,9 @@ bool imx9_epcomplete(struct imx9_usb_s *priv, uint8_t epphy)
 
   /* Make sure we have updated data after the DMA transfer. */
 
+  DEBUGASSERT(IS_CACHE_ALIGNED(dtd, sizeof(struct imx9_dtd_s)));
   up_invalidate_dcache((uintptr_t)dtd,
                        (uintptr_t)dtd + sizeof(struct imx9_dtd_s));
-  up_invalidate_dcache((uintptr_t)dtd->buffer0,
-                       (uintptr_t)dtd->buffer0 + dtd->xfer_len);
 
   int xfrd = dtd->xfer_len - (dtd->config >> 16);
 
@@ -1885,6 +1909,14 @@ bool imx9_epcomplete(struct imx9_usb_s *priv, uint8_t epphy)
        */
 
       usbtrace(TRACE_INTDECODE(IMX9_TRACEINTID_EPIN), complete);
+
+      /* Invalidate rx buffer cache */
+
+      DEBUGASSERT(IS_CACHE_ALIGNED(privreq->req.buf,
+                                   DCACHE_ALIGN_UP(privreq->req.xfrd)));
+      up_invalidate_dcache((uintptr_t)privreq->req.buf,
+                           (uintptr_t)privreq->req.buf +
+                           DCACHE_ALIGN_UP(privreq->req.xfrd));
     }
   else
     {
@@ -2268,7 +2300,7 @@ static int imx9_epdisable(struct usbdev_ep_s *ep)
 
   usbtrace(TRACE_EPDISABLE, privep->epphy);
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&privep->spinlock);
 
   /* Disable Endpoint */
 
@@ -2287,7 +2319,7 @@ static int imx9_epdisable(struct usbdev_ep_s *ep)
 
   /* Cancel any ongoing activity */
 
-  imx9_cancelrequests(privep, -ESHUTDOWN);
+  spin_unlock_irqrestore(&privep->spinlock, flags);
 
   leave_critical_section(flags);
   return OK;
@@ -2446,7 +2478,7 @@ static int imx9_epsubmit(struct usbdev_ep_s *ep,
 
   /* Disable Interrupts */
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&privep->spinlock);
 
   /* If we are stalled, then drop all requests on the floor */
 
@@ -2473,7 +2505,7 @@ static int imx9_epsubmit(struct usbdev_ep_s *ep,
         }
     }
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&privep->spinlock, flags);
   return ret;
 }
 
@@ -2501,7 +2533,7 @@ static int imx9_epcancel(struct usbdev_ep_s *ep,
 
   usbtrace(TRACE_EPCANCEL, privep->epphy);
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&privep->spinlock);
 
   /* FIXME: if the request is the first, then we need to flush the EP
    *         otherwise just remove it from the list
@@ -2510,7 +2542,7 @@ static int imx9_epcancel(struct usbdev_ep_s *ep,
    */
 
   imx9_cancelrequests(privep, -ESHUTDOWN);
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&privep->spinlock, flags);
   return OK;
 }
 
@@ -2530,7 +2562,7 @@ static int imx9_epstall(struct usbdev_ep_s *ep, bool resume)
 
   /* STALL or RESUME the endpoint */
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&privep->spinlock);
   usbtrace(resume ? TRACE_EPRESUME : TRACE_EPSTALL, privep->epphy);
 
   uint32_t offs    = IMX9_USBDEV_ENDPTCTRL_OFFSET(privep->epphy >> 1);
@@ -2554,7 +2586,7 @@ static int imx9_epstall(struct usbdev_ep_s *ep, bool resume)
       imx9_modifyreg(priv, offs, 0, ctrl_xs);
     }
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&privep->spinlock, flags);
   return OK;
 }
 
@@ -2658,7 +2690,7 @@ static struct usbdev_ep_s *imx9_allocep(struct usbdev_s *dev,
     {
       /* Yes.. now see if any of the request endpoints are available */
 
-      flags = enter_critical_section();
+      flags = spin_lock_irqsave(&priv->spinlock);
       epset &= priv->epavail;
       if (epset)
         {
@@ -2674,7 +2706,7 @@ static struct usbdev_ep_s *imx9_allocep(struct usbdev_s *dev,
                   /* Mark endpoint no longer available */
 
                   priv->epavail &= ~bit;
-                  leave_critical_section(flags);
+                  spin_unlock_irqrestore(&priv->spinlock, flags);
 
                   /* And return the pointer to the standard endpoint
                    * structure
@@ -2687,7 +2719,7 @@ static struct usbdev_ep_s *imx9_allocep(struct usbdev_s *dev,
           /* Shouldn't get here */
         }
 
-      leave_critical_section(flags);
+      spin_unlock_irqrestore(&priv->spinlock, flags);
     }
 
   usbtrace(TRACE_DEVERROR(IMX9_TRACEERR_NOEP), (uint16_t)eplog);
@@ -2707,7 +2739,8 @@ static void imx9_freeep(struct usbdev_s *dev,
 {
   struct imx9_usb_s *priv = (struct imx9_usb_s *)dev;
   struct imx9_ep_s *privep = (struct imx9_ep_s *)ep;
-  irqstate_t flags;
+  irqstate_t flags_1;
+  irqstate_t flags_2;
 
   usbtrace(TRACE_DEVFREEEP, (uint16_t)privep->epphy);
 
@@ -2715,9 +2748,11 @@ static void imx9_freeep(struct usbdev_s *dev,
     {
       /* Mark the endpoint as available */
 
-      flags = enter_critical_section();
+      flags_1 = spin_lock_irqsave(&priv->spinlock);
+      flags_2 = spin_lock_irqsave(&privep->spinlock);
       priv->epavail |= (1 << privep->epphy);
-      leave_critical_section(flags);
+      spin_unlock_irqrestore(&privep->spinlock, flags_2);
+      spin_unlock_irqrestore(&priv->spinlock, flags_1);
     }
 }
 
@@ -2766,9 +2801,9 @@ static int imx9_wakeup(struct usbdev_s *dev)
 
   usbtrace(TRACE_DEVWAKEUP, 0);
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&priv->spinlock);
   imx9_modifyreg(priv, IMX9_USBDEV_PORTSC1_OFFSET, 0, USBDEV_PRTSC1_FPR);
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&priv->spinlock, flags);
   return OK;
 }
 
@@ -2812,7 +2847,7 @@ static int imx9_pullup(struct usbdev_s *dev, bool enable)
 
   usbtrace(TRACE_DEVPULLUP, (uint16_t)enable);
 
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = spin_lock_irqsave(&priv->spinlock);
   if (enable)
     {
       imx9_modifyreg(priv, IMX9_USBDEV_USBCMD_OFFSET, 0, USBDEV_USBCMD_RS);
@@ -2829,7 +2864,7 @@ static int imx9_pullup(struct usbdev_s *dev, bool enable)
       imx9_modifyreg(priv, IMX9_USBDEV_USBCMD_OFFSET, USBDEV_USBCMD_RS, 0);
     }
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&priv->spinlock, flags);
   return OK;
 }
 
@@ -2898,7 +2933,7 @@ void arm64_usbinitialize(void)
   int i;
   irqstate_t flags;
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&priv->spinlock);
 
   /* Initialize the device state structure */
 
@@ -2986,7 +3021,7 @@ void arm64_usbinitialize(void)
   irq_attach(IMX9_IRQ_USB1 + priv->id, imx9_usbinterrupt, priv);
   up_enable_irq(IMX9_IRQ_USB1 + priv->id);
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&priv->spinlock, flags);
 
   /* Reset/Re-initialize the USB hardware */
 
@@ -3010,7 +3045,7 @@ void arm64_usbuninitialize(void)
       usbdev_unregister(priv->driver);
     }
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&priv->spinlock);
 
   /* Disconnect device */
 
@@ -3037,7 +3072,7 @@ void arm64_usbuninitialize(void)
 
   imx9_ccm_gate_on(CCM_LPCG_USB_CONTROLLER, false);
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&priv->spinlock, flags);
 }
 
 /****************************************************************************

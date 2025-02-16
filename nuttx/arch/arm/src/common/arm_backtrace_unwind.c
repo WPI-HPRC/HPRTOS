@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/common/arm_backtrace_unwind.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -736,17 +738,17 @@ int up_backtrace(struct tcb_s *tcb,
       if (up_interrupt_context())
         {
 #if CONFIG_ARCH_INTERRUPTSTACK > 7
-          frame.stack_base = up_get_intstackbase(up_cpu_index());
+          frame.stack_base = up_get_intstackbase(this_cpu());
           frame.stack_top = frame.stack_base + INTSTACK_SIZE;
 #endif /* CONFIG_ARCH_INTERRUPTSTACK > 7 */
 
           ret = backtrace_unwind(&frame, buffer, size, &skip);
           if (ret < size)
             {
-              frame.fp = CURRENT_REGS[REG_FP];
-              frame.sp = CURRENT_REGS[REG_SP];
-              frame.pc = CURRENT_REGS[REG_PC];
-              frame.lr = CURRENT_REGS[REG_LR];
+              frame.fp = ((uint32_t *)running_regs())[REG_FP];
+              frame.sp = ((uint32_t *)running_regs())[REG_SP];
+              frame.pc = ((uint32_t *)running_regs())[REG_PC];
+              frame.lr = ((uint32_t *)running_regs())[REG_LR];
               frame.stack_base = (unsigned long)rtcb->stack_base_ptr;
               frame.stack_top = frame.stack_base + rtcb->adj_stack_size;
               ret += backtrace_unwind(&frame, &buffer[ret],

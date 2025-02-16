@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/fvp-v8r-aarch32/fvp_boot.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -28,12 +30,12 @@
 #include <assert.h>
 #include <debug.h>
 
+#include <arch/irq.h>
 #include <arch/chip/chip.h>
 
 #include "arm_internal.h"
 
 #include "barriers.h"
-#include "cp15.h"
 #include "arm_gic.h"
 #include "chip.h"
 #include "fvp_boot.h"

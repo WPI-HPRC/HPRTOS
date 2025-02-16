@@ -1,6 +1,8 @@
 # ##############################################################################
 # arch/arm/src/qemu/CMakeLists.txt
 #
+# SPDX-License-Identifier: Apache-2.0
+#
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements.  See the NOTICE file distributed with this work for
 # additional information regarding copyright ownership.  The ASF licenses this
@@ -22,6 +24,14 @@ set(SRCS qemu_boot.c qemu_serial.c qemu_irq.c qemu_timer.c qemu_memorymap.c)
 
 if(CONFIG_SMP)
   list(APPEND SRCS qemu_cpuboot.c)
+endif()
+
+if(CONFIG_ARCH_IDLE_CUSTOM)
+  list(APPEND SRCS qemu_idle.c)
+endif()
+
+if(CONFIG_BUILD_KERNEL)
+  list(APPEND SRCS qemu_pgalloc.c)
 endif()
 
 target_sources(arch PRIVATE ${SRCS})

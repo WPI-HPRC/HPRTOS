@@ -730,15 +730,10 @@ static void esp_thread_semphr_free(void *semphr)
 
 static void esp_update_time(struct timespec *timespec, uint32_t ticks)
 {
-  uint32_t tmp;
+  struct timespec ts;
 
-  tmp = TICK2SEC(ticks);
-  timespec->tv_sec += tmp;
-
-  ticks -= SEC2TICK(tmp);
-  tmp = TICK2NSEC(ticks);
-
-  timespec->tv_nsec += tmp;
+  clock_ticks2time(&ts, ticks);
+  clock_timespec_add(timespec, &ts, timespec);
 }
 
 /****************************************************************************
@@ -925,7 +920,7 @@ static void *esp_spin_lock_create(void)
       DEBUGPANIC();
     }
 
-  spin_initialize(lock, SP_UNLOCKED);
+  spin_lock_init(lock);
 
   return lock;
 }
@@ -6174,7 +6169,7 @@ int esp_wifi_softap_password(struct iwreq *iwr, bool set)
 
       if (ext->alg != IW_ENCODE_ALG_NONE)
         {
-          memcpy(wifi_cfg.sta.password, pdata, len);
+          memcpy(wifi_cfg.ap.password, pdata, len);
         }
 
       if (g_softap_started)

@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/input/spq10kbd.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -192,7 +194,7 @@ struct spq10kbd_dev_s
    * retained in the f_priv field of the 'struct file'.
    */
 
-  struct pollfd *fds[CONFIG_SPQ10KBD_NPOLLWAITERS];
+  FAR struct pollfd *fds[CONFIG_SPQ10KBD_NPOLLWAITERS];
 
   /* Buffer used to collect and buffer incoming keyboard characters */
 
@@ -658,7 +660,7 @@ static int spq10kbd_poll(FAR struct file *filep, FAR struct pollfd *fds,
     {
       /* This is a request to tear down the poll. */
 
-      struct pollfd **slot = (struct pollfd **)fds->priv;
+      FAR struct pollfd **slot = (FAR struct pollfd **)fds->priv;
       DEBUGASSERT(slot);
 
       /* Remove all memory of the poll setup */

@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/sensors/hdc1008.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -163,7 +165,9 @@ static const struct file_operations g_hdc1008fops =
   hdc1008_ioctl,    /* ioctl */
   NULL,             /* mmap */
   NULL,             /* truncate */
-  NULL              /* poll */
+  NULL,             /* poll */
+  NULL,             /* readv */
+  NULL              /* writev */
 #ifndef CONFIG_DISABLE_PSEUDOFS_OPERATIONS
   , hdc1008_unlink  /* unlink */
 #endif
@@ -799,7 +803,7 @@ static int hdc1008_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
           ret = hdc1008_getreg(priv, HDC1008_REG_CONFIGURATION, &reg);
           if (ret >= 0)
             {
-              *(uint16_t *)arg = reg;
+              *(FAR uint16_t *)arg = reg;
             }
 
           hdc1008_dbg("read config ret: %d\n", ret);

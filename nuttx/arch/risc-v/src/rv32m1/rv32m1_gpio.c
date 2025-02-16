@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/risc-v/src/rv32m1/rv32m1_gpio.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -483,7 +485,7 @@ void rv32m1_gpio_write(uint32_t cfgset, bool value)
   port = (cfgset & GPIO_PORT_MASK) >> GPIO_PORT_SHIFT;
   if (port >= RV32M1_NGPIO_PORTS)
     {
-      return ;
+      return;
     }
 
   /* Get the gpio base address */
@@ -517,7 +519,7 @@ void rv32m1_gpio_toggle(uint32_t cfgset)
   port = (cfgset & GPIO_PORT_MASK) >> GPIO_PORT_SHIFT;
   if (port >= RV32M1_NGPIO_PORTS)
     {
-      return ;
+      return;
     }
 
   /* Get the gpio base address */
@@ -568,7 +570,7 @@ void rv32m1_gpio_irqenable(uint32_t cfgset)
   port = (cfgset & GPIO_PORT_MASK) >> GPIO_PORT_SHIFT;
   if (port >= RV32M1_NGPIO_PORTS)
     {
-      return ;
+      return;
     }
 
   /* Get the irq */
@@ -597,7 +599,7 @@ void rv32m1_gpio_irqdisable(uint32_t cfgset)
   port = (cfgset & GPIO_PORT_MASK) >> GPIO_PORT_SHIFT;
   if (port >= RV32M1_NGPIO_PORTS)
     {
-      return ;
+      return;
     }
 
   /* Get the port base address */

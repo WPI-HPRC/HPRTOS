@@ -1,6 +1,8 @@
 /****************************************************************************
  * sched/sched/sched_unlock.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -75,12 +77,11 @@ int sched_unlock(void)
       irqstate_t flags = enter_critical_section();
       int cpu = this_cpu();
 
+      DEBUGASSERT(rtcb->lockcount > 0);
+
       /* Decrement the preemption lock counter */
 
-      if (rtcb->lockcount > 0)
-        {
-          rtcb->lockcount--;
-        }
+      rtcb->lockcount--;
 
       /* Check if the lock counter has decremented to zero.  If so,
        * then pre-emption has been re-enabled.
@@ -90,24 +91,12 @@ int sched_unlock(void)
         {
           /* Note that we no longer have pre-emption disabled. */
 
-#ifdef CONFIG_SCHED_CRITMONITOR
-          nxsched_critmon_preemption(rtcb, false);
+#if CONFIG_SCHED_CRITMONITOR_MAXTIME_PREEMPTION >= 0
+          nxsched_critmon_preemption(rtcb, false, return_address(0));
 #endif
 #ifdef CONFIG_SCHED_INSTRUMENTATION_PREEMPTION
-          sched_note_premption(rtcb, false);
+          sched_note_preemption(rtcb, false);
 #endif
-
-          /* Set the lock count to zero */
-
-          rtcb->lockcount = 0;
-
-          /* The lockcount has decremented to zero and we need to perform
-           * release our hold on the lock.
-           */
-
-          DEBUGASSERT((g_cpu_lockset & (1 << cpu)) != 0);
-
-          g_cpu_lockset &= ~(1 << cpu);
 
           /* Release any ready-to-run tasks that have collected in
            * g_pendingtasks.
@@ -116,27 +105,7 @@ int sched_unlock(void)
            * this task to be switched out!
            */
 
-          /* In the SMP case, the tasks remains pend(1) if we are
-           * in a critical section, i.e., g_cpu_irqlock is locked by other
-           * CPUs, or (2) other CPUs still have pre-emption disabled, i.e.,
-           * g_cpu_lockset is locked.  In those cases, the release of the
-           * pending tasks must be deferred until those conditions are met.
-           *
-           * There are certain conditions that we must avoid by preventing
-           * releasing the pending tasks while within the critical section
-           * of other CPUs.  This logic does that and there is matching
-           * logic in nxsched_add_readytorun to avoid starting new tasks
-           * within the critical section (unless the CPU is the holder of
-           * the lock).
-           *
-           * REVISIT: If this CPU is only one that holds the IRQ lock, then
-           * we should go ahead and release the pending tasks.  See the logic
-           * leave_critical_section():  It will call nxsched_merge_pending()
-           * BEFORE it clears IRQ lock.
-           */
-
-          if (!nxsched_islocked_global() &&
-              list_pendingtasks()->head != NULL)
+          if (list_pendingtasks()->head != NULL)
             {
               if (nxsched_merge_pending())
                 {
@@ -209,6 +178,7 @@ int sched_unlock(void)
 #endif
         }
 
+      UNUSED(cpu);
       leave_critical_section(flags);
     }
 
@@ -232,12 +202,11 @@ int sched_unlock(void)
 
       irqstate_t flags = enter_critical_section();
 
+      DEBUGASSERT(rtcb->lockcount > 0);
+
       /* Decrement the preemption lock counter */
 
-      if (rtcb->lockcount > 0)
-        {
-          rtcb->lockcount--;
-        }
+      rtcb->lockcount--;
 
       /* Check if the lock counter has decremented to zero.  If so,
        * then pre-emption has been re-enabled.
@@ -247,16 +216,12 @@ int sched_unlock(void)
         {
           /* Note that we no longer have pre-emption disabled. */
 
-#ifdef CONFIG_SCHED_CRITMONITOR
-          nxsched_critmon_preemption(rtcb, false);
+#if CONFIG_SCHED_CRITMONITOR_MAXTIME_PREEMPTION >= 0
+          nxsched_critmon_preemption(rtcb, false, return_address(0));
 #endif
 #ifdef CONFIG_SCHED_INSTRUMENTATION_PREEMPTION
-          sched_note_premption(rtcb, false);
+          sched_note_preemption(rtcb, false);
 #endif
-
-          /* Set the lock count to zero */
-
-          rtcb->lockcount = 0;
 
           /* Release any ready-to-run tasks that have collected in
            * g_pendingtasks.

@@ -1,7 +1,6 @@
 #pragma once
 
-constexpr static int stateMachine_loopRate = 100; // [Hz]
-constexpr static int imu_looprate = 100; // [Hz]
-constexpr static int mag_looprate = 50; // [Hz]
+constexpr static int stateMachine_loopRate = 200; // [Hz]
+constexpr static int lsm_looprate = 400; // [Hz]
 constexpr static int gps_looprate = 10; // [Hz]
-constexpr static int baro_looprate = 25; // [Hz]
+constexpr static int lps_looprate = 40; // [Hz]

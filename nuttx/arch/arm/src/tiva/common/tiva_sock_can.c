@@ -1,6 +1,7 @@
 /****************************************************************************
  * arch/arm/src/tiva/common/tiva_sock_can.c
- * SocketCAN driver implementation for Tiva. Based on the chardev driver.
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -41,10 +42,8 @@
 #include <nuttx/arch.h>
 
 #include <nuttx/wqueue.h>
-#include <nuttx/can.h>
 #include <nuttx/net/netdev.h>
 #include <nuttx/net/can.h>
-#include <netpacket/can.h>
 
 #include "arm_internal.h"
 #include "chip.h"

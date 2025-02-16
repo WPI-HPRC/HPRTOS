@@ -42,19 +42,26 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
 
     # Set the base directory to project folder
     set(BASEDIR ${CMAKE_CURRENT_SOURCE_DIR})
+    set(UBXLIB_DIR ${BASEDIR}/Libs/ubxlib)
 
     # Collect source files from sensor libraries
-    file(GLOB_RECURSE ICMSRC ${BASEDIR}/ICM42688/*.cxx)
-    file(GLOB_RECURSE LPSSRC ${BASEDIR}/LPS25/*.cxx)
-    file(GLOB_RECURSE MAGSRC ${BASEDIR}/MS5611/*.cxx)
+    file(GLOB_RECURSE ADXLSRC ${BASEDIR}/ADXL375/*.cxx)
     file(GLOB_RECURSE GPSSRC ${BASEDIR}/MAX10S/*.cxx)
+    file(GLOB_RECURSE ASMSRC ${BASEDIR}/ASM330/*.cxx)
+    file(GLOB_RECURSE LSMSRC ${BASEDIR}/LSM303/*.cxx)
+    file(GLOB_RECURSE LPSSRC ${BASEDIR}/LPS22/*.cxx)
+
+    # Add NMEA Library
+    file(GLOB_RECURSE NMEASRC ${BASEDIR}/Libs/TinyGPS/*.cxx)
 
     # Collect sources
     set(SENSOR_SRCS
-            ${ICMSRC}
-            ${LPSSRC}
-            ${MAGSRC}
+            ${ADXLSRC}
             ${GPSSRC}
+            ${NMEASRC}
+            ${ASMSRC}
+            ${LSMSRC}
+            ${LPSSRC}
     )
 
     nuttx_add_application(
@@ -71,6 +78,8 @@ if(CONFIG_FLIGHTCOMPUTER_SENSORPACKAGE)
             ${APPDIR}/FlightComputer/FlightLib
             ${BASEDIR}
             ${NUTTX_INCLUDE_DIRS}
+            ${BASEDIR}/Libs/TinyGPS/
+
 
             LINK_LIBRARIES
             ${NUTTX_LIBRARIES}

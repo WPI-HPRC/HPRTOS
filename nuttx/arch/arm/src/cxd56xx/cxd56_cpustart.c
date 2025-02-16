@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/cxd56xx/cxd56_cpustart.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -72,7 +74,7 @@
 
 volatile static spinlock_t g_appdsp_boot;
 
-extern int arm_pause_handler(int irq, void *c, void *arg);
+extern int cxd56_smp_call_handler(int irq, void *c, void *arg);
 
 /****************************************************************************
  * Private Functions
@@ -94,7 +96,7 @@ static void appdsp_boot(void)
 {
   int cpu;
 
-  cpu = up_cpu_index();
+  cpu = this_cpu();
   DPRINTF("cpu = %d\n", cpu);
 
 #if CONFIG_ARCH_INTERRUPTSTACK > 7
@@ -117,8 +119,8 @@ static void appdsp_boot(void)
 
   /* Enable SW_INT */
 
-  irq_attach(CXD56_IRQ_SW_INT, arm_pause_handler, NULL);
-  up_enable_irq(CXD56_IRQ_SW_INT);
+  irq_attach(CXD56_IRQ_SMP_CALL, cxd56_smp_call_handler, NULL);
+  up_enable_irq(CXD56_IRQ_SMP_CALL);
 
   spin_unlock(&g_appdsp_boot);
 
@@ -232,8 +234,8 @@ int up_cpu_start(int cpu)
 
       /* Setup SW_INT for this APP_DSP0 */
 
-      irq_attach(CXD56_IRQ_SW_INT, arm_pause_handler, NULL);
-      up_enable_irq(CXD56_IRQ_SW_INT);
+      irq_attach(CXD56_IRQ_SMP_CALL, cxd56_smp_call_handler, NULL);
+      up_enable_irq(CXD56_IRQ_SMP_CALL);
     }
 
   spin_lock(&g_appdsp_boot);

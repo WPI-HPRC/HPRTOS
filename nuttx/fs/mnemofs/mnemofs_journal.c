@@ -1,6 +1,7 @@
 /****************************************************************************
  * fs/mnemofs/mnemofs_journal.c
- * Journal of mnemofs.
+ *
+ * SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -82,6 +83,7 @@
 #include <sys/param.h>
 
 #include "mnemofs.h"
+#include "fs_heap.h"
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -102,34 +104,13 @@
  * search methods of higher functions.
  */
 
-/* New journal log structure being phased in. */
-
-struct jrnl_log_s
-{
-  /* A field denoting the size of the below elements is added here on-flash.
-   */
-
-  mfs_t                  depth;
-  mfs_t                  sz_new;
-  struct mfs_ctz_s       loc_new;
-  struct timespec        st_mtim_new;
-  struct timespec        st_atim_new;
-  struct timespec        st_ctim_new;
-  FAR struct mfs_path_s *path;
-  uint16_t               hash;
-};
-
 /****************************************************************************
  * Private Function Prototypes
  ****************************************************************************/
 
-static int            jrnl_rdlog(FAR const struct mfs_sb_s *const sb,
-                                 FAR mfs_t *blkidx, FAR mfs_t *pg_in_blk,
-                                 FAR struct jrnl_log_s *log);
-
 FAR static const char *deser_log(FAR const char * const in,
-                                 FAR struct jrnl_log_s * const x);
-FAR static char       *ser_log(FAR const struct jrnl_log_s * const x,
+                                 FAR struct mfs_jrnl_log_s * const x);
+FAR static char       *ser_log(FAR const struct mfs_jrnl_log_s * const x,
                                FAR char * const out);
 
 /****************************************************************************
@@ -145,7 +126,7 @@ FAR static char       *ser_log(FAR const struct jrnl_log_s * const x,
  ****************************************************************************/
 
 /****************************************************************************
- * Name: jrnl_rdlog
+ * Name: mfs_jrnl_rdlog
  *
  * Description:
  *   Read a log to the journal from given location, and update location to
@@ -175,21 +156,16 @@ FAR static char       *ser_log(FAR const struct jrnl_log_s * const x,
  *
  ****************************************************************************/
 
-static int jrnl_rdlog(FAR const struct mfs_sb_s *const sb,
+int mfs_jrnl_rdlog(FAR const struct mfs_sb_s *const sb,
                       FAR mfs_t *blkidx, FAR mfs_t *pg_in_blk,
-                      FAR struct jrnl_log_s *log)
+                      FAR struct mfs_jrnl_log_s *log)
 {
   int       ret       = OK;
   char      tmp[4];
-  mfs_t     i;
-  mfs_t     len;
-  mfs_t     n_pgs;
-  mfs_t     rd_sz;
   mfs_t     log_sz;
   mfs_t     jrnl_pg;
   mfs_t     jrnl_blk;
   FAR char *buf       = NULL;
-  FAR char *buftmp    = NULL;
 
   DEBUGASSERT(*pg_in_blk % MFS_PGSZ(sb) == 0);
 
@@ -205,73 +181,26 @@ static int jrnl_rdlog(FAR const struct mfs_sb_s *const sb,
     }
 
   mfs_deser_mfs(tmp, &log_sz);
-  n_pgs = MFS_CEILDIVIDE(log_sz, MFS_PGSZ(sb));
+  if (log_sz == 0)
+    {
+      ret = -ENOSPC;
+      goto errout;
+    }
 
-  buf = kmm_zalloc(log_sz);
+  buf = fs_heap_zalloc(log_sz);
   if (predict_false(buf == NULL))
     {
       ret = -ENOMEM;
       goto errout;
     }
 
-  buftmp = buf;
-  rd_sz  = 0;
-  for (i = 0; i < n_pgs && rd_sz < log_sz; i++)
+  ret = mfs_read_page(sb, buf, log_sz, jrnl_pg, 4);
+  if (predict_false(ret < 0))
     {
-      /* This if-statement exists to remove calculation behind
-       * MIN(MFS_PGSZ(sb), log_sz - rd_sz)
-       */
-
-      if (i == 0 && i != n_pgs - 1)
-        {
-          ret = mfs_read_page(sb, buftmp, MFS_PGSZ(sb), jrnl_pg,
-                sizeof(mfs_t));
-          len = MFS_PGSZ(sb);
-        }
-      else if (i == 0)
-        {
-          ret = mfs_read_page(sb, buftmp, log_sz, jrnl_pg, sizeof(mfs_t));
-          len = log_sz;
-        }
-      else if (i == n_pgs - 1)
-        {
-          ret = mfs_read_page(sb, buftmp, log_sz - rd_sz, jrnl_pg, 0);
-          len = log_sz - rd_sz;
-        }
-      else
-        {
-          ret = mfs_read_page(sb, buftmp, MFS_PGSZ(sb), jrnl_pg, 0);
-          len = MFS_PGSZ(sb);
-        }
-
-      buftmp += len;
-      rd_sz  += len;
-
-      if (predict_false(ret == 0))
-        {
-          ret = -EINVAL; /* TODO: Need to check when this occurs. */
-          goto errout_with_buf;
-        }
-
-      /* Move to next block if needed. */
-
-      jrnl_pg++;
-      if (jrnl_pg - MFS_BLK2PG(sb, jrnl_blk) >= MFS_PGINBLK(sb))
-        {
-          (*blkidx)++;
-
-          if (*blkidx >= MFS_JRNL(sb).n_blks)
-            {
-              /* Not finished reading log yet, and the journal is over. */
-
-              ret = -ENOSPC;
-              goto errout_with_buf;
-            }
-
-          jrnl_blk = mfs_jrnl_blkidx2blk(sb, *blkidx);
-          jrnl_pg  = MFS_BLK2PG(sb, jrnl_blk);
-        }
+      goto errout_with_buf;
     }
+
+  ret = OK;
 
   if (predict_false(deser_log(buf, log) == NULL))
     {
@@ -279,12 +208,16 @@ static int jrnl_rdlog(FAR const struct mfs_sb_s *const sb,
       goto errout_with_buf;
     }
 
-  /* blkidx has been up to date throughout the program. */
+  (*pg_in_blk)++;
 
-  *pg_in_blk = jrnl_pg - MFS_BLK2PG(sb, jrnl_blk);
+  if (*pg_in_blk >= MFS_PGINBLK(sb))
+    {
+      *pg_in_blk = 0;
+      (*blkidx)++;
+    }
 
 errout_with_buf:
-  kmm_free(buf);
+  fs_heap_free(buf);
 
 errout:
   return ret;
@@ -310,11 +243,11 @@ errout:
  *
  ****************************************************************************/
 
-FAR static char *ser_log(FAR const struct jrnl_log_s * const x,
+FAR static char *ser_log(FAR const struct mfs_jrnl_log_s * const x,
                          FAR char * const out)
 {
-  char *o = out;
-  mfs_t i = 0;
+  FAR char *o = out;
+  mfs_t i;
 
   o = mfs_ser_mfs(x->depth, o);
   o = mfs_ser_mfs(x->sz_new, o);
@@ -352,10 +285,10 @@ FAR static char *ser_log(FAR const struct jrnl_log_s * const x,
  ****************************************************************************/
 
 FAR static const char *deser_log(FAR const char * const in,
-                                 FAR struct jrnl_log_s * const x)
+                                 FAR struct mfs_jrnl_log_s * const x)
 {
-  mfs_t       k = 0;
-  const char *i = in;
+  FAR const char *i = in;
+  mfs_t k;
 
   i = mfs_deser_mfs(i, &x->depth);
   i = mfs_deser_mfs(i, &x->sz_new);
@@ -366,7 +299,7 @@ FAR static const char *deser_log(FAR const char * const in,
 
   /* Allocates path. Deallocate using mfs_jrnl_log_free. */
 
-  x->path = kmm_zalloc(sizeof(struct jrnl_log_s) * x->depth);
+  x->path = fs_heap_zalloc(sizeof(struct mfs_jrnl_log_s) * x->depth);
   if (predict_false(x->path == NULL))
     {
       return NULL;
@@ -382,7 +315,7 @@ FAR static const char *deser_log(FAR const char * const in,
 }
 
 /****************************************************************************
- * Name: jrnl_log_free
+ * Name: mfs_jrnl_log_free
  *
  * Description:
  *   Free the log.
@@ -395,9 +328,9 @@ FAR static const char *deser_log(FAR const char * const in,
  *
  ****************************************************************************/
 
-static void jrnl_log_free(FAR const struct jrnl_log_s * const log)
+void mfs_jrnl_log_free(FAR const struct mfs_jrnl_log_s * const log)
 {
-  free(log->path);
+  fs_heap_free(log->path);
 }
 
 /****************************************************************************
@@ -406,18 +339,17 @@ static void jrnl_log_free(FAR const struct jrnl_log_s * const log)
 
 int mfs_jrnl_init(FAR struct mfs_sb_s * const sb, mfs_t blk)
 {
-  char                   buftmp[2];
-  int                    ret        = OK;
-  mfs_t                  sz;
-  mfs_t                  blkidx;
-  mfs_t                  pg_in_blk;
-  FAR char              *buf        = NULL;
-  FAR struct jrnl_log_s *log        = NULL;
+  char              buftmp[2];
+  int               ret        = OK;
+  mfs_t             sz;
+  mfs_t             blkidx;
+  mfs_t             pg_in_blk;
+  struct mfs_jrnl_log_s log;
 
   /* Magic sequence is already used to find the block, so not required. */
 
   mfs_read_page(sb, buftmp, 2, MFS_BLK2PG(sb, blk), 8);
-  mfs_deser_16(buf, &MFS_JRNL(sb).n_blks);
+  mfs_deser_16(buftmp, &MFS_JRNL(sb).n_blks);
 
   if (MFS_JRNL(sb).n_blks == 0)
     {
@@ -427,11 +359,12 @@ int mfs_jrnl_init(FAR struct mfs_sb_s * const sb, mfs_t blk)
 
   sz = MFS_JRNL_SUFFIXSZ + ((CONFIG_MNEMOFS_JOURNAL_NBLKS + 2) * 4);
 
+  MFS_JRNL(sb).jrnl_start    = blk;
   MFS_JRNL(sb).log_cpg       = (sz + (MFS_PGSZ(sb) - 1)) / MFS_PGSZ(sb);
   MFS_JRNL(sb).log_spg       = MFS_JRNL(sb).log_cpg;
   MFS_JRNL(sb).log_cblkidx   = 0;
   MFS_JRNL(sb).log_sblkidx   = MFS_JRNL(sb).log_cblkidx;
-  MFS_JRNL(sb).jrnlarr_pg    = 0;
+  MFS_JRNL(sb).jrnlarr_pg    = MFS_BLK2PG(sb, blk); /* Assuming pgsz > 10 */
   MFS_JRNL(sb).jrnlarr_pgoff = MFS_JRNL_SUFFIXSZ;
 
   /* Number of logs */
@@ -442,9 +375,7 @@ int mfs_jrnl_init(FAR struct mfs_sb_s * const sb, mfs_t blk)
 
   while (true)
     {
-      /* TODO: Update this to new read log. */
-
-      ret = jrnl_rdlog(sb, &blkidx, &pg_in_blk, log);
+      ret = mfs_jrnl_rdlog(sb, &blkidx, &pg_in_blk, &log);
       if (predict_false(ret < 0 && ret != -ENOSPC))
         {
           goto errout;
@@ -460,14 +391,14 @@ int mfs_jrnl_init(FAR struct mfs_sb_s * const sb, mfs_t blk)
        * depth of 1.
        */
 
-      if (!log || log->depth == 0)
+      if (log.depth == 0)
         {
-          DEBUGASSERT(!log || log->path == NULL);
+          DEBUGASSERT(log.path == NULL);
           break;
         }
 
       MFS_JRNL(sb).n_logs++;
-      jrnl_log_free(log);
+      mfs_jrnl_log_free(&log);
     }
 
   /* Master node */
@@ -486,23 +417,22 @@ errout:
 int mfs_jrnl_fmt(FAR struct mfs_sb_s * const sb, FAR mfs_t *blk1,
                  FAR mfs_t *blk2, FAR mfs_t *jrnl_blk)
 {
-  int      i;
-  int      ret        = OK;
-  mfs_t    sz;
-  mfs_t    pg;
-  mfs_t    blk;
-  mfs_t    n_pgs;
-  mfs_t    rem_sz;
-  mfs_t    alloc_blk;
+  int       i;
+  int       ret       = OK;
+  mfs_t     sz;
+  mfs_t     pg;
+  mfs_t     blk;
+  mfs_t     alloc_blk;
   FAR char *tmp;
   FAR char *buf       = NULL;
 
+  /* TODO: Replace jrnl_blk with MFS_JRNL(sb).jrnl_start if possible. */
+
   /* Write magic sequence, size of jrnlarr, and then the jrnlarr. */
 
-  sz    = MFS_JRNL_SUFFIXSZ + ((CONFIG_MNEMOFS_JOURNAL_NBLKS + 2) * 4);
-  n_pgs = (sz + (MFS_PGSZ(sb) - 1)) / MFS_PGSZ(sb);
+  sz = MFS_JRNL_SUFFIXSZ + ((CONFIG_MNEMOFS_JOURNAL_NBLKS + 2) * 4);
 
-  buf   = kmm_zalloc(sz);
+  buf = fs_heap_zalloc(sz);
   if (predict_false(buf == NULL))
     {
       ret = -ENOMEM;
@@ -542,7 +472,9 @@ int mfs_jrnl_fmt(FAR struct mfs_sb_s * const sb, FAR mfs_t *blk1,
 
       if (predict_false(i == 0))
         {
-          blk = alloc_blk;
+          blk                     = alloc_blk;
+          *jrnl_blk               = alloc_blk;
+          MFS_JRNL(sb).jrnl_start = alloc_blk;
         }
 
       finfo("Allocated Journal Block %d at Block %d.", i, alloc_blk);
@@ -553,22 +485,13 @@ int mfs_jrnl_fmt(FAR struct mfs_sb_s * const sb, FAR mfs_t *blk1,
 
   finfo("All Journal Blocks allocated.");
 
-  tmp = buf;
   pg  = MFS_BLK2PG(sb, blk);
-  for (i = 0; i < n_pgs; i++)
+  ret = mfs_write_page(sb, buf, sz, pg, 0); /* Assuming array fits in a
+                                             * single page.
+                                             */
+  if (predict_false(ret < 0))
     {
-      rem_sz = MIN(MFS_PGSZ(sb), buf + sz - tmp);
-      ret    = mfs_write_page(sb, tmp, rem_sz, pg, 0);
-      if (predict_false(ret < 0))
-        {
-          goto errout_with_buf;
-        }
-
-      pg++;
-
-      DEBUGASSERT(pg < MFS_BLK2PG(sb, blk) + MFS_PGINBLK(sb));
-
-      tmp += rem_sz;
+      goto errout_with_buf;
     }
 
   ret = OK; /* We reach here, we OK. */
@@ -577,7 +500,7 @@ int mfs_jrnl_fmt(FAR struct mfs_sb_s * const sb, FAR mfs_t *blk1,
 
   MFS_JRNL(sb).n_logs        = 0;
   MFS_JRNL(sb).n_blks        = CONFIG_MNEMOFS_JOURNAL_NBLKS;
-  MFS_JRNL(sb).log_cpg       = pg;
+  MFS_JRNL(sb).log_cpg       = pg + 1; /* Assumes 1 page for jrnl_arr. */
   MFS_JRNL(sb).log_cblkidx   = 0;
   MFS_JRNL(sb).log_spg       = MFS_JRNL(sb).log_cpg;
   MFS_JRNL(sb).log_sblkidx   = MFS_JRNL(sb).log_cblkidx;
@@ -587,7 +510,7 @@ int mfs_jrnl_fmt(FAR struct mfs_sb_s * const sb, FAR mfs_t *blk1,
   MFS_JRNL(sb).mblk2         = *blk2;
 
 errout_with_buf:
-  kmm_free(buf);
+  fs_heap_free(buf);
 
 errout:
   return ret;
@@ -595,24 +518,28 @@ errout:
 
 void mfs_jrnl_free(FAR struct mfs_sb_s * const sb)
 {
-  mfs_jrnl_flush(sb);
+  if (!mfs_jrnl_isempty(sb) &&
+      MFS_JRNL(sb).log_cblkidx >= MFS_JRNL_LIM(sb))
+    {
+      mfs_jrnl_flush(sb);
+    }
+
   finfo("Journal Freed.");
 }
 
 mfs_t mfs_jrnl_blkidx2blk(FAR const struct mfs_sb_s * const sb,
                           const mfs_t blk_idx)
 {
-  int   ret    = OK;
+  int   ret = OK;
   mfs_t pg;
   mfs_t idx;
   mfs_t blk;
   mfs_t pgoff;
   char  buf[4];
 
-  pg    = MFS_JRNL(sb).jrnlarr_pg;
-  pgoff = MFS_JRNL(sb).jrnlarr_pgoff;
-  blk   = MFS_PG2BLK(sb, pg);
-
+  pg     = MFS_JRNL(sb).jrnlarr_pg;
+  pgoff  = MFS_JRNL(sb).jrnlarr_pgoff;
+  blk    = MFS_PG2BLK(sb, pg);
   pgoff += blk_idx * 4;
 
   if (pgoff > MFS_PGSZ(sb))
@@ -644,11 +571,11 @@ int mfs_jrnl_updatedinfo(FAR const struct mfs_sb_s * const sb,
                          FAR struct mfs_path_s * const path,
                          const mfs_t depth)
 {
-  int                   ret         = OK;
-  mfs_t                 blkidx;
-  mfs_t                 counter     = 0;
-  mfs_t                 pg_in_block;
-  struct jrnl_log_s     tmplog;
+  int               ret         = OK;
+  mfs_t             blkidx;
+  mfs_t             counter     = 0;
+  mfs_t             pg_in_block;
+  struct mfs_jrnl_log_s tmplog;
 
   /* TODO: Allow optional filling of updated timestamps, etc. */
 
@@ -659,7 +586,7 @@ int mfs_jrnl_updatedinfo(FAR const struct mfs_sb_s * const sb,
 
   while (blkidx < MFS_JRNL(sb).n_blks && counter < MFS_JRNL(sb).n_logs)
     {
-      ret = jrnl_rdlog(sb, &blkidx, &pg_in_block, &tmplog);
+      ret = mfs_jrnl_rdlog(sb, &blkidx, &pg_in_block, &tmplog);
       if (predict_false(ret < 0 && ret != -ENOSPC))
         {
           goto errout;
@@ -687,7 +614,7 @@ int mfs_jrnl_updatedinfo(FAR const struct mfs_sb_s * const sb,
             }
         }
 
-      jrnl_log_free(&tmplog);
+      mfs_jrnl_log_free(&tmplog);
       counter++;
     }
 
@@ -699,18 +626,14 @@ int mfs_jrnl_wrlog(FAR struct mfs_sb_s * const sb,
                    FAR const struct mfs_node_s *node,
                    const struct mfs_ctz_s loc_new, const mfs_t sz_new)
 {
-  int                ret      = OK;
-  mfs_t              i;
-  mfs_t              n_pgs;
-  mfs_t              wr_sz;
-  mfs_t              jrnl_pg;
-  mfs_t              jrnl_blk;
-  FAR char          *buf      = NULL;
-  FAR char          *tmp      = NULL;
-  const mfs_t        log_sz   = sizeof(mfs_t) + MFS_LOGSZ(node->depth);
-  struct jrnl_log_s  log;
+  int                    ret      = OK;
+  mfs_t                  jrnl_pg;
+  FAR char              *buf      = NULL;
+  FAR char              *tmp      = NULL;
+  const mfs_t            log_sz   = sizeof(mfs_t) + MFS_LOGSZ(node->depth);
+  struct mfs_jrnl_log_s  log;
 
-  buf = kmm_zalloc(log_sz); /* For size before log. */
+  buf = fs_heap_zalloc(log_sz); /* For size before log. */
   if (predict_false(buf == NULL))
     {
       ret = -ENOMEM;
@@ -733,75 +656,30 @@ int mfs_jrnl_wrlog(FAR struct mfs_sb_s * const sb,
 
   /* Store */
 
-  n_pgs    = MFS_CEILDIVIDE(log_sz, MFS_PGSZ(sb));
-  jrnl_blk = mfs_jrnl_blkidx2blk(sb, MFS_JRNL(sb).log_cblkidx);
   jrnl_pg  = MFS_JRNL(sb).log_cpg;
-  tmp      = buf;
-  wr_sz    = 0;
-  for (i = 0; i < n_pgs && wr_sz < log_sz; i++)
+
+  /* TODO: It assumes it takes only one page per log. */
+
+  ret = mfs_write_page(sb, buf, log_sz, jrnl_pg, 0);
+  if (predict_false(ret < 0))
     {
-      /* This if-statement exists to remove calculation behind
-       * MIN(MFS_PGSZ(sb), log_sz - wr_sz)
-       */
-
-      if (i == 0 && i == n_pgs - 1)
-        {
-          ret = mfs_write_page(sb, tmp, log_sz, jrnl_pg, 0);
-          wr_sz += log_sz;
-          tmp   += log_sz;
-        }
-      else if (i == 0)
-        {
-          ret = mfs_write_page(sb, tmp, MFS_PGSZ(sb), jrnl_pg, 0);
-          wr_sz += MFS_PGSZ(sb);
-          tmp   += MFS_PGSZ(sb);
-        }
-      else if (i == n_pgs - 1)
-        {
-          ret = mfs_write_page(sb, tmp, log_sz - wr_sz, jrnl_pg, 0);
-          wr_sz += MFS_PGSZ(sb);
-          tmp   += MFS_PGSZ(sb);
-        }
-      else
-        {
-          ret = mfs_write_page(sb, tmp, MFS_PGSZ(sb), jrnl_pg, 0);
-          wr_sz += MFS_PGSZ(sb);
-          tmp   += MFS_PGSZ(sb);
-        }
-
-      if (predict_false(ret == 0))
-        {
-          ret = -EINVAL;
-          goto errout_with_buf;
-        }
-
-      /* Move to next block if needed. */
-
-      jrnl_pg++;
-      if (jrnl_pg - MFS_BLK2PG(sb, jrnl_blk) == MFS_PGINBLK(sb))
-        {
-          MFS_JRNL(sb).log_cblkidx++;
-
-          if (MFS_JRNL(sb).log_cblkidx == MFS_JRNL(sb).n_blks)
-            {
-              /* Not finished reading log yet, and the journal is over. */
-
-              ret = -ENOSPC;
-              goto errout_with_buf;
-            }
-
-          jrnl_blk = mfs_jrnl_blkidx2blk(sb, MFS_JRNL(sb).log_cblkidx);
-          jrnl_pg  = MFS_BLK2PG(sb, jrnl_blk);
-        }
+      goto errout_with_buf;
     }
 
-  /* MFS_JRNL(sb).log_cblkidx is up to date */
+  ret = OK;
+
+  jrnl_pg++;
+
+  if (jrnl_pg % MFS_PGINBLK(sb) == 0)
+    {
+      MFS_JRNL(sb).log_cblkidx++;
+    }
 
   MFS_JRNL(sb).log_cpg = jrnl_pg;
   MFS_JRNL(sb).n_logs++;
 
 errout_with_buf:
-  kmm_free(buf);
+  fs_heap_free(buf);
 
 errout:
   return ret;
@@ -852,15 +730,15 @@ int mfs_jrnl_flush(FAR struct mfs_sb_s * const sb)
   mfs_t                    i;
   mfs_t                    jrnl_blk;
   mfs_t                    blk;
-  struct jrnl_log_s        log;
-  struct jrnl_log_s        tmp_log;
+  struct mfs_jrnl_log_s    log;
+  struct mfs_jrnl_log_s    tmp_log;
   FAR struct mfs_path_s   *path          = NULL;
   struct mfs_jrnl_state_s  j_state;
   struct mfs_mn_s          mn_state;
 
   while (log_itr < MFS_JRNL(sb).n_logs)
     {
-      ret = jrnl_rdlog(sb, &blkidx, &pg_in_blk, &log);
+      ret = mfs_jrnl_rdlog(sb, &blkidx, &pg_in_blk, &log);
       if (predict_false(ret < 0))
         {
           DEBUGASSERT(ret != -ENOSPC); /* While condition is sufficient. */
@@ -877,7 +755,7 @@ int mfs_jrnl_flush(FAR struct mfs_sb_s * const sb)
       tmp_blkidx    = blkidx;
       tmp_pg_in_blk = pg_in_blk;
 
-      path = kmm_zalloc(log.depth * sizeof(struct mfs_path_s));
+      path = fs_heap_zalloc(log.depth * sizeof(struct mfs_path_s));
       if (predict_false(path == NULL))
         {
           goto errout;
@@ -888,27 +766,28 @@ int mfs_jrnl_flush(FAR struct mfs_sb_s * const sb)
 
       for (; ; )
         {
-          ret = jrnl_rdlog(sb, &tmp_blkidx, &tmp_pg_in_blk, &tmp_log);
+          ret = mfs_jrnl_rdlog(sb, &tmp_blkidx, &tmp_pg_in_blk, &tmp_log);
           if (ret == -ENOSPC)
             {
               break;
             }
           else if (predict_false(ret < 0))
             {
-              jrnl_log_free(&log);
+              mfs_jrnl_log_free(&log);
+              mfs_free_patharr(path);
               goto errout;
             }
 
           if (tmp_log.depth > log.depth)
             {
-              jrnl_log_free(&tmp_log);
+              mfs_jrnl_log_free(&tmp_log);
               continue;
             }
 
           if (!mfs_path_eq(&path[tmp_log.depth - 1],
                           &tmp_log.path[tmp_log.depth - 1]))
             {
-              jrnl_log_free(&tmp_log);
+              mfs_jrnl_log_free(&tmp_log);
               continue;
             }
 
@@ -937,13 +816,13 @@ int mfs_jrnl_flush(FAR struct mfs_sb_s * const sb)
           if (predict_false(ret < 0))
             {
               mfs_free_patharr(path);
-              jrnl_log_free(&log);
+              mfs_jrnl_log_free(&log);
               goto errout;
             }
         }
 
       mfs_free_patharr(path);
-      jrnl_log_free(&log);
+      mfs_jrnl_log_free(&log);
     }
 
   if (MFS_MN(sb).mblk_idx == MFS_PGINBLK(sb))

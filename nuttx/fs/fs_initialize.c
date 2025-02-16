@@ -1,6 +1,8 @@
 /****************************************************************************
  * fs/fs_initialize.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -31,6 +33,7 @@
 #include "inode/inode.h"
 #include "aio/aio.h"
 #include "vfs/lock.h"
+#include "fs_heap.h"
 
 /****************************************************************************
  * Private Functions
@@ -80,6 +83,8 @@ static struct notifier_block g_sync_nb =
 void fs_initialize(void)
 {
   fs_trace_begin();
+
+  fs_heap_initialize();
 
   /* Initial inode, file, and VFS data structures */
 

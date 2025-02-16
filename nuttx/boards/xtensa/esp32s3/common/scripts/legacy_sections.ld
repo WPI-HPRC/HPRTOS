@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/xtensa/esp32s3/common/scripts/legacy_sections.ld
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -90,9 +92,7 @@ SECTIONS
     *libarch.a:*esp_rom_spiflash.*(.literal .text .literal.* .text.*)
     *libarch.a:*esp_rom_cache_esp32s2_esp32s3.*(.literal .text .literal.* .text.*)
 
-#ifdef CONFIG_ESP32S3_BLE
     *libc.a:sq_remlast.*(.literal .text .literal.* .text.*)
-#endif
 
     *libdrivers.a:syslog_flush.*(.literal .text .literal.* .text.*)
 
@@ -104,6 +104,7 @@ SECTIONS
     *libsched.a:sched_suspendscheduler.*(.literal .text .literal.* .text.*)
     *libsched.a:sched_thistask.*(.literal .text .literal.* .text.*)
     *libsched.a:spinlock.*(.literal .text .literal.* .text.*)
+    *libsched.a:stack_record.*(.literal .text .literal.* .text.*)
 
     *libc.a:*lib_instrument.*(.literal .text .literal.* .text.*)
 
@@ -386,10 +387,20 @@ SECTIONS
     _iram_end = ABSOLUTE(.);
   } >iram0_0_seg
 
+  /* RTC BSS section. */
+
+  .rtc.bss (NOLOAD) :
+  {
+    *(.rtc.bss)
+  } >rtc_slow_seg
+
   .rtc.data :
   {
+    . = ALIGN(4);
     *(.rtc.data)
+    *(.rtc.data.*)
     *(.rtc.rodata)
+    *(.rtc.rodata.*)
 
    /* Whatever is left from the RTC memory is used as a special heap. */
 

@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/arm/stm32/common/src/stm32_bmp180.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -92,7 +94,7 @@ int board_bmp180_initialize(int devno, int busno)
 
   /* Then register the barometer sensor */
 
-  snprintf(devpath, 12, "/dev/press%d", devno);
+  snprintf(devpath, sizeof(devpath), "/dev/press%d", devno);
   ret = bmp180_register(devpath, i2c);
   if (ret < 0)
     {

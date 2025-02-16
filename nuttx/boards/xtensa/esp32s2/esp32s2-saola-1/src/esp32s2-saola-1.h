@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/xtensa/esp32s2/esp32s2-saola-1/src/esp32s2-saola-1.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -102,7 +104,7 @@ int esp32s2_bringup(void);
  *
  ****************************************************************************/
 
-#ifdef CONFIG_ESP32S2_SPIFLASH
+#ifdef CONFIG_ESPRESSIF_SPIFLASH
 int board_spiflash_init(void);
 #endif
 

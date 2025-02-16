@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm64/src/common/arm64_smp.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -58,7 +60,7 @@
  *
  * Input Parameters:
  *   cpu - The CPU index.  This is the same value that would be obtained by
- *      calling up_cpu_index();
+ *      calling this_cpu();
  *
  * Returned Value:
  *   Does not return.

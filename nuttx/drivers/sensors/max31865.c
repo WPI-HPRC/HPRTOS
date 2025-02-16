@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/sensors/max31865.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -255,7 +257,7 @@ static ssize_t max31865_read(FAR struct file *filep, FAR char *buffer,
   temp = (-RTD_A + sqrt(RTD_A * RTD_A - 4 * RTD_B * (1 - rt / 100.0))) \
           / (2 * RTD_B);
 
-  *(float *)buffer = temp;
+  *(FAR float *)buffer = temp;
 
   sninfo("MAX31865 ADC: %d, RTD: %.2f, temperature: %.1f\n", \
         regmsb, rt, temp);

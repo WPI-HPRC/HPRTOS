@@ -1,8 +1,9 @@
 /******************************************************************************
  * drivers/wireless/spirit/lib/spirit_radio.c
  *
- *   Copyright(c) 2015 STMicroelectronics
- *   Author: VMA division - AMS
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-FileCopyrightText: Copyright(c) 2015 STMicroelectronics
+ * SPDX-FileContributor: Author: VMA division - AMS
  *   Version 3.2.2 08-July-2015
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1239,7 +1240,7 @@ int32_t spirit_radio_get_foffset(FAR struct spirit_library_s *spirit)
       offtmp &= 0x0fff;
     }
 
-  fcoffset = *((int16_t *)(&offtmp));
+  fcoffset = *((FAR int16_t *)(&offtmp));
 
   /* Calculates the frequency offset and return it */
 

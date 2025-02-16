@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/lpc214x/lpc214x_usbdev.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -1035,7 +1037,7 @@ static int lpc214x_wrrequest(struct lpc214x_ep_s *privep)
       return OK;
     }
 
-  uinfo("epphy=%d req=%p: len=%d xfrd=%d nullpkt=%d\n",
+  uinfo("epphy=%d req=%p: len=%zu xfrd=%zu nullpkt=%d\n",
         privep->epphy, privreq, privreq->req.len, privreq->req.xfrd,
         privep->txnullpkt);
 
@@ -1145,7 +1147,7 @@ static int lpc214x_rdrequest(struct lpc214x_ep_s *privep)
       return OK;
     }
 
-  uinfo("len=%d xfrd=%d nullpkt=%d\n",
+  uinfo("len=%zu xfrd=%zu nullpkt=%d\n",
         privreq->req.len, privreq->req.xfrd, privep->txnullpkt);
 
   /* Ignore any attempt to receive a zero length packet */

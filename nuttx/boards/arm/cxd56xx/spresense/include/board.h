@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/arm/cxd56xx/spresense/include/board.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -135,7 +137,7 @@
 #define LED_CPU1                (101)
 #define LED_CPU2                (102)
 #define LED_CPU3                (103)
-#define LED_CPU                 (LED_CPU0 + up_cpu_index())
+#define LED_CPU                 (LED_CPU0 + this_cpu())
 #endif
 
 /* Buttons definitions ******************************************************/

@@ -1,6 +1,7 @@
 /****************************************************************************
  * net/icmpv6/icmpv6_input.c
- * Handling incoming ICMPv6 input
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -556,7 +557,10 @@ void icmpv6_input(FAR struct net_driver_s *dev, unsigned int iplen)
         net_ipv6addr_copy(ipv6->srcipaddr, srcaddr);
 
         icmpv6->chksum = 0;
+
+#ifdef CONFIG_NET_ICMPv6_CHECKSUMS
         icmpv6->chksum = ~icmpv6_chksum(dev, iplen);
+#endif
       }
       break;
 

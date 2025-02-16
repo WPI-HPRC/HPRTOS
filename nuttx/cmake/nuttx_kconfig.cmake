@@ -1,6 +1,8 @@
 # ##############################################################################
 # cmake/nuttx_kconfig.cmake
 #
+# SPDX-License-Identifier: Apache-2.0
+#
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements.  See the NOTICE file distributed with this work for
 # additional information regarding copyright ownership.  The ASF licenses this
@@ -134,25 +136,75 @@ function(nuttx_generate_kconfig)
     file(WRITE ${KCONFIG_OUTPUT_FILE} "menu \"${MENUDESC}\"\n")
   else()
     set(KCONFIG_OUTPUT_FILE ${NUTTX_APPS_BINDIR}/Kconfig)
-    file(
-      GLOB subdir
-      LIST_DIRECTORIES false
-      ${NUTTX_APPS_BINDIR} ${NUTTX_APPS_BINDIR}/*_Kconfig)
-    foreach(dir ${subdir})
-      file(APPEND ${KCONFIG_OUTPUT_FILE} "source \"${dir}\"\n")
-    endforeach()
   endif()
 
   file(
-    GLOB subdir
+    GLOB SUB_CMAKESCRIPTS
     LIST_DIRECTORIES false
-    ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/*/Kconfig)
+    ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/*/CMakeLists.txt)
 
-  foreach(dir ${subdir})
-    file(APPEND ${KCONFIG_OUTPUT_FILE} "source \"${dir}\"\n")
+  # we need to recursively generate the Kconfig menus of multi-level
+  # directories.
+  #
+  # when generating a Kconfig file for the current directory, it should include
+  # and invoke all the Kconfig files gathered from its subdirectories.
+  foreach(SUB_CMAKESCRIPT ${SUB_CMAKESCRIPTS})
+    string(REPLACE "CMakeLists.txt" "Kconfig" SUB_KCONFIG ${SUB_CMAKESCRIPT})
+    string(REPLACE "/" "_" MENUCONFIG ${SUB_KCONFIG})
+    if(WIN32)
+      string(REPLACE ":" "_" MENUCONFIG ${MENUCONFIG})
+    endif()
+    # check whether the subdirectory will include a generated Kconfig file.
+    if(EXISTS ${NUTTX_APPS_BINDIR}/${MENUCONFIG})
+      file(APPEND ${KCONFIG_OUTPUT_FILE}
+           "source \"${NUTTX_APPS_BINDIR}/${MENUCONFIG}\"\n")
+    elseif(EXISTS ${SUB_KCONFIG})
+      file(APPEND ${KCONFIG_OUTPUT_FILE} "source \"${SUB_KCONFIG}\"\n")
+    endif()
   endforeach()
 
   if(MENUDESC)
     file(APPEND ${KCONFIG_OUTPUT_FILE} "endmenu # ${MENUDESC}\n")
+  endif()
+endfunction()
+
+function(nuttx_olddefconfig)
+  execute_process(
+    COMMAND olddefconfig
+    ERROR_VARIABLE KCONFIG_ERROR
+    OUTPUT_VARIABLE KCONFIG_OUTPUT
+    RESULT_VARIABLE KCONFIG_STATUS
+    WORKING_DIRECTORY ${NUTTX_DIR})
+
+  if(KCONFIG_ERROR)
+    message(WARNING "Kconfig Configuration Error: ${KCONFIG_ERROR}")
+  endif()
+
+  if(KCONFIG_STATUS AND NOT KCONFIG_STATUS EQUAL 0)
+    message(
+      FATAL_ERROR
+        "nuttx_olddefconfig: Failed to initialize Kconfig configuration: ${KCONFIG_OUTPUT}"
+    )
+  endif()
+endfunction()
+
+function(nuttx_setconfig)
+  set(ENV{KCONFIG_CONFIG} ${CMAKE_BINARY_DIR}/.config)
+  execute_process(
+    COMMAND setconfig ${ARGN} --kconfig ${NUTTX_DIR}/Kconfig
+    ERROR_VARIABLE KCONFIG_ERROR
+    OUTPUT_VARIABLE KCONFIG_OUTPUT
+    RESULT_VARIABLE KCONFIG_STATUS
+    WORKING_DIRECTORY ${NUTTX_DIR})
+
+  if(KCONFIG_ERROR)
+    message(WARNING "Kconfig Configuration Error: ${KCONFIG_ERROR}")
+  endif()
+
+  if(KCONFIG_STATUS AND NOT KCONFIG_STATUS EQUAL 0)
+    message(
+      FATAL_ERROR
+        "nuttx_setconfig: Failed to initialize Kconfig configuration: ${KCONFIG_OUTPUT}"
+    )
   endif()
 endfunction()

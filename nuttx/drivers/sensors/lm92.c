@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/sensors/lm92.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -452,7 +454,7 @@ static int lm92_ioctl(FAR struct file *filep, int cmd, unsigned long arg)
 
       case SNIOC_WRITECONF:
         ret = lm92_writeconf(priv, (uint8_t)arg);
-        sninfo("conf: %02x ret: %d\n", *(uint8_t *)arg, ret);
+        sninfo("conf: %02x ret: %d\n", *(FAR uint8_t *)arg, ret);
         break;
 
       /* Shutdown the LM92.  Arg:  None */

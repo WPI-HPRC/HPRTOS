@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/at32/at32_adc.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -97,7 +99,7 @@
 
 /* RCC reset ****************************************************************/
 
-#define AT32_RCC_RSTR       AT32_CRM_APB2RST   
+#define AT32_RCC_RSTR       AT32_CRM_APB2RST
 #define RCC_RSTR_ADC123RST  CRM_APB2RST_ADCRST
 
 /* ADC Channels/DMA *********************************************************/
@@ -142,7 +144,7 @@
 /* Number of channels per ADC:
  */
 
-#if defined(CONFIG_AT32_AT32F43XX) 
+#if defined(CONFIG_AT32_AT32F43XX)
 #  define ADC_CHANNELS_NUMBER 19
 #else
 #  error "Not supported"

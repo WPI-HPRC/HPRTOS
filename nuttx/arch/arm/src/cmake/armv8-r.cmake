@@ -1,6 +1,8 @@
 # ##############################################################################
 # arch/arm/src/cmake/armv8-r.cmake
 #
+# SPDX-License-Identifier: Apache-2.0
+#
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements.  See the NOTICE file distributed with this work for
 # additional information regarding copyright ownership.  The ASF licenses this
@@ -25,7 +27,12 @@ if(CONFIG_ARCH_CORTEXR52)
 endif()
 
 if(CONFIG_ARCH_FPU)
-  list(APPEND PLATFORM_FLAGS -mfpu=vfpv3-d16)
+
+  if(CONFIG_ARM_NEON)
+    list(APPEND PLATFORM_FLAGS -mfpu=neon-fp-armv8)
+  else()
+    list(APPEND PLATFORM_FLAGS -mfpu=fp-armv8)
+  endif()
   if(CONFIG_ARM_FPU_ABI_SOFT)
     list(APPEND PLATFORM_FLAGS -mfloat-abi=softfp)
   else()

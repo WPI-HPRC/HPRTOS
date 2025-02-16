@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm64/src/goldfish/goldfish_boot.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -169,6 +171,10 @@ void arm64_chip_boot(void)
    */
 
   arm64_earlyserialinit();
+#endif
+
+#ifdef CONFIG_ARCH_PERF_EVENTS
+  up_perf_init((void *)CONFIG_SYS_CLOCK_HW_CYCLES_PER_SEC);
 #endif
 }
 

@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm64/src/imx9/imx9_ccm.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -555,6 +557,26 @@ int imx9_ccm_clock_init(void)
     {
       return ret;
     }
+
+  /* ENET to 125MHz */
+
+  imx9_ccm_gate_on(CCM_LPCG_ENET1, false);
+
+  ret = imx9_ccm_configure_root_clock(CCM_ENET_REF_CLK_ROOT,
+                                      SYS_PLL1PFD0DIV2, 2);
+  if (ret != 0)
+    {
+      return ret;
+    }
+
+  ret = imx9_ccm_configure_root_clock(CCM_ENET_TIMER_CLK_ROOT,
+                                      SYS_PLL1PFD0DIV2, 5);
+  if (ret != 0)
+    {
+      return ret;
+    }
+
+  imx9_ccm_gate_on(CCM_LPCG_ENET1, true);
 
   return OK;
 }

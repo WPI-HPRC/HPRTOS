@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/mtd/mtd_partition.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -909,8 +911,11 @@ FAR struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
 #ifdef CONFIG_MTD_BYTE_WRITE
   part->child.write   = mtd->write ? part_write : NULL;
 #endif
+#ifdef CONFIG_MTD_PARTITION_NAMES
+  part->child.name    = part->name;
+#else
   part->child.name    = "part";
-
+#endif
   part->parent        = mtd;
   part->firstblock    = erasestart * part->blkpererase;
   part->geo.neraseblocks = eraseend - erasestart;

@@ -1,6 +1,8 @@
 /********************************************************************************
  * tools/nxstyle.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -202,6 +204,7 @@ static const char *g_white_prefix[] =
   "b8",      /* Ref:  include/fixedmath.h */
   "b16",     /* Ref:  include/fixedmath.h */
   "b32",     /* Ref:  include/fixedmath.h */
+  "cJSON",   /* Ref:  apps/wireless/wapi/src */
   "ub8",     /* Ref:  include/fixedmath.h */
   "ub16",    /* Ref:  include/fixedmath.h */
   "ub32",    /* Ref:  include/fixedmath.h */
@@ -225,6 +228,16 @@ static const char *g_white_suffix[] =
 
 static const char *g_white_content_list[] =
 {
+  /* Ref:
+   * nuttx-apps/examples/wamr_module/module_hello.c
+   * nuttx-apps/interpreters/wamr/wamr_custom_init.c
+   *
+   * They are from the WAMR project.
+   */
+
+  "NativeSymbol",
+  "RuntimeInitArgs",
+
   /* Ref:  gnu_unwind_find_exidx.c */
 
   "__EIT_entry",
@@ -292,12 +305,19 @@ static const char *g_white_content_list[] =
    * drivers/segger/note_sysview.c
    */
 
-  "SEGGER_SYSVIEW",
-  "TaskID",
-  "sName",
+  "DataType",
+  "Offset",
   "Prio",
+  "pU32_Value",
+  "RangeMax",
+  "RangeMin",
+  "SEGGER_SYSVIEW",
+  "ScalingFactor",
+  "sName",
+  "sUnit",
   "StackBase",
   "StackSize",
+  "TaskID",
 
   /* Ref:
    * drivers/segger/syslog_rtt.c
@@ -347,6 +367,8 @@ static const char *g_white_content_list[] =
   "__asan_storeN",
   "__asan_loadN_noabort",
   "__asan_storeN_noabort",
+  "__hwasan_loadN_noabort",
+  "__hwasan_storeN_noabort",
 
   /* Ref:
    * tools/jlink-nuttx.c
@@ -620,6 +642,19 @@ static const char *g_white_files[] =
 
   "arm-acle-compat.h",
   "arm_asm.h",
+
+  /* Skip Mixed case
+   * Ref:
+   * libs/libbuiltin/
+   */
+
+  "InstrProfilingPlatform.c",
+
+  /* Skip Mixed case
+   * arch/arm/src/phy62xx/uart.c:1229:13: error: Mixed case identifier found
+   */
+
+  "phy62xx/uart.c",
   NULL
 };
 
@@ -1225,6 +1260,7 @@ int main(int argc, char **argv, char **envp)
   bswitch        = false;       /* True: Within a switch statement */
   bstring        = false;       /* True: Within a string */
   bexternc       = false;       /* True: Within 'extern "C"' */
+  bif            = false;       /* True: This line is beginning of a 'if' statement */
   ppline         = PPLINE_NONE; /* > 0: The next line the continuation of a
                                  * pre-processor command */
   rhcomment      = 0;           /* Indentation of Comment to the right of code
@@ -1258,7 +1294,6 @@ int main(int argc, char **argv, char **envp)
       bstatm       = false;    /* True: This line is beginning of a
                                 * statement */
       bfor         = false;    /* REVISIT: Implies for() is all on one line */
-      bif          = false;    /* True: This line is beginning of a 'if' statement */
 
       /* If we are not in a comment, then this certainly is not a right-hand
        * comment.
@@ -2260,6 +2295,13 @@ int main(int argc, char **argv, char **envp)
                         }
                     }
 
+                  /* Allow comments on the same line as the if statement */
+
+                  if (bif == true)
+                    {
+                      bif = false;
+                    }
+
                   n++;
                   continue;
                 }
@@ -2630,9 +2672,11 @@ int main(int argc, char **argv, char **envp)
                         ERROR("Space precedes right parenthesis", lineno, n);
                       }
 
-                    if (bif == true && pnest == 0 && line[n + 1] != '\n')
+                    /* Unset bif if last parenthesis is closed */
+
+                    if (bif == true && pnest == 0)
                       {
-                        ERROR("If statement followed by garbage", lineno, n);
+                        bif = false;
                       }
                   }
                   break;
@@ -3105,7 +3149,16 @@ int main(int argc, char **argv, char **envp)
           if (m > 1 && isspace((int)line[m - 1]) &&
               line[m - 1] != '\n' && line[m - 1] != '\r')
             {
-               ERROR("Dangling whitespace at the end of line", lineno, m);
+              /* Report warning on if statement only is pnest is 0
+               * This takes into consideration the multiline if statement.
+               */
+
+              if (bif == true && pnest == 0)
+                {
+                  WARN("If statement followed by garbage", lineno, n);
+                }
+
+              ERROR("Dangling whitespace at the end of line", lineno, m);
             }
 
           /* The line width is determined by the location of the final

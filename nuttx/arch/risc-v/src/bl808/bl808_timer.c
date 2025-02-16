@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/risc-v/src/bl808/bl808_timer.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -80,18 +82,18 @@ struct bl808_timer_ch_s
  * Private Function Prototypes
  ****************************************************************************/
 
-int bl808_timer_start(FAR struct timer_lowerhalf_s *lower);
-int bl808_timer_stop(FAR struct timer_lowerhalf_s *lower);
-int bl808_timer_getstatus(FAR struct timer_lowerhalf_s *lower,
-                          FAR struct timer_status_s *status);
-int bl808_timer_settimeout(FAR struct timer_lowerhalf_s *lower,
+int bl808_timer_start(struct timer_lowerhalf_s *lower);
+int bl808_timer_stop(struct timer_lowerhalf_s *lower);
+int bl808_timer_getstatus(struct timer_lowerhalf_s *lower,
+                          struct timer_status_s *status);
+int bl808_timer_settimeout(struct timer_lowerhalf_s *lower,
                            uint32_t timeout);
-void bl808_timer_setcallback(FAR struct timer_lowerhalf_s *lower,
-                            CODE tccb_t callback, FAR void *arg);
-int bl808_timer_ioctl(FAR struct timer_lowerhalf_s *lower,
+void bl808_timer_setcallback(struct timer_lowerhalf_s *lower,
+                            tccb_t callback, void *arg);
+int bl808_timer_ioctl(struct timer_lowerhalf_s *lower,
                       int cmd, unsigned long arg);
-int bl808_timer_maxtimeout(FAR struct timer_lowerhalf_s *lower,
-                           FAR uint32_t *maxtimeout);
+int bl808_timer_maxtimeout(struct timer_lowerhalf_s *lower,
+                           uint32_t *maxtimeout);
 
 /****************************************************************************
  * Private Data
@@ -215,7 +217,7 @@ static int __timer_interrupt(int irq, void *context, void *arg)
  *
  ****************************************************************************/
 
-int bl808_timer_start(FAR struct timer_lowerhalf_s *lower)
+int bl808_timer_start(struct timer_lowerhalf_s *lower)
 {
   struct bl808_timer_ch_s *priv = (struct bl808_timer_ch_s *)lower;
   if (TIMER_GET_CH(priv->blk_ch) == 0)
@@ -269,7 +271,7 @@ int bl808_timer_start(FAR struct timer_lowerhalf_s *lower)
  *
  ****************************************************************************/
 
-int bl808_timer_stop(FAR struct timer_lowerhalf_s *lower)
+int bl808_timer_stop(struct timer_lowerhalf_s *lower)
 {
   struct bl808_timer_ch_s *priv = (struct bl808_timer_ch_s *)lower;
 
@@ -304,8 +306,8 @@ int bl808_timer_stop(FAR struct timer_lowerhalf_s *lower)
  *
  ****************************************************************************/
 
-int bl808_timer_getstatus(FAR struct timer_lowerhalf_s *lower,
-                          FAR struct timer_status_s *status)
+int bl808_timer_getstatus(struct timer_lowerhalf_s *lower,
+                          struct timer_status_s *status)
 {
   struct bl808_timer_ch_s *priv = (struct bl808_timer_ch_s *)lower;
   uint32_t current_count;
@@ -338,7 +340,7 @@ int bl808_timer_getstatus(FAR struct timer_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-int bl808_timer_settimeout(FAR struct timer_lowerhalf_s *lower,
+int bl808_timer_settimeout(struct timer_lowerhalf_s *lower,
                            uint32_t timeout)
 {
   struct bl808_timer_ch_s *priv = (struct bl808_timer_ch_s *)lower;
@@ -408,8 +410,8 @@ int bl808_timer_settimeout(FAR struct timer_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-void bl808_timer_setcallback(FAR struct timer_lowerhalf_s *lower,
-                            CODE tccb_t callback, FAR void *arg)
+void bl808_timer_setcallback(struct timer_lowerhalf_s *lower,
+                             tccb_t callback, void *arg)
 {
   struct bl808_timer_ch_s *priv = (struct bl808_timer_ch_s *)lower;
   priv->callback = callback;
@@ -424,7 +426,7 @@ void bl808_timer_setcallback(FAR struct timer_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-int bl808_timer_ioctl(FAR struct timer_lowerhalf_s *lower,
+int bl808_timer_ioctl(struct timer_lowerhalf_s *lower,
                       int cmd, unsigned long arg)
 {
   /* No additional ioctl commands implemented */
@@ -441,8 +443,8 @@ int bl808_timer_ioctl(FAR struct timer_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-int bl808_timer_maxtimeout(FAR struct timer_lowerhalf_s *lower,
-                           FAR uint32_t *maxtimeout)
+int bl808_timer_maxtimeout(struct timer_lowerhalf_s *lower,
+                           uint32_t *maxtimeout)
 {
   /* Timer comparators are 32-bit */
 

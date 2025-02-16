@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/ioexpander/icjx.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -948,6 +950,12 @@ static void icjx_interrupt_worker(void *arg)
   ioe_pinset_t irq_match;
   int ret;
 
+  /* Disable interrupts. All newly incoming interrupts are handled in
+   * a while loop if there is something to handle.
+   */
+
+  priv->config->enable(priv->config, false);
+
   /* Read interrupt status register */
 
   icjx_read(priv, ICJX_INT_STATUS_A, &isr, ICJX_NOB2);
@@ -975,6 +983,10 @@ static void icjx_interrupt_worker(void *arg)
       icjx_write(priv, ICJX_CTRL_WORD_4, ICJX_CTRL_WORD_4_EOI, ICJX_NOB1);
       icjx_read(priv, ICJX_INT_STATUS_A, &isr, ICJX_NOB2);
     }
+
+  /* And enable interrupts again. */
+
+  priv->config->enable(priv->config, true);
 }
 
 /****************************************************************************
@@ -996,7 +1008,7 @@ static int icjx_interrupt(int irq, FAR void *context, FAR void *arg)
 
   DEBUGASSERT(work_available(&priv->work));
   DEBUGVERIFY(work_queue(HPWORK, &priv->work, icjx_interrupt_worker,
-                        (void *)priv, 0));
+                         (FAR void *)priv, 0));
 
   return OK;
 }

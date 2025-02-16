@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/armv7-a/arm_addrenv_shm.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -37,6 +39,7 @@
 #include "mmu.h"
 #include "addrenv.h"
 #include "pgalloc.h"
+#include "sched/sched.h"
 
 #if defined(CONFIG_BUILD_KERNEL) && defined(CONFIG_ARCH_VMA_MAPPING)
 
@@ -65,7 +68,7 @@
 
 int up_shmat(uintptr_t *pages, unsigned int npages, uintptr_t vaddr)
 {
-  struct tcb_s *tcb = nxsched_self();
+  struct tcb_s *tcb = this_task();
   struct arch_addrenv_s *addrenv;
   uintptr_t *l1entry;
   uint32_t *l2table;
@@ -73,9 +76,6 @@ int up_shmat(uintptr_t *pages, unsigned int npages, uintptr_t vaddr)
   uintptr_t paddr;
   unsigned int nmapped;
   unsigned int shmndx;
-
-  shminfo("pages=%p npages=%d vaddr=%08lx\n",
-          pages, npages, (unsigned long)vaddr);
 
   /* Sanity checks */
 
@@ -188,7 +188,7 @@ int up_shmat(uintptr_t *pages, unsigned int npages, uintptr_t vaddr)
 
 int up_shmdt(uintptr_t vaddr, unsigned int npages)
 {
-  struct tcb_s *tcb = nxsched_self();
+  struct tcb_s *tcb = this_task();
   struct arch_addrenv_s *addrenv;
   uintptr_t *l1entry;
   uint32_t *l2table;
@@ -196,8 +196,6 @@ int up_shmdt(uintptr_t vaddr, unsigned int npages)
   uintptr_t paddr;
   unsigned int nunmapped;
   unsigned int shmndx;
-
-  shminfo("npages=%d vaddr=%08lx\n", npages, (unsigned long)vaddr);
 
   /* Sanity checks */
 

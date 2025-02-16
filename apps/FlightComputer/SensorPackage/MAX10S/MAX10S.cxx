@@ -1,13 +1,6 @@
 #include "MAX10S.h"
 
-#include <sys/param.h>
-
-#include <cstring>
-
-MAX10S::MAX10S()
-{
-
-}
+MAX10S::MAX10S() = default;
 
 int MAX10S::init(int i2cBus)
 {
@@ -177,8 +170,7 @@ sfe_ublox_status_e MAX10S::sendCommand(ubxPacket* outgoingPacket, uint16_t maxWa
     return SFE_UBLOX_STATUS_SUCCESS;
 }
 
-char* MAX10S::getNMEA() {
-    uint8_t buffer[128];
+int MAX10S::getNMEA(uint8_t *buffer) {
     int ret;
     int index = 0;
 
@@ -199,12 +191,22 @@ char* MAX10S::getNMEA() {
 
         if(buffer[index-1] == '\n' && buffer[index-2] == '\r') {
             buffer[index] = '\0';
-            printf("%s", buffer);
+//            printf("%s", buffer);
             messageComplete = true;
         }
 
     }
 
-    return reinterpret_cast<char *>(buffer);
+    return (messageComplete & ret);
 
+}
+
+int MAX10S::parseMessage(char *msg, gps_data_t *gpsData) {
+    tinyGps.encode(*msg);
+
+//    printf("%i/%i/%i\n", tinyGps.date.month(), tinyGps.date.day(), tinyGps.date.year());
+//    printf("%i:%i:%i\n", tinyGps.time.hour(), tinyGps.time.minute(), tinyGps.time.second());
+//    printf("Satellites: %li\n", tinyGps.satellites.value());
+
+    return true;
 }

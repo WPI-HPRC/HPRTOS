@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/stm32h7/stm32_fdcan_sock.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -33,7 +35,6 @@
 #include <debug.h>
 #include <errno.h>
 
-#include <nuttx/can.h>
 #include <nuttx/wdog.h>
 #include <nuttx/irq.h>
 #include <nuttx/arch.h>
@@ -41,7 +42,6 @@
 #include <nuttx/signal.h>
 #include <nuttx/net/netdev.h>
 #include <nuttx/net/can.h>
-#include <netpacket/can.h>
 
 #if defined(CONFIG_NET_CAN_RAW_TX_DEADLINE) || defined(CONFIG_NET_TIMESTAMP)
 #include <sys/time.h>
@@ -882,7 +882,7 @@ static int fdcan_transmit(struct fdcan_driver_s *priv)
 
       header.id.esi = (frame->can_id & CAN_ERR_FLAG) ? 1 : 0;
       header.id.rtr = (frame->can_id & CAN_RTR_FLAG) ? 1 : 0;
-      header.dlc = len_to_can_dlc[frame->len];
+      header.dlc = g_len_to_can_dlc[frame->len];
       header.brs = brs; /* Bitrate switching */
       header.fdf = 1;   /* CAN-FD frame */
       header.efc = 0;   /* Don't store Tx events */
@@ -1142,8 +1142,10 @@ static void fdcan_receive_work(void *arg)
       /* Read the frame contents */
 
 #ifdef CONFIG_NET_CAN_CANFD
-      if (rf->header.fdf) /* CAN FD frame */
+      if (rf->header.fdf)
         {
+          /* CAN FD frame */
+
           struct canfd_frame *frame = (struct canfd_frame *)priv->rx_pool;
 
           if (rf->header.id.xtd)
@@ -1161,7 +1163,7 @@ static void fdcan_receive_work(void *arg)
               frame->can_id |= CAN_RTR_FLAG;
             }
 
-          frame->len = can_dlc_to_len[rf->header.dlc];
+          frame->len = g_can_dlc_to_len[rf->header.dlc];
 
           uint32_t *frame_data_word = (uint32_t *)&frame->data[0];
 
@@ -1181,9 +1183,11 @@ static void fdcan_receive_work(void *arg)
           priv->dev.d_len = sizeof(struct canfd_frame);
           priv->dev.d_buf = (uint8_t *)frame;
         }
-      else /* CAN 2.0 Frame */
+      else
 #endif
         {
+          /* CAN 2.0 Frame */
+
           struct can_frame *frame = (struct can_frame *)priv->rx_pool;
 
           if (rf->header.id.xtd)

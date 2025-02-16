@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/sensors/max44009.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -79,7 +81,7 @@ struct max44009_dev_s
   uint8_t addr;
   uint8_t cref;
   bool int_pending;
-  struct pollfd *fds[CONFIG_MAX44009_NPOLLWAITERS];
+  FAR struct pollfd *fds[CONFIG_MAX44009_NPOLLWAITERS];
 };
 
 /****************************************************************************
@@ -168,14 +170,14 @@ static int max44009_write_reg8(FAR struct max44009_dev_s *dev,
       .frequency = CONFIG_MAX44009_I2C_FREQUENCY,
       .addr      = dev->addr,
       .flags     = 0,
-      .buffer    = (void *)&command[0],
+      .buffer    = (FAR void *)&command[0],
       .length    = 1
     },
     {
       .frequency = CONFIG_MAX44009_I2C_FREQUENCY,
       .addr      = dev->addr,
       .flags     = I2C_M_NOSTART,
-      .buffer    = (void *)&command[1],
+      .buffer    = (FAR void *)&command[1],
       .length    = 1
     }
   };
@@ -836,7 +838,7 @@ static int max44009_poll(FAR struct file *filep, FAR struct pollfd *fds,
     {
       /* This is a request to tear down the poll. */
 
-      struct pollfd **slot = (struct pollfd **)fds->priv;
+      FAR struct pollfd **slot = (FAR struct pollfd **)fds->priv;
       DEBUGASSERT(slot != NULL);
 
       /* Remove all memory of the poll setup */

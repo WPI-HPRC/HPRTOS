@@ -1,7 +1,8 @@
 /****************************************************************************
  * crypto/cryptodev.c
- * $OpenBSD: cryptodev.c,v 1.82 2014/08/18 05:11:03 dlg Exp $
- * Copyright (c) 2001 Theo de Raadt
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ * SPDX-FileCopyrightText: Copyright (c) 2001 Theo de Raadt
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
  * Effort sponsored in part by the Defense Advanced Research Projects
  * Agency (DARPA) and Air Force Research Laboratory, Air Force
  * Materiel Command, USAF, under agreement number F30602-01-2-0537.
+ *
  ****************************************************************************/
 
 /****************************************************************************
@@ -36,7 +38,6 @@
 #include <nuttx/config.h>
 
 #include <sys/types.h>
-#include <sys/queue.h>
 #include <stdbool.h>
 #include <string.h>
 #include <poll.h>
@@ -94,7 +95,9 @@ struct csession
 struct fcrypt
 {
   TAILQ_HEAD(csessionlist, csession) csessions;
+  TAILQ_HEAD(cryptkoplist, cryptkop) crpk_ret;
   int sesn;
+  FAR struct pollfd *fds;
 };
 
 /****************************************************************************
@@ -110,7 +113,7 @@ static ssize_t cryptof_write(FAR struct file *filep,
 static int cryptof_ioctl(FAR struct file *filep,
                          int cmd, unsigned long arg);
 static int cryptof_poll(FAR struct file *filep,
-                        struct pollfd *fds, bool setup);
+                        FAR struct pollfd *fds, bool setup);
 static int cryptof_open(FAR struct file *filep);
 static int cryptof_close(FAR struct file *filep);
 
@@ -121,6 +124,23 @@ static ssize_t cryptowrite(FAR struct file *filep,
                            FAR const char *buffer, size_t len);
 static int cryptoclose(FAR struct file *filep);
 static int cryptoioctl(FAR struct file *filep, int cmd, unsigned long arg);
+
+static FAR struct csession *csefind(FAR struct fcrypt *, u_int);
+static int csedelete(FAR struct fcrypt *, FAR struct csession *);
+static FAR struct csession *cseadd(FAR struct fcrypt *,
+                                   FAR struct csession *);
+static FAR struct csession *csecreate(FAR struct fcrypt *, uint64_t,
+                                      caddr_t, uint64_t,
+                                      caddr_t, uint64_t, uint32_t,
+                                      uint32_t, bool, bool);
+static int csefree(FAR struct csession *);
+
+static int cryptodev_op(FAR struct csession *,
+                        FAR struct crypt_op *);
+static int cryptodev_key(FAR struct fcrypt *, FAR struct crypt_kop *);
+static int cryptodevkey_cb(FAR struct cryptkop *);
+static int cryptodev_getkeystatus(FAR struct fcrypt *,
+                                  FAR struct crypt_kop *);
 
 /****************************************************************************
  * Private Data
@@ -154,6 +174,7 @@ static const struct file_operations g_cryptoops =
 
 static struct inode g_cryptoinode =
 {
+  .i_flags = FSNODEFLAG_TYPE_DRIVER,
   .i_crefs = 1,
   .u.i_ops = &g_cryptofops
 };
@@ -161,23 +182,6 @@ static struct inode g_cryptoinode =
 /****************************************************************************
  * Private Functions
  ****************************************************************************/
-
-FAR struct csession *csefind(FAR struct fcrypt *, u_int);
-int csedelete(FAR struct fcrypt *, FAR struct csession *);
-FAR struct csession *cseadd(FAR struct fcrypt *, FAR struct csession *);
-FAR struct csession *csecreate(FAR struct fcrypt *, uint64_t,
-                               caddr_t, uint64_t,
-                               caddr_t, uint64_t, uint32_t,
-                               uint32_t, bool, bool);
-int csefree(FAR struct csession *);
-
-int cryptodev_op(FAR struct csession *,
-                 FAR struct crypt_op *);
-int cryptodev_key(FAR struct crypt_kop *);
-int cryptodev_dokey(FAR struct crypt_kop *kop, FAR struct crparam *kvp);
-
-int cryptodev_cb(FAR struct cryptop *);
-int cryptodevkey_cb(FAR struct cryptkop *);
 
 /* ARGSUSED */
 
@@ -224,6 +228,7 @@ static int cryptof_ioctl(FAR struct file *filep,
             case CRYPTO_BLF_CBC:
             case CRYPTO_CAST_CBC:
             case CRYPTO_AES_CBC:
+            case CRYPTO_AES_CMAC:
             case CRYPTO_AES_CTR:
             case CRYPTO_AES_XTS:
             case CRYPTO_AES_OFB:
@@ -247,6 +252,7 @@ static int cryptof_ioctl(FAR struct file *filep,
             case CRYPTO_SHA2_384_HMAC:
             case CRYPTO_SHA2_512_HMAC:
             case CRYPTO_AES_128_GMAC:
+            case CRYPTO_AES_128_CMAC:
             case CRYPTO_MD5:
             case CRYPTO_POLY1305:
             case CRYPTO_RIPEMD160:
@@ -255,6 +261,7 @@ static int cryptof_ioctl(FAR struct file *filep,
             case CRYPTO_SHA2_256:
             case CRYPTO_SHA2_384:
             case CRYPTO_SHA2_512:
+            case CRYPTO_CRC32:
               thash = true;
               break;
             default:
@@ -362,7 +369,10 @@ bail:
         error = cryptodev_op(cse, cop);
         break;
       case CIOCKEY:
-        error = cryptodev_key((FAR struct crypt_kop *)arg);
+        error = cryptodev_key(fcr, (FAR struct crypt_kop *)arg);
+        break;
+      case CIOCKEYRET:
+        error = cryptodev_getkeystatus(fcr, (FAR struct crypt_kop *)arg);
         break;
       case CIOCASYMFEAT:
         error = crypto_getfeat((FAR int *)arg);
@@ -374,22 +384,14 @@ bail:
   return error;
 }
 
-int cryptodev_op(FAR struct csession *cse,
-                 FAR struct crypt_op *cop)
+static int cryptodev_op(FAR struct csession *cse,
+                        FAR struct crypt_op *cop)
 {
   FAR struct cryptop *crp = NULL;
   FAR struct cryptodesc *crde = NULL;
   FAR struct cryptodesc *crda = NULL;
   int error = OK;
   uint32_t hid;
-
-  if (cse->txform)
-    {
-      if (cop->len == 0)
-        {
-          return -EINVAL;
-        }
-    }
 
   /* number of requests, not logical and */
 
@@ -554,7 +556,7 @@ bail:
   return error;
 }
 
-int cryptodev_key(FAR struct crypt_kop *kop)
+static int cryptodev_key(FAR struct fcrypt *fcr, FAR struct crypt_kop *kop)
 {
   FAR struct cryptkop *krp = NULL;
   int error = -EINVAL;
@@ -574,38 +576,92 @@ int cryptodev_key(FAR struct crypt_kop *kop)
     {
       case CRK_MOD_EXP:
         if (in == 3 && out == 1)
-          break;
+          {
+            break;
+          }
+
         return -EINVAL;
       case CRK_MOD_EXP_CRT:
         if (in == 6 && out == 1)
-          break;
+          {
+            break;
+          }
+
         return -EINVAL;
       case CRK_DSA_SIGN:
         if (in == 5 && out == 2)
-          break;
+          {
+            break;
+          }
+
         return -EINVAL;
       case CRK_DSA_VERIFY:
         if (in == 7 && out == 0)
-          break;
+          {
+            break;
+          }
+
         return -EINVAL;
       case CRK_DH_COMPUTE_KEY:
         if (in == 3 && out == 1)
-          break;
+          {
+            break;
+          }
+
         return -EINVAL;
-      case CRK_RSA_PCKS15_VERIFY:
+      case CRK_DH_MAKE_PUBLIC:
+        if (in == 2 && out == 2)
+          {
+            break;
+          }
+
+        return -EINVAL;
+      case CRK_RSA_PKCS15_VERIFY:
         if (in == 5 && out == 0)
-          break;
+          {
+            break;
+          }
+
+        return -EINVAL;
+      case CRK_ECDSA_SECP256R1_SIGN:
+        if (in == 2 && out == 2)
+          {
+            break;
+          }
+
+        return -EINVAL;
+      case CRK_ECDSA_SECP256R1_VERIFY:
+        if (in == 6 && out == 0)
+          {
+            break;
+          }
+
+        return -EINVAL;
+      case CRK_ECDSA_SECP256R1_GENKEY:
+        if (in == 0 && out == 4)
+          {
+            break;
+          }
+
         return -EINVAL;
       default:
         return -EINVAL;
     }
 
   krp = kmm_zalloc(sizeof *krp);
+  if (krp == NULL)
+    {
+      return -ENOMEM;
+    }
+
   krp->krp_op = kop->crk_op;
-  krp->krp_status = kop->crk_status;
   krp->krp_iparams = kop->crk_iparams;
   krp->krp_oparams = kop->crk_oparams;
   krp->krp_status = 0;
+  krp->krp_flags = kop->crk_flags;
+  krp->krp_reqid = kop->crk_reqid;
+  krp->krp_fcr = fcr;
+  krp->krp_callback = cryptodevkey_cb;
 
   for (i = 0; i < CRK_MAXPARAM; i++)
     {
@@ -679,12 +735,100 @@ fail:
   return error;
 }
 
+static int cryptodevkey_cb(FAR struct cryptkop *krp)
+{
+  TAILQ_INSERT_TAIL(&krp->krp_fcr->crpk_ret, krp, krp_next);
+  if (krp->krp_fcr->fds != NULL)
+    {
+      poll_notify(&krp->krp_fcr->fds, 1, POLLIN);
+    }
+
+  return OK;
+}
+
+static int cryptodev_getkeystatus(struct fcrypt *fcr, struct crypt_kop *ret)
+{
+  FAR struct cryptkop *krp = NULL;
+  int i;
+  int size;
+
+  if (TAILQ_EMPTY(&fcr->crpk_ret))
+    {
+      return -EAGAIN;
+    }
+
+  /* return the result in task list to the upper layer  */
+
+  krp = TAILQ_FIRST(&fcr->crpk_ret);
+  TAILQ_REMOVE(&fcr->crpk_ret, krp, krp_next);
+
+  ret->crk_op = krp->krp_op;
+  ret->crk_status = krp->krp_status;
+  ret->crk_iparams = krp->krp_iparams;
+  ret->crk_oparams = krp->krp_oparams;
+  for (i = 0; i < krp->krp_iparams + krp->krp_oparams; i++)
+    {
+      size = (krp->krp_param[i].crp_nbits + 7) / 8;
+
+      /* copy result into oparams */
+
+      if (i < ret->crk_iparams || size == 0)
+        {
+          continue;
+        }
+
+      memcpy(ret->crk_param[i].crp_p, krp->krp_param[i].crp_p, size);
+    }
+
+  /* free asynchronous result */
+
+  for (i = 0; i < CRK_MAXPARAM; i++)
+    {
+      if (krp->krp_param[i].crp_p)
+        {
+          explicit_bzero(krp->krp_param[i].crp_p,
+              (krp->krp_param[i].crp_nbits + 7) / 8);
+          kmm_free(krp->krp_param[i].crp_p);
+        }
+    }
+
+  kmm_free(krp);
+  return OK;
+}
+
 /* ARGSUSED */
 
 static int cryptof_poll(FAR struct file *filep,
-                        struct pollfd *fds, bool setup)
+                        FAR struct pollfd *fds, bool setup)
 {
-  return 0;
+  FAR struct fcrypt *fcr = filep->f_priv;
+
+  if (fcr == NULL || fds == NULL)
+    {
+      return -EINVAL;
+    }
+
+  if (setup)
+    {
+      if (!TAILQ_EMPTY(&fcr->crpk_ret))
+        {
+          poll_notify(&fds, 1, POLLIN);
+          return OK;
+        }
+
+      if (fcr->fds)
+        {
+          return -EBUSY;
+        }
+
+      fcr->fds = fds;
+    }
+  else
+    {
+      fcr->fds = NULL;
+    }
+
+  return OK;
 }
 
 /* ARGSUSED */
@@ -693,6 +837,8 @@ static int cryptof_close(FAR struct file *filep)
 {
   FAR struct fcrypt *fcr = filep->f_priv;
   FAR struct csession *cse;
+  FAR struct cryptkop *krp;
+  int i;
 
   while ((cse = TAILQ_FIRST(&fcr->csessions)))
     {
@@ -700,9 +846,24 @@ static int cryptof_close(FAR struct file *filep)
       (void)csefree(cse);
     }
 
-    kmm_free(fcr);
-    filep->f_priv = NULL;
+  while ((krp = TAILQ_FIRST(&fcr->crpk_ret)))
+    {
+      TAILQ_REMOVE(&fcr->crpk_ret, krp, krp_next);
+      for (i = 0; i < CRK_MAXPARAM; i++)
+        {
+          if (krp->krp_param[i].crp_p)
+            {
+              explicit_bzero(krp->krp_param[i].crp_p,
+                  (krp->krp_param[i].crp_nbits + 7) / 8);
+              kmm_free(krp->krp_param[i].crp_p);
+            }
+        }
 
+      kmm_free(krp);
+    }
+
+  kmm_free(fcr);
+  filep->f_priv = NULL;
   return 0;
 }
 
@@ -858,8 +1019,14 @@ static int cryptoioctl(FAR struct file *filep, int cmd, unsigned long arg)
   switch (cmd)
     {
       case CRIOGET:
-        fcr = kmm_malloc(sizeof(struct fcrypt));
+        fcr = kmm_zalloc(sizeof(struct fcrypt));
+        if (fcr == NULL)
+          {
+            return -ENOMEM;
+          }
+
         TAILQ_INIT(&fcr->csessions);
+        TAILQ_INIT(&fcr->crpk_ret);
 
         fd = file_allocate(&g_cryptoinode, 0,
                            0, fcr, 0, true);
@@ -880,7 +1047,7 @@ static int cryptoioctl(FAR struct file *filep, int cmd, unsigned long arg)
   return error;
 }
 
-FAR struct csession *csefind(FAR struct fcrypt *fcr, u_int ses)
+static FAR struct csession *csefind(FAR struct fcrypt *fcr, u_int ses)
 {
   FAR struct csession *cse;
 
@@ -893,7 +1060,7 @@ FAR struct csession *csefind(FAR struct fcrypt *fcr, u_int ses)
   return NULL;
 }
 
-int csedelete(FAR struct fcrypt *fcr, FAR struct csession *cse_del)
+static int csedelete(FAR struct fcrypt *fcr, FAR struct csession *cse_del)
 {
   FAR struct csession *cse;
 
@@ -909,19 +1076,19 @@ int csedelete(FAR struct fcrypt *fcr, FAR struct csession *cse_del)
   return 0;
 }
 
-FAR struct csession *cseadd(FAR struct fcrypt *fcr,
-                            FAR struct csession *cse)
+static FAR struct csession *cseadd(FAR struct fcrypt *fcr,
+                                   FAR struct csession *cse)
 {
   TAILQ_INSERT_TAIL(&fcr->csessions, cse, next);
   cse->ses = fcr->sesn++;
   return cse;
 }
 
-FAR struct csession *csecreate(FAR struct fcrypt *fcr, uint64_t sid,
-                               caddr_t key, uint64_t keylen,
-                               caddr_t mackey, uint64_t mackeylen,
-                               uint32_t cipher, uint32_t mac,
-                               bool txform, bool thash)
+static FAR struct csession *csecreate(FAR struct fcrypt *fcr, uint64_t sid,
+                                      caddr_t key, uint64_t keylen,
+                                      caddr_t mackey, uint64_t mackeylen,
+                                      uint32_t cipher, uint32_t mac,
+                                      bool txform, bool thash)
 {
   FAR struct csession *cse;
 
@@ -944,7 +1111,7 @@ FAR struct csession *csecreate(FAR struct fcrypt *fcr, uint64_t sid,
   return cse;
 }
 
-int csefree(FAR struct csession *cse)
+static int csefree(FAR struct csession *cse)
 {
   int error;
 

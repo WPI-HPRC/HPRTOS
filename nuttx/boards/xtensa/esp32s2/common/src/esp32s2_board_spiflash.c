@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/xtensa/esp32s2/common/src/esp32s2_board_spiflash.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -42,8 +44,8 @@
 #include <nuttx/drivers/drivers.h>
 #endif
 
-#include "esp32s2_spiflash.h"
-#include "esp32s2_spiflash_mtd.h"
+#include "espressif/esp_spiflash.h"
+#include "espressif/esp_spiflash_mtd.h"
 #include "esp32s2-saola-1.h"
 
 /****************************************************************************
@@ -51,7 +53,7 @@
  ****************************************************************************/
 
 #ifndef CONFIG_ESP32S2_STORAGE_MTD_OFFSET
-#  define CONFIG_ESP32S2_STORAGE_MTD_OFFSET 0x10000
+#  define CONFIG_ESP32S2_STORAGE_MTD_OFFSET 0x180000
 #endif
 
 #ifndef CONFIG_ESP32S2_STORAGE_MTD_SIZE
@@ -281,9 +283,8 @@ static int init_storage_partition(void)
   int ret = OK;
   struct mtd_dev_s *mtd;
 
-  mtd = esp32s2_spiflash_alloc_mtdpart(CONFIG_ESP32S2_STORAGE_MTD_OFFSET,
-                                       CONFIG_ESP32S2_STORAGE_MTD_SIZE,
-                                       false);
+  mtd = esp_spiflash_alloc_mtdpart(CONFIG_ESP32S2_STORAGE_MTD_OFFSET,
+                                   CONFIG_ESP32S2_STORAGE_MTD_SIZE);
   if (!mtd)
     {
       syslog(LOG_ERR, "ERROR: Failed to alloc MTD partition of SPI Flash\n");
@@ -358,7 +359,7 @@ int board_spiflash_init(void)
 {
   int ret = OK;
 
-  ret = esp32s2_spiflash_init();
+  ret = esp_spiflash_init();
   if (ret < 0)
     {
       return ret;
@@ -372,4 +373,3 @@ int board_spiflash_init(void)
 
   return ret;
 }
-

@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/phy62xx/phyplus_stub.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -750,7 +752,7 @@ static int phyplus_stub_ioctl(struct file *filep, int cmd,
 int phyplus_stub_register(void)
 {
   char devname[16];
-  snprintf(devname, 16, "/dev/phyplus");
+  snprintf(devname, sizeof(devname), "/dev/phyplus");
   return register_driver(devname, &g_stub_drvrops, 0666, NULL);
 }
 
@@ -772,7 +774,7 @@ int phyplus_stub_register(void)
 void phyplus_stub_unregister(void)
 {
   char devname[16];
-  snprintf(devname, 16, "/dev/phyplus");
+  snprintf(devname, sizeof(devname), "/dev/phyplus");
   unregister_driver(devname);
 }
 

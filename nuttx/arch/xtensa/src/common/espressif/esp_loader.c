@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/xtensa/src/common/espressif/esp_loader.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -273,8 +275,12 @@ int map_rom_segments(uint32_t app_drom_start, uint32_t app_drom_vaddr,
 #endif
 
 #ifdef CONFIG_ARCH_CHIP_ESP32
-  cache_read_disable(0);
-  cache_flush(0);
+  cache_read_disable(PRO_CPU_NUM);
+  cache_flush(PRO_CPU_NUM);
+#  ifdef CONFIG_SMP
+  cache_flush(APP_CPU_NUM);
+  cache_read_enable(APP_CPU_NUM);
+#  endif
 #else
   cache_hal_disable(CACHE_TYPE_ALL);
 #endif

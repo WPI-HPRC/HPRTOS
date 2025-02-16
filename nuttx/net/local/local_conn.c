@@ -1,6 +1,8 @@
 /****************************************************************************
  * net/local/local_conn.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -30,6 +32,7 @@
 #include <debug.h>
 #include <unistd.h>
 
+#include <nuttx/sched.h>
 #include <nuttx/kmalloc.h>
 #include <nuttx/queue.h>
 
@@ -69,6 +72,38 @@ FAR struct local_conn_s *local_nextconn(FAR struct local_conn_s *conn)
 }
 
 /****************************************************************************
+ * Name: local_findconn
+ *
+ * Description:
+ *   Traverse the connections list to find the local connection
+ *
+ * Assumptions:
+ *   This function must be called with the network locked.
+ *
+ ****************************************************************************/
+
+FAR struct local_conn_s *
+local_findconn(FAR const struct local_conn_s *local_conn,
+               FAR const struct sockaddr_un *unaddr)
+{
+  FAR struct local_conn_s *conn = NULL;
+
+  int index = unaddr->sun_path[0] == '\0' ? 1 : 0;
+
+  while ((conn = local_nextconn(conn)) != NULL)
+    {
+      if (local_conn->lc_proto == conn->lc_proto &&
+          strncmp(conn->lc_path, &unaddr->sun_path[index],
+                  UNIX_PATH_MAX - 1) == 0)
+        {
+          return conn;
+        }
+    }
+
+  return NULL;
+}
+
+/****************************************************************************
  * Name: local_peerconn
  *
  * Description:
@@ -103,6 +138,9 @@ FAR struct local_conn_s *local_peerconn(FAR struct local_conn_s *conn)
  *   This is normally something done by the implementation of the socket()
  *   API
  *
+ * Assumptions:
+ *   This function must be called with the network locked.
+ *
  ****************************************************************************/
 
 FAR struct local_conn_s *local_alloc(void)
@@ -118,6 +156,7 @@ FAR struct local_conn_s *local_alloc(void)
        */
 
       conn->lc_crefs = 1;
+      conn->lc_rcvsize = CONFIG_DEV_FIFO_SIZE;
 
 #ifdef CONFIG_NET_LOCAL_STREAM
       nxsem_init(&conn->lc_waitsem, 0, 0);
@@ -138,9 +177,7 @@ FAR struct local_conn_s *local_alloc(void)
 
       /* Add the connection structure to the list of listeners */
 
-      net_lock();
       dq_addlast(&conn->lc_conn.node, &g_local_connections);
-      net_unlock();
     }
 
   return conn;
@@ -153,6 +190,9 @@ FAR struct local_conn_s *local_alloc(void)
  *    Called when a client calls connect and can find the appropriate
  *    connection in LISTEN. In that case, this function will create
  *    a new connection and initialize it.
+ *
+ * Assumptions:
+ *   This function must be called with the network locked.
  *
  ****************************************************************************/
 
@@ -180,8 +220,18 @@ int local_alloc_accept(FAR struct local_conn_s *server,
   conn->lc_peer   = client;
   client->lc_peer = conn;
 
-  strlcpy(conn->lc_path, client->lc_path, sizeof(conn->lc_path));
+  strlcpy(conn->lc_path, server->lc_path, sizeof(conn->lc_path));
   conn->lc_instance_id = client->lc_instance_id;
+
+  /* Create the FIFOs needed for the connection */
+
+  ret = local_create_fifos(conn, server->lc_rcvsize, client->lc_rcvsize);
+  if (ret < 0)
+    {
+      nerr("ERROR: Failed to create FIFOs for %s: %d\n",
+           client->lc_path, ret);
+      goto err;
+    }
 
   /* Open the server-side write-only FIFO.  This should not
    * block.
@@ -192,7 +242,7 @@ int local_alloc_accept(FAR struct local_conn_s *server,
     {
       nerr("ERROR: Failed to open write-only FIFOs for %s: %d\n",
            conn->lc_path, ret);
-      goto err;
+      goto errout_with_fifos;
     }
 
   /* Do we have a connection?  Is the write-side FIFO opened? */
@@ -209,7 +259,7 @@ int local_alloc_accept(FAR struct local_conn_s *server,
     {
       nerr("ERROR: Failed to open read-only FIFOs for %s: %d\n",
            conn->lc_path, ret);
-      goto err;
+      goto errout_with_fifos;
     }
 
   /* Do we have a connection?  Are the FIFOs opened? */
@@ -217,6 +267,9 @@ int local_alloc_accept(FAR struct local_conn_s *server,
   DEBUGASSERT(conn->lc_infile.f_inode != NULL);
   *accept = conn;
   return OK;
+
+errout_with_fifos:
+  local_release_fifos(conn);
 
 err:
   local_free(conn);
@@ -230,6 +283,9 @@ err:
  *   Free a packet Unix domain connection structure that is no longer in use.
  *   This should be done by the implementation of close().
  *
+ * Assumptions:
+ *   This function must be called with the network locked.
+ *
  ****************************************************************************/
 
 void local_free(FAR struct local_conn_s *conn)
@@ -242,16 +298,13 @@ void local_free(FAR struct local_conn_s *conn)
 
   /* Remove the server from the list of listeners. */
 
-  net_lock();
   dq_rem(&conn->lc_conn.node, &g_local_connections);
 
-  if (local_peerconn(conn) && conn->lc_peer)
+  if (conn->lc_peer)
     {
       conn->lc_peer->lc_peer = NULL;
       conn->lc_peer = NULL;
     }
-
-  net_unlock();
 
   /* Make sure that the read-only FIFO is closed */
 

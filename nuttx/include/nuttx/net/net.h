@@ -1,6 +1,8 @@
 /****************************************************************************
  * include/nuttx/net/net.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -111,7 +113,7 @@ enum net_lltype_e
   NET_LL_IEEE802154,   /* IEEE 802.15.4 MAC */
   NET_LL_PKTRADIO,     /* Non-standard packet radio */
   NET_LL_MBIM,         /* CDC-MBIM USB host driver */
-  NET_LL_CAN,          /* CAN bus */
+  NET_LL_CAN,          /* CAN/LIN bus */
   NET_LL_CELL          /* Cellular Virtual Network Device */
 };
 
@@ -400,7 +402,7 @@ void net_unlock(void);
  *
  ****************************************************************************/
 
-int net_sem_timedwait(sem_t *sem, unsigned int timeout);
+int net_sem_timedwait(FAR sem_t *sem, unsigned int timeout);
 
 /****************************************************************************
  * Name: net_mutex_timedlock
@@ -424,7 +426,7 @@ int net_sem_timedwait(sem_t *sem, unsigned int timeout);
  *
  ****************************************************************************/
 
-int net_mutex_timedlock(mutex_t *mutex, unsigned int timeout);
+int net_mutex_timedlock(FAR mutex_t *mutex, unsigned int timeout);
 
 /****************************************************************************
  * Name: net_sem_wait
@@ -446,7 +448,7 @@ int net_mutex_timedlock(mutex_t *mutex, unsigned int timeout);
  *
  ****************************************************************************/
 
-int net_sem_wait(sem_t *sem);
+int net_sem_wait(FAR sem_t *sem);
 
 /****************************************************************************
  * Name: net_mutex_lock
@@ -468,7 +470,7 @@ int net_sem_wait(sem_t *sem);
  *
  ****************************************************************************/
 
-int net_mutex_lock(mutex_t *mutex);
+int net_mutex_lock(FAR mutex_t *mutex);
 
 /****************************************************************************
  * Name: net_sem_timedwait_uninterruptible
@@ -487,7 +489,7 @@ int net_mutex_lock(mutex_t *mutex);
  *
  ****************************************************************************/
 
-int net_sem_timedwait_uninterruptible(sem_t *sem, unsigned int timeout);
+int net_sem_timedwait_uninterruptible(FAR sem_t *sem, unsigned int timeout);
 
 /****************************************************************************
  * Name: net_sem_wait_uninterruptible
@@ -505,7 +507,7 @@ int net_sem_timedwait_uninterruptible(sem_t *sem, unsigned int timeout);
  *
  ****************************************************************************/
 
-int net_sem_wait_uninterruptible(sem_t *sem);
+int net_sem_wait_uninterruptible(FAR sem_t *sem);
 
 #ifdef CONFIG_MM_IOB
 
@@ -597,7 +599,8 @@ int sockfd_allocate(FAR struct socket *psock, int oflags);
  ****************************************************************************/
 
 FAR struct socket *file_socket(FAR struct file *filep);
-int sockfd_socket(int sockfd, FAR struct socket **socketp);
+int sockfd_socket(int sockfd, FAR struct file **filep,
+                  FAR struct socket **socketp);
 
 /****************************************************************************
  * Name: psock_socket
@@ -955,7 +958,7 @@ ssize_t psock_recvmsg(FAR struct socket *psock, FAR struct msghdr *msg,
  *
  ****************************************************************************/
 
-ssize_t psock_send(FAR struct socket *psock, const void *buf, size_t len,
+ssize_t psock_send(FAR struct socket *psock, FAR const void *buf, size_t len,
                    int flags);
 
 /****************************************************************************

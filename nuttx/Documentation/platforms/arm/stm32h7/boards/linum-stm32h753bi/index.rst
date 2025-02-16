@@ -787,3 +787,109 @@ To test the sdram use the command **ramtest**::
     RAMTest: Pattern test: c0000000 8388608 66666666 99999999
     RAMTest: Pattern test: c0000000 8388608 33333333 cccccccc
     RAMTest: Address-in-address test: c0000000 8388608
+
+mfrc522
+--------
+
+Configures the board to use the SPI4 and enables RFID driver with MFRC522::
+
+    nsh> ls /dev/
+    /dev:
+    console
+    null
+    rfid0
+    rtc0
+    ttyS0
+    nsh> rfid_readuid
+    Trying to READ: Card is not present!
+    Trying to READ: Card is not present!
+    Trying to READ: RFID CARD UID = 0x3DB3F169
+
+  ======== =====
+  MFRC522  PINS
+  ======== =====
+  SCK      PE2
+  MISO     PE5
+  MOSI     PE6
+  CS       PE4
+  ======== =====
+
+lvgl
+----
+
+Configures the board to use display of 7 inch with lvgl example.
+
+To verify if the display is functioning correctly, use the **fb** command. You should see the display change colors.::
+
+  nsh> fb
+  VideoInfo:
+        fmt: 11
+      xres: 1024
+      yres: 600
+    nplanes: 1
+  noverlays: 1
+  OverlayInfo (overlay 0):
+      fbmem: 0xc0000000
+      fblen: 1228800
+    stride: 2048
+    overlay: 0
+        bpp: 16
+      blank: 0
+  chromakey: 0x00000000
+      color: 0x00000000
+    transp: 0xff
+      mode: 0
+      area: (0,0) => (1024,600)
+      accl: 1
+  PlaneInfo (plane 0):
+      fbmem: 0xc0000000
+      fblen: 1228800
+    stride: 2048
+    display: 0
+        bpp: 16
+  Mapped FB: 0xc0000000
+  0: (  0,  0) (1024,600)
+  1: ( 93, 54) (838,492)
+  2: (186,108) (652,384)
+  3: (279,162) (466,276)
+  4: (372,216) (280,168)
+  5: (465,270) ( 94, 60)
+  Test finished
+
+Once the **fd** command work, run the lvgl exemple. ::
+
+  nsh> lvgldemo
+
+**WARNING:** This example at the moment is not working correctly yet and have a bug fix to be done.
+In the lvgl file **./apps/graphics/lvgl/lvgl/src/drivers/nuttx/lv_nuttx_fbdev.c**
+search the function **lv_nuttx_fbdev_set_file** and modify line 156 as follows:
+
+    dsc->mem_off_screen = malloc(data_size);
+    to
+    dsc->mem_off_screen = (void*)0xC00000000;
+
+tone
+----
+
+This example demonstrates how to use PWM4 and Timer17 to play music using the Tone library and the board's buzzer.
+
+socketcan
+---------
+
+This example demonstrates how to use the CAN-FD peripherals can0 and can1 with the SocketCAN protocol.::
+
+  # Configure the can0 and can1 to send messages
+  nsh> ifup can0
+  ifup can0...OK
+  nsh> ifup can1
+  ifup can1 ...OK
+  nsh> cansend can0 123#DEADBEEF
+  nsh> cansend can1 5A1#11.2233.44556677.88
+
+  # Reset the board and configure the can0 peripheral to receive messages
+  nsh> ifup can0
+  ifup can0...OK
+  nsh> candump can0
+    can0  051   [8]  00 11 22 33 44 55 66 77
+    can0  051  [16]  00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF
+

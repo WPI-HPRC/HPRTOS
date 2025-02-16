@@ -290,9 +290,11 @@ config ESP32_LEDC
 		Enable support to PWM on ESP32 using LEDC peripheral.
 
 config ESP32_PCNT
-	bool "Pulse Counter (PCNT / QE) Module"
+	bool "Pulse Counter (PCNT / QE) Module (Legacy Driver)"
 	default n
+	depends on !ESP_PCNT
 	---help---
+		Warning: this is deprecated option. Please use ESP_PCNT option
 		Pulse Counter is currently used to implement Quadracture
 		Encoder.
 
@@ -610,6 +612,7 @@ config ESP32_SPI2
 	select ESP32_SPI
 	select ESP32_GPIO_IRQ
 	select SPI
+	select ESPRESSIF_SPI_PERIPH
 
 config ESP32_SPI3
 	bool "SPI 3"
@@ -617,6 +620,7 @@ config ESP32_SPI3
 	select ESP32_SPI
 	select ESP32_GPIO_IRQ
 	select SPI
+	select ESPRESSIF_SPI_PERIPH
 
 config ESP32_SPIRAM
 	bool "SPI RAM"
@@ -753,6 +757,7 @@ config ESP32_BLE
 	default n
 	select ESP32_WIRELESS
 	select BLUETOOTH_TXCMD_PINNED_TO_CORE if SMP
+	select BLUETOOTH_CNTRL_HOST_FLOW_DISABLE
 	---help---
 		Enable BLE support
 
@@ -760,11 +765,13 @@ config ESP32_I2C0
 	bool "I2C 0"
 	default n
 	select ESP32_I2C
+	select ESPRESSIF_I2C_PERIPH
 
 config ESP32_I2C1
 	bool "I2C 1"
 	default n
 	select ESP32_I2C
+	select ESPRESSIF_I2C_PERIPH
 
 config ESP32_TWAI0
 	bool "TWAI (CAN) 0"
@@ -854,6 +861,7 @@ config ESP32_RTC_HEAP
 config ESP32_IRAM_HEAP
 	bool "Use the rest of IRAM as a separate heap"
 	select ARCH_HAVE_EXTRA_HEAPS
+	select LIBC_ARCH_ATOMIC
 	default n
 
 endmenu # Memory Configuration
@@ -1135,10 +1143,12 @@ endif # ESP32_I2C1
 config ESP32_I2CTIMEOSEC
 	int "Timeout seconds"
 	default 0
+	depends on ESPRESSIF_I2C_PERIPH
 
 config ESP32_I2CTIMEOMS
 	int "Timeout milliseconds"
 	default 500
+	depends on ESPRESSIF_I2C_PERIPH
 
 endmenu # I2C configuration
 
@@ -2174,11 +2184,6 @@ menu "BLE Configuration"
 config ESP32_BLE_PKTBUF_NUM
 	int "BLE netcard packet buffer number per netcard"
 	default 16
-
-config ESP32_BLE_TTY_NAME
-	string "BLE TTY device name"
-	default "/dev/ttyHCI0"
-	depends on UART_BTH4
 
 config ESP32_BLE_TASK_STACK_SIZE
 	int "Controller task stack size"

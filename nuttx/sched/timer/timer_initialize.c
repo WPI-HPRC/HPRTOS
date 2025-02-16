@@ -1,6 +1,8 @@
 /****************************************************************************
  * sched/timer/timer_initialize.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -63,6 +65,8 @@ volatile sq_queue_t g_freetimers;
  */
 
 volatile sq_queue_t g_alloctimers;
+
+spinlock_t g_locktimers = SP_UNLOCKED;
 
 /****************************************************************************
  * Public Functions
@@ -171,7 +175,7 @@ FAR struct posix_timer_s *timer_gethandle(timer_t timerid)
 
   if (timerid != NULL)
     {
-      flags = spin_lock_irqsave(NULL);
+      flags = spin_lock_irqsave(&g_locktimers);
 
       sq_for_every(&g_alloctimers, entry)
         {
@@ -182,7 +186,7 @@ FAR struct posix_timer_s *timer_gethandle(timer_t timerid)
             }
         }
 
-      spin_unlock_irqrestore(NULL, flags);
+      spin_unlock_irqrestore(&g_locktimers, flags);
     }
 
   return timer;

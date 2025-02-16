@@ -896,7 +896,7 @@ static void wlan_dopoll(struct wlan_priv_s *priv)
   pktbuf = wlan_alloc_buffer(priv);
   if (!pktbuf)
     {
-      return ;
+      return;
     }
 
   dev->d_buf = pktbuf->buffer;
@@ -1375,6 +1375,10 @@ static int wlan_ioctl(struct net_driver_s *dev,
 
       case SIOCSIWCOUNTRY:  /* Set country code */
         ret = ops->country(iwr, true);
+        break;
+
+      case SIOCGIWCOUNTRY:  /* Set country code */
+        ret = ops->country(iwr, false);
         break;
 
       case SIOCGIWSENS:    /* Get sensitivity (dBm) */

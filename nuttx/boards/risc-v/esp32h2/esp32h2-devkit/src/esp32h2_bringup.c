@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/risc-v/esp32h2/esp32h2-devkit/src/esp32h2_bringup.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -63,6 +65,10 @@
 #  include <nuttx/input/buttons.h>
 #endif
 
+#ifdef CONFIG_ESPRESSIF_EFUSE
+#  include "espressif/esp_efuse.h"
+#endif
+
 #ifdef CONFIG_ESP_RMT
 #  include "esp_board_rmt.h"
 #endif
@@ -70,6 +76,9 @@
 #ifdef CONFIG_ESPRESSIF_SPI
 #  include "espressif/esp_spi.h"
 #  include "esp_board_spidev.h"
+#  ifdef CONFIG_ESPRESSIF_SPI_BITBANG
+#    include "espressif/esp_spi_bitbang.h"
+#  endif
 #endif
 
 #ifdef CONFIG_SPI_SLAVE_DRIVER
@@ -83,6 +92,15 @@
 
 #ifdef CONFIG_ESP_MCPWM
 #  include "esp_board_mcpwm.h"
+#endif
+
+#ifdef CONFIG_ESP_PCNT
+#  include "espressif/esp_pcnt.h"
+#  include "esp_board_pcnt.h"
+#endif
+
+#ifdef CONFIG_SYSTEM_NXDIAG_ESPRESSIF_CHIP_WO_TOOL
+#  include "espressif/esp_nxdiag.h"
 #endif
 
 #include "esp32h2-devkit.h"
@@ -137,6 +155,14 @@ int esp_bringup(void)
   if (ret < 0)
     {
       _err("Failed to mount tmpfs at %s: %d\n", CONFIG_LIBC_TMPDIR, ret);
+    }
+#endif
+
+#if defined(CONFIG_ESPRESSIF_EFUSE)
+  ret = esp_efuse_initialize("/dev/efuse");
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to init EFUSE: %d\n", ret);
     }
 #endif
 
@@ -213,12 +239,22 @@ int esp_bringup(void)
 #endif
 
 #if defined(CONFIG_ESPRESSIF_SPI) && defined(CONFIG_SPI_DRIVER)
+#  ifdef CONFIG_ESPRESSIF_SPI2
   ret = board_spidev_initialize(ESPRESSIF_SPI2);
   if (ret < 0)
     {
       syslog(LOG_ERR, "ERROR: Failed to init spidev 2: %d\n", ret);
     }
-#endif
+#  endif /* CONFIG_ESPRESSIF_SPI2 */
+
+#  ifdef CONFIG_ESPRESSIF_SPI_BITBANG
+  ret = board_spidev_initialize(ESPRESSIF_SPI_BITBANG);
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to init spidev 3: %d\n", ret);
+    }
+#  endif /* CONFIG_ESPRESSIF_SPI_BITBANG */
+#endif /* CONFIG_ESPRESSIF_SPI && CONFIG_SPI_DRIVER*/
 
 #ifdef CONFIG_ESPRESSIF_SPIFLASH
   ret = board_spiflash_init();
@@ -320,6 +356,22 @@ int esp_bringup(void)
   if (ret < 0)
     {
       syslog(LOG_ERR, "ERROR: board_motor_initialize failed: %d\n", ret);
+    }
+#endif
+
+#ifdef CONFIG_ESP_PCNT
+  ret = board_pcnt_initialize();
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: board_pcnt_initialize failed: %d\n", ret);
+    }
+#endif
+
+#ifdef CONFIG_SYSTEM_NXDIAG_ESPRESSIF_CHIP_WO_TOOL
+  ret = esp_nxdiag_initialize();
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: esp_nxdiag_initialize failed: %d\n", ret);
     }
 #endif
 

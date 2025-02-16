@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm64/src/a64/a64_twi.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -42,6 +44,7 @@
 #include <nuttx/i2c/i2c_master.h>
 
 #include <nuttx/irq.h>
+#include <nuttx/spinlock.h>
 #include <arch/board/board.h>
 
 #include "arm64_internal.h"
@@ -164,6 +167,7 @@ struct a64_twi_priv_s
 
   int refs;                    /* Reference count */
   mutex_t lock;                /* Mutual exclusion mutex */
+  spinlock_t spinlock;         /* Spinlock */
   sem_t            waitsem;    /* Wait for TWI transfer completion */
   struct wdog_s    timeout;    /* Watchdog to recover from bus hangs */
   volatile int     result;     /* The result of the transfer */
@@ -286,6 +290,7 @@ static struct a64_twi_priv_s a64_twi0_priv =
   .config     = &a64_twi0_config,
   .refs       = 0,
   .lock       = NXMUTEX_INITIALIZER,
+  .spinlock   = SP_UNLOCKED,
   .waitsem    = SEM_INITIALIZER(0),
   .intstate   = INTSTATE_IDLE,
   .msgc       = 0,
@@ -322,6 +327,7 @@ static struct a64_twi_priv_s a64_twi1_priv =
   .config     = &a64_twi1_config,
   .refs       = 0,
   .lock       = NXMUTEX_INITIALIZER,
+  .spinlock   = SP_UNLOCKED,
   .waitsem    = SEM_INITIALIZER(0),
   .intstate   = INTSTATE_IDLE,
   .msgc       = 0,
@@ -358,6 +364,7 @@ static struct a64_twi_priv_s a64_twi2_priv =
   .config     = &a64_twi2_config,
   .refs       = 0,
   .lock       = NXMUTEX_INITIALIZER,
+  .spinlock   = SP_UNLOCKED,
   .waitsem    = SEM_INITIALIZER(0),
   .intstate   = INTSTATE_IDLE,
   .msgc       = 0,
@@ -394,6 +401,7 @@ static struct a64_twi_priv_s a64_rtwi_priv =
   .config     = &a64_rtwi_config,
   .refs       = 0,
   .lock       = NXMUTEX_INITIALIZER,
+  .spinlock   = SP_UNLOCKED,
   .waitsem    = SEM_INITIALIZER(0),
   .intstate   = INTSTATE_IDLE,
   .msgc       = 0,
@@ -1224,7 +1232,7 @@ static int a64_twi_isr_process(struct a64_twi_priv_s *priv)
              */
 
   #ifdef CONFIG_I2C_POLLED
-            irqstate_t flags = enter_critical_section();
+            irqstate_t flags = spin_lock_irqsave(&priv->spinlock);
   #endif
 
             /* Transmit a byte */
@@ -1233,7 +1241,7 @@ static int a64_twi_isr_process(struct a64_twi_priv_s *priv)
             priv->dcnt--;
 
   #ifdef CONFIG_I2C_POLLED
-            leave_critical_section(flags);
+            spin_unlock_irqrestore(&priv->spinlock, flags);
   #endif
 
             break;
@@ -1556,7 +1564,7 @@ static int twi_transfer(struct i2c_master_s *dev,
 
   twi_setclock(priv, msgs->frequency);
 
-  flags = enter_critical_section();
+  flags = spin_lock_irqsave(&priv->spinlock);
 
   /* Initiate the transfer.  The rest will be handled from interrupt
    * logic.  Interrupts must be disabled to prevent re-entrance from the
@@ -1610,7 +1618,7 @@ out:
 
   /* Release the port for re-use by other clients */
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&priv->spinlock, flags);
   nxmutex_unlock(&priv->lock);
   return ret;
 }
@@ -1818,7 +1826,7 @@ set_clk:
 
 static void twi_hw_initialize(struct a64_twi_priv_s *priv)
 {
-  irqstate_t flags = enter_critical_section();
+  irqstate_t flags = spin_lock_irqsave(&priv->spinlock);
 
   i2cinfo("TWI%d Initializing\n", priv->config->twi);
 
@@ -1854,7 +1862,7 @@ static void twi_hw_initialize(struct a64_twi_priv_s *priv)
 
   twi_softreset(priv);
 
-  leave_critical_section(flags);
+  spin_unlock_irqrestore(&priv->spinlock, flags);
 }
 
 /****************************************************************************

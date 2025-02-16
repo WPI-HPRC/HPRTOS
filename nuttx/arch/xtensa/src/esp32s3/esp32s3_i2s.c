@@ -45,7 +45,8 @@
 #include <nuttx/semaphore.h>
 #include <nuttx/spinlock.h>
 #include <nuttx/mqueue.h>
-#include <nuttx/mm/circbuf.h>
+#include <nuttx/circbuf.h>
+#include <nuttx/nuttx.h>
 #include <nuttx/audio/audio.h>
 #include <nuttx/audio/i2s.h>
 
@@ -109,10 +110,6 @@
 #  define I2S_HAVE_RX 1
 #else
 #  define I2S1_RX_ENABLED 0
-#endif
-
-#ifndef ALIGN_UP
-#  define ALIGN_UP(num, align) (((num) + ((align) - 1)) & ~((align) - 1))
 #endif
 
 /* Debug ********************************************************************/
@@ -3071,7 +3068,7 @@ static int i2s_dma_setup(struct esp32s3_i2s_s *priv)
    * will be assigned to a different CPU interrupt.
    */
 
-  priv->cpu = up_cpu_index();
+  priv->cpu = this_cpu();
 
 #ifdef I2S_HAVE_TX
   if (priv->config->tx_en)

@@ -1,6 +1,8 @@
 /****************************************************************************
  * sched/group/group_create.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -220,6 +222,7 @@ void group_postinitialize(FAR struct task_tcb_s *tcb)
 
   DEBUGASSERT(tcb && tcb->cmn.group);
   group = tcb->cmn.group;
+  spin_lock_init(&group->tg_lock);
 
   /* Allocate mm_map list if required */
 

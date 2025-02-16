@@ -1,14 +1,10 @@
 /****************************************************************************
  * arch/arm/src/armv8-r/cp15_cacheops.h
  *
- *   Copyright (C) 2015 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
- *
- * Portions of this file derive from Atmel sample code for the SAMA5D3
- * Cortex-A5 which also has a modified BSD-style license:
- *
- *   Copyright (c) 2012, Atmel Corporation
- *   All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-FileCopyrightText: 2015 Gregory Nutt. All rights reserved.
+ * SPDX-FileCopyrightText: 2012, Atmel Corporation. All rights reserved.
+ * SPDX-FileContributor: Gregory Nutt <gnutt@nuttx.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -557,6 +553,25 @@
  ****************************************************************************/
 
 #ifndef __ASSEMBLY__
+
+/****************************************************************************
+ * Name: cp15_dcache_is_enabled
+ *
+ * Description:
+ *   Check if L1 D Cache is enabled
+ *
+ * Input Parameters:
+ *   None
+ *
+ * Returned Value:
+ *   true if L1 D Cache is enabled, false otherwise
+ *
+ ****************************************************************************/
+
+static inline int cp15_dcache_is_enabled(void)
+{
+  return (CP15_GET(SCTLR) & SCTLR_C) != 0;
+}
 
 /****************************************************************************
  * Name: cp15_enable_dcache

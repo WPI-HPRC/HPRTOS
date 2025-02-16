@@ -1,6 +1,7 @@
 /****************************************************************************
  * fs/mnemofs/mnemofs_util.c
- * Utilities for mnemofs
+ *
+ * SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -102,7 +103,7 @@ uint8_t mfs_arrhash(FAR const char *arr, ssize_t len)
       hash %= (1 << 8);
     }
 
-  finfo("Hash calculated for size %ld to be %d.", len, hash % (1 << 8));
+  finfo("Hash calculated for size %zd to be %d.", len, hash % (1 << 8));
 
   return hash % (1 << 8);
 }
@@ -123,7 +124,7 @@ uint16_t mfs_hash(FAR const char *arr, ssize_t len)
       hash %= (1 << MFS_HASHSZ);
     }
 
-  finfo("Hash calculated for size %ld to be %u.", len, hash);
+  finfo("Hash calculated for size %zd to be %" PRIi32, len, hash);
 
   return hash;
 }
@@ -195,7 +196,7 @@ FAR const char *mfs_deser_64(FAR const char * const in,
 FAR char *mfs_ser_ctz(FAR const struct mfs_ctz_s * const x,
                       FAR char * const out)
 {
-  char *o = out;
+  FAR char *o = out;
 
   o = mfs_ser_mfs(x->pg_e, o);
   o = mfs_ser_mfs(x->idx_e, o);
@@ -205,7 +206,7 @@ FAR char *mfs_ser_ctz(FAR const struct mfs_ctz_s * const x,
 FAR const char *mfs_deser_ctz(FAR const char * const in,
                               FAR struct mfs_ctz_s * const x)
 {
-  const char *i = in;
+  FAR const char *i = in;
 
   i = mfs_deser_mfs(i, &x->pg_e);
   i = mfs_deser_mfs(i, &x->idx_e);
@@ -215,7 +216,7 @@ FAR const char *mfs_deser_ctz(FAR const char * const in,
 FAR char *mfs_ser_path(FAR const struct mfs_path_s * const x,
                       FAR char * const out)
 {
-  char *o = out;
+  FAR char *o = out;
 
   o = mfs_ser_ctz(&x->ctz, o);
   o = mfs_ser_mfs(x->off, o);
@@ -226,7 +227,7 @@ FAR char *mfs_ser_path(FAR const struct mfs_path_s * const x,
 FAR const char *mfs_deser_path(FAR const char * const in,
                                FAR struct mfs_path_s * const x)
 {
-  const char *i = in;
+  FAR const char *i = in;
 
   i = mfs_deser_ctz(i, &x->ctz);
   i = mfs_deser_mfs(i, &x->off);
@@ -237,7 +238,7 @@ FAR const char *mfs_deser_path(FAR const char * const in,
 FAR char *mfs_ser_timespec(FAR const struct timespec * const x,
                            FAR char * const out)
 {
-  char *o = out;
+  FAR char *o = out;
 
   o = mfs_ser_64(x->tv_sec, o);
   o = mfs_ser_64(x->tv_nsec, o);
@@ -248,8 +249,8 @@ FAR char *mfs_ser_timespec(FAR const struct timespec * const x,
 FAR const char *mfs_deser_timespec(FAR const char * const in,
                                    FAR struct timespec * const x)
 {
-  uint64_t   tmp;
-  const char *i   = in;
+  uint64_t tmp;
+  FAR const char *i = in;
 
   i = mfs_deser_64(i, &tmp);
   x->tv_sec = tmp;

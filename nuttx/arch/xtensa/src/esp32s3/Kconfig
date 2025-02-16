@@ -615,6 +615,7 @@ config ESP32S3_SPI2
 	select ESP32S3_SPI
 	select SPI
 	select ESP32S3_GPIO_IRQ if SPI_SLAVE
+	select ESPRESSIF_SPI_PERIPH
 
 config ESP32S3_SPI3
 	bool "SPI 3"
@@ -622,6 +623,7 @@ config ESP32S3_SPI3
 	select ESP32S3_SPI
 	select SPI
 	select ESP32S3_GPIO_IRQ if SPI_SLAVE
+	select ESPRESSIF_SPI_PERIPH
 
 config ESP32S3_DMA
 	bool "General DMA (GDMA)"
@@ -683,12 +685,14 @@ config ESP32S3_I2C0
 	default n
 	select ESP32S3_I2C
 	select I2C
+	select ESPRESSIF_I2C_PERIPH
 
 config ESP32S3_I2C1
 	bool "I2C 1"
 	default n
 	select ESP32S3_I2C
 	select I2C
+	select ESPRESSIF_I2C_PERIPH
 
 config ESP32S3_TWAI
 	bool "TWAI (CAN)"
@@ -1430,10 +1434,12 @@ endif # ESP32S3_I2C1
 config ESP32S3_I2CTIMEOSEC
 	int "Timeout seconds"
 	default 0
+	depends on ESPRESSIF_I2C_PERIPH
 
 config ESP32S3_I2CTIMEOMS
 	int "Timeout milliseconds"
 	default 500
+	depends on ESPRESSIF_I2C_PERIPH
 
 endmenu # I2C Configuration
 
@@ -1658,13 +1664,29 @@ config ESP32S3_WIFI_LISTEN_INTERVAL
 
 endmenu # ESP32S3_WIFI
 
+config ESP32S3_OPENETH
+	bool "Opencores Ethernet MAC"
+	default n
+	depends on !ESP32S3_WIFI
+	select NET
+	select SCHED_WORKQUEUE
+	---help---
+		Enable ESP32S3 ethernet opencores support for use with QEMU.
+		Disable this if you are using the real device.
+
+if ESP32S3_OPENETH
+
+config ESP32S3_OPENETH_DMA_RX_BUFFER_NUM
+	int "Number of Ethernet DMA Rx buffers"
+	range 1 64
+	default 4
+	---help---
+		Number of DMA receive buffers, each buffer is 1600 bytes.
+
+endif # ESP32S3_OPENETH
+
 menu "BLE Configuration"
 	depends on ESP32S3_BLE
-
-config ESP32S3_BLE_TTY_NAME
-	string "BLE TTY device name"
-	default "/dev/ttyHCI0"
-	depends on UART_BTH4
 
 config ESP32S3_BLE_TASK_STACK_SIZE
 	int "Controller task stack size"
@@ -1681,6 +1703,44 @@ config ESP32S3_BLE_INTERRUPT_SAVE_STATUS
 		Number of interrupt save status variables to keep track. Increase it if any related bug is found.
 
 endmenu # BLE Configuration
+
+choice ESP32S3_UNIVERSAL_MAC_ADDRESSES
+	bool "Number of universally administered (by IEEE) MAC address"
+	default ESP32S3_UNIVERSAL_MAC_ADDRESSES_FOUR
+	depends on ESP32S3_WIFI || ESP32S3_BLE
+	---help---
+		Configure the number of universally administered (by IEEE) MAC addresses.
+		During initialization, MAC addresses for each network interface are generated or derived from a
+		single base MAC address.
+		If the number of universal MAC addresses is four, all four interfaces (WiFi station, WiFi softap,
+		Bluetooth and Ethernet) receive a universally administered MAC address. These are generated
+		sequentially by adding 0, 1, 2 and 3 (respectively) to the final octet of the base MAC address.
+		If the number of universal MAC addresses is two, only two interfaces (WiFi station and Bluetooth)
+		receive a universally administered MAC address. These are generated sequentially by adding 0
+		and 1 (respectively) to the base MAC address. The remaining two interfaces (WiFi softap and Ethernet)
+		receive local MAC addresses. These are derived from the universal WiFi station and Bluetooth MAC
+		addresses, respectively.
+		When using the default (Espressif-assigned) base MAC address, either setting can be used. When using
+		a custom universal MAC address range, the correct setting will depend on the allocation of MAC
+		addresses in this range (either 2 or 4 per device.)
+
+	config ESP32S3_UNIVERSAL_MAC_ADDRESSES_TWO
+		bool "Two"
+		select ESP_MAC_ADDR_UNIVERSE_WIFI_STA
+		select ESP_MAC_ADDR_UNIVERSE_BT
+
+	config ESP32S3_UNIVERSAL_MAC_ADDRESSES_FOUR
+		bool "Four"
+		select ESP_MAC_ADDR_UNIVERSE_WIFI_STA
+		select ESP_MAC_ADDR_UNIVERSE_WIFI_AP
+		select ESP_MAC_ADDR_UNIVERSE_BT
+		select ESP_MAC_ADDR_UNIVERSE_ETH
+endchoice
+
+config ESP32S3_UNIVERSAL_MAC_ADDRESSES
+	int
+	default 2 if ESP32S3_UNIVERSAL_MAC_ADDRESSES_TWO
+	default 4 if ESP32S3_UNIVERSAL_MAC_ADDRESSES_FOUR
 
 menu "PHY"
 	depends on ESP32S3_PARTITION_TABLE
@@ -2473,6 +2533,13 @@ config ESP32S3_LCD_HPULSEWIDTH
 config ESP32S3_LCD_BUFFER_LAYERS
 	int "LCD Buffer Layer Number"
 	default 1
+
+config ESP32S3_LCD_DOUBLE_BUFFERED
+	bool "LCD Double Buffered"
+	default y
+	---help---
+		Double the framebuffer size per layer.
+		Twice as much memory will be allocated.
 
 choice
 	prompt "LCD Data Width"

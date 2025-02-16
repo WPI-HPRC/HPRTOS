@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/audio/es8311.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -802,8 +804,6 @@ static int es8311_getcaps(FAR struct audio_lowerhalf_s *dev, int type,
   DEBUGASSERT(caps && caps->ac_len >= sizeof(struct audio_caps_s));
   audinfo("getcaps: type=%d ac_type=%d\n", type, caps->ac_type);
 
-  uint16_t *ptr;
-
   /* Fill in the caller's structure based on requested info */
 
   caps->ac_format.hw  = 0;
@@ -847,8 +847,7 @@ static int es8311_getcaps(FAR struct audio_lowerhalf_s *dev, int type,
 
               /* 8kHz is hardware dependent */
 
-              ptr  = (uint16_t *)caps->ac_controls.b;
-              *ptr =
+              caps->ac_controls.hw[0] =
                 AUDIO_SAMP_RATE_11K | AUDIO_SAMP_RATE_16K |
                 AUDIO_SAMP_RATE_22K | AUDIO_SAMP_RATE_32K |
                 AUDIO_SAMP_RATE_44K | AUDIO_SAMP_RATE_48K;
@@ -865,8 +864,7 @@ static int es8311_getcaps(FAR struct audio_lowerhalf_s *dev, int type,
           {
               /* Report supported input sample rates */
 
-              ptr  = (uint16_t *)caps->ac_controls.b;
-              *ptr =
+              caps->ac_controls.hw[0] =
                 AUDIO_SAMP_RATE_11K | AUDIO_SAMP_RATE_16K |
                 AUDIO_SAMP_RATE_22K | AUDIO_SAMP_RATE_32K |
                 AUDIO_SAMP_RATE_44K | AUDIO_SAMP_RATE_48K;

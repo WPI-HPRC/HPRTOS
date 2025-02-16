@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/net/lan9250.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -973,7 +975,7 @@ static inline void lan9250_send_buffer(FAR struct lan9250_driver_s *priv,
   meminfo.cmd     = LAN9250_SPI_WRITE;
   meminfo.addr    = LAN9250_TXDFR;
   meminfo.addrlen = sizeof(uint16_t);
-  meminfo.buffer  = (void *)buffer;
+  meminfo.buffer  = (FAR void *)buffer;
   meminfo.buflen  = LAN9250_ALIGN(buflen);
   meminfo.dummies = 0;
   meminfo.flags   = QSPIMEM_WRITE;
@@ -2029,7 +2031,7 @@ static int lan9250_interrupt(int irq, FAR void *context, FAR void *arg)
 
   priv->lower->disable(priv->lower);
   return work_queue(LAN9250_WORK, &priv->irq_work, lan9250_int_worker,
-                    (void *)priv, 0);
+                    (FAR void *)priv, 0);
 }
 
 /****************************************************************************
@@ -2438,7 +2440,7 @@ int lan9250_initialize(
 
   memset(priv, 0, sizeof(struct lan9250_driver_s));
 
-  dev->d_buf     = (uint8_t *)priv->pktbuf;
+  dev->d_buf     = (FAR uint8_t *)priv->pktbuf;
   dev->d_ifup    = lan9250_ifup;
   dev->d_ifdown  = lan9250_ifdown;
   dev->d_txavail = lan9250_txavail;
@@ -2472,7 +2474,11 @@ int lan9250_initialize(
 
   if (lower->getmac)
     {
-      lower->getmac(lower, priv->dev.d_mac.ether.ether_addr_octet);
+      if (lower->getmac(lower, priv->dev.d_mac.ether.ether_addr_octet) < 0)
+        {
+          nerr("ERROR: Failed read MAC address\n");
+          return -EAGAIN;
+        }
     }
 
   /* Register the device with the OS so that socket IOCTLs can be performed */

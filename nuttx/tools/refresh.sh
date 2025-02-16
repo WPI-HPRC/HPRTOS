@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # tools/refresh.sh
 #
+# SPDX-License-Identifier: Apache-2.0
+#
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.  The
@@ -203,6 +205,12 @@ for CONFIG in ${CONFIGS}; do
         exit 1
       fi
     fi
+  fi
+
+  # skip refresh if defconfig contains `#include`
+  if grep -q "#include" $DEFCONFIG; then
+    echo "Note: skipping refresh for debug defconfig."
+    exit 0
   fi
 
   # Copy the .config and Make.defs to the toplevel directory

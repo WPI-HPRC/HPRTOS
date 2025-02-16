@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/risc-v/src/qemu-rv/qemu_rv_irq.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -46,11 +48,11 @@
  ****************************************************************************/
 
 #ifdef CONFIG_RPTUN
-static int qemu_ipi_handler(int mcause, FAR void *regs, FAR void *args)
+static int qemu_ipi_handler(int mcause, void *regs, void *args)
 {
   /* Clear IPI (Inter-Processor-Interrupt) */
 
-  riscv_ipi_clear(up_cpu_index());
+  riscv_ipi_clear(this_cpu());
 
 #ifdef CONFIG_SMP
   riscv_pause_handler(mcause, regs, args);

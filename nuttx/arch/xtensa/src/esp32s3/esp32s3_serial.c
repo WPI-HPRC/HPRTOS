@@ -295,7 +295,7 @@ static uart_dev_t g_uart2_dev =
 #ifdef CONFIG_ESP32S3_UART
 
 /****************************************************************************
- * Name: uart_interrupt
+ * Name: uart_handler
  *
  * Description:
  *   This is the UART interrupt handler.  It will be invoked when an
@@ -537,7 +537,7 @@ static int esp32s3_attach(struct uart_dev_s *dev)
 
   /* Set up to receive peripheral interrupts on the current CPU */
 
-  priv->cpu = up_cpu_index();
+  priv->cpu = this_cpu();
   priv->cpuint = esp32s3_setup_irq(priv->cpu, priv->periph, priv->int_pri,
                                    ESP32S3_CPUINT_LEVEL);
   if (priv->cpuint < 0)
@@ -1210,7 +1210,7 @@ void xtensa_serialinit(void)
  *
  ****************************************************************************/
 
-int up_putc(int ch)
+void up_putc(int ch)
 {
 #ifdef CONSOLE_UART
   uint32_t int_status;
@@ -1218,21 +1218,11 @@ int up_putc(int ch)
   esp32s3_lowputc_disable_all_uart_int(CONSOLE_DEV.priv, &int_status);
 #endif
 
-  /* Check for LF */
-
-  if (ch == '\n')
-    {
-      /* Add CR */
-
-      xtensa_lowputc('\r');
-    }
-
   xtensa_lowputc((char)ch);
 
 #ifdef CONSOLE_UART
   esp32s3_lowputc_restore_all_uart_int(CONSOLE_DEV.priv, &int_status);
 #endif
-  return ch;
 }
 
 #endif /* HAVE_UART_DEVICE */
@@ -1247,7 +1237,7 @@ int up_putc(int ch)
  *
  ****************************************************************************/
 
-int up_putc(int ch)
+void up_putc(int ch)
 {
 #ifdef CONSOLE_UART
   uint32_t int_status;
@@ -1255,21 +1245,11 @@ int up_putc(int ch)
   esp32s3_lowputc_disable_all_uart_int(CONSOLE_DEV.priv, &int_status);
 #endif
 
-  /* Check for LF */
-
-  if (ch == '\n')
-    {
-      /* Add CR */
-
-      xtensa_lowputc('\r');
-    }
-
   xtensa_lowputc(ch);
 
 #ifdef CONSOLE_UART
   esp32s3_lowputc_restore_all_uart_int(CONSOLE_DEV.priv, &int_status);
 #endif
-  return ch;
 }
 
 #endif /* USE_SERIALDRIVER */

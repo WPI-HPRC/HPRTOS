@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/net/lan91c111.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -1263,7 +1265,7 @@ static int lan91c111_ioctl(FAR struct net_driver_s *dev, int cmd,
                            unsigned long arg)
 {
   FAR struct lan91c111_driver_s *priv = dev->d_private;
-  struct mii_ioctl_data_s *req = (void *)arg;
+  FAR struct mii_ioctl_data_s *req = (FAR void *)arg;
   int ret = OK;
 
   net_lock();

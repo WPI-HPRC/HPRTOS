@@ -108,6 +108,43 @@ disables the NuttShell to get the best possible score.
 .. note:: As the NSH is disabled, the application will start as soon as the
   system is turned on.
 
+efuse
+-----
+
+This configuration demonstrates the use of the eFuse driver. It can be accessed
+through the ``/dev/efuse`` device file.
+Virtual eFuse mode can be used by enabling `CONFIG_ESPRESSIF_EFUSE_VIRTUAL`
+option to prevent possible damages on chip.
+
+The following snippet demonstrates how to read MAC address:
+
+.. code-block:: C
+
+   int fd;
+   int ret;
+   uint8_t mac[6];
+   struct efuse_param_s param;
+   struct efuse_desc_s mac_addr =
+   {
+     .bit_offset = 1,
+     .bit_count = 48
+   };
+
+   const efuse_desc_t* desc[] =
+   {
+       &mac_addr,
+       NULL
+   };
+   param.field = desc;
+   param.size = 48;
+   param.data = mac;
+
+   fd = open("/dev/efuse", O_RDONLY);
+   ret = ioctl(fd, EFUSEIOC_READ_FIELD, &param);
+
+To find offset and count variables for related eFuse,
+please refer to Espressif's Technical Reference Manuals.
+
 gpio
 ----
 
@@ -165,6 +202,16 @@ To test it, just execute the ``pwm`` application::
     pwm_main: starting output with frequency: 10000 duty: 00008000
     pwm_main: stopping output
 
+qencoder
+---
+
+This configuration demostrates the use of Quadrature Encoder connected to pins
+GPIO10 and GPIO11. You can start measurement of pulses using the following
+command (by default, it will open ``\dev\qe0`` device and print 20 samples
+using 1 second delay)::
+
+    nsh> qe
+
 rmt
 ---
 
@@ -220,6 +267,10 @@ by default to each other and running the ``spi`` example::
     nsh> spi exch -b 2 "AB"
     Sending:	AB
     Received:	AB
+
+If SPI peripherals are already in use you can also use bitbang driver which is a
+software implemented SPI peripheral by enabling `CONFIG_ESPRESSIF_SPI_BITBANG`
+option.
 
 spiflash
 --------

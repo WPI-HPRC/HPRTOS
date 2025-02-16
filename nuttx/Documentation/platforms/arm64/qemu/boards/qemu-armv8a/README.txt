@@ -86,6 +86,40 @@ Getting Started
    NuttShell (NSH) NuttX-10.4.0
    nsh> fb
 
+  3.1.3 Single Core with virtio 9pFs (GICv3)
+  Configuring NuttX and compile:
+   $ ./tools/configure.sh qemu-armv8a:netnsh
+   $ make -j
+   Running with qemu
+   $ qemu-system-aarch64 -cpu cortex-a53 -nographic \
+     -machine virt,virtualization=on,gic-version=3 \
+     -fsdev local,security_model=none,id=fsdev0,path=/mnt/xxx \
+     -device virtio-9p-device,id=fs0,fsdev=fsdev0,mount_tag=host \
+     -chardev stdio,id=con,mux=on, -serial chardev:con \
+     -mon chardev=con,mode=readline  -kernel ./nuttx
+
+   NuttShell (NSH) NuttX-10.4.0
+   nsh> mkdir mnt
+   nsh> mount -t v9fs -o trans=virtio,tag=host mnt
+   nsh> ls
+   /:
+    dev/
+    mnt/
+    proc/
+
+  3.1.4 Single Core with MTE Expansion (GICv3)
+  Configuring NuttX and compile:
+   $ ./tools/configure.sh qemu-armv8a:mte
+   $ make -j
+   Running with qemu
+   $ qemu-system-aarch64 -cpu max -nographic \
+     -machine virt,virtualization=on,gic-version=3,mte=on \
+     -chardev stdio,id=con,mux=on, -serial chardev:con \
+     -mon chardev=con,mode=readline  -kernel ./nuttx/nuttx
+
+   NuttShell (NSH) NuttX-10.4.0
+   nsh> mtetest
+
   3.2 SMP (GICv3)
    Configuring NuttX and compile:
    $ ./tools/configure.sh -l qemu-armv8a:nsh_smp
@@ -146,6 +180,22 @@ Getting Started
      -drive file=./mydisk-1gb.img,if=none,format=raw,id=hd -device virtio-blk-device,drive=hd \
      -netdev user,id=u1,hostfwd=tcp:127.0.0.1:10023-10.0.2.15:23,hostfwd=tcp:127.0.0.1:15001-10.0.2.15:5001 \
      -device virtio-net-device,netdev=u1,bus=virtio-mmio-bus.0 \
+     -mon chardev=con,mode=readline -kernel ./nuttx
+
+  3.5 Single Core /w kernel mode (GICv3)
+   Configuring NuttX and compile:
+   $ ./tools/configure.sh -l qemu-armv8a:knsh
+   $ make
+   $ make export V=1
+   $ pushd ../apps
+   $ ./tools/mkimport.sh -z -x ../nuttx/nuttx-export-*.tar.gz
+   $ make import V=1
+   $ popd
+
+   Running with qemu
+   $ qemu-system-aarch64 -semihosting -cpu cortex-a53 -nographic \
+     -machine virt,virtualization=on,gic-version=3 \
+     -net none -chardev stdio,id=con,mux=on -serial chardev:con \
      -mon chardev=con,mode=readline -kernel ./nuttx
 
 Status

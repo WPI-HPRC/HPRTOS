@@ -1,6 +1,8 @@
 /****************************************************************************
  * libs/libc/string/lib_memset.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -95,6 +97,18 @@ FAR void *memset(FAR void *s, int c, size_t n)
             }
 
 #ifndef CONFIG_MEMSET_64BIT
+          /* Loop while there are at least 16-bytes left to be written */
+
+          while (n >= 16)
+            {
+              *(FAR uint32_t *)(addr +  0) = val32;
+              *(FAR uint32_t *)(addr +  4) = val32;
+              *(FAR uint32_t *)(addr +  8) = val32;
+              *(FAR uint32_t *)(addr + 12) = val32;
+              addr += 16;
+              n    -= 16;
+            }
+
           /* Loop while there are at least 32-bits left to be written */
 
           while (n >= 4)
@@ -117,6 +131,22 @@ FAR void *memset(FAR void *s, int c, size_t n)
                   *(FAR uint32_t *)addr = val32;
                   addr += 4;
                   n    -= 4;
+                }
+
+              /* Loop while there are at least 64-bytes left to be written */
+
+              while (n >= 64)
+                {
+                  *(FAR uint64_t *)(addr +  0) = val64;
+                  *(FAR uint64_t *)(addr +  8) = val64;
+                  *(FAR uint64_t *)(addr + 16) = val64;
+                  *(FAR uint64_t *)(addr + 24) = val64;
+                  *(FAR uint64_t *)(addr + 32) = val64;
+                  *(FAR uint64_t *)(addr + 40) = val64;
+                  *(FAR uint64_t *)(addr + 48) = val64;
+                  *(FAR uint64_t *)(addr + 56) = val64;
+                  addr += 64;
+                  n    -= 64;
                 }
 
               /* Loop while there are at least 64-bits left to be written */

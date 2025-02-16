@@ -38,7 +38,6 @@ file(MAKE_DIRECTORY ${NUTTX_APPS_BINDIR}/include)
 include_directories(include)
 include_directories(${NUTTX_APPS_BINDIR}/include)
 
-add_subdirectory(audioutils)
 add_subdirectory(benchmarks)
 add_subdirectory(boot)
 add_subdirectory(canutils)

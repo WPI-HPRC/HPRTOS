@@ -358,6 +358,16 @@ To test it, just run the ``oneshot`` example::
     Waiting...
     Finished
 
+qencoder
+---
+
+This configuration demostrates the use of Quadrature Encoder connected to pins
+GPIO10 and GPIO11. You can start measurement of pulses using the following
+command (by default, it will open ``\dev\qe0`` device and print 20 samples
+using 1 second delay)::
+
+    nsh> qe
+
 pm
 -------
 
@@ -520,6 +530,54 @@ You can set an alarm, check its progress and receive a notification after it exp
     Alarm 0 is active with 10 seconds to expiration
     nsh> alarm_daemon: alarm 0 received
 
+sdmmc
+-----
+
+Based on nsh. Support for sdmmc driver is enabled with following settings:
+
+Enable sdmmc driver::
+
+    CONFIG_ESP32S3_SDMMC=y
+
+Default GPIO definitions::
+
+    CONFIG_ESP32S3_SDMMC_CMD=41
+    CONFIG_ESP32S3_SDMMC_CLK=39
+    CONFIG_ESP32S3_SDMMC_D0=40
+    CONFIG_ESP32S3_SDMMC_D1=16
+    CONFIG_ESP32S3_SDMMC_D2=8
+    CONFIG_ESP32S3_SDMMC_D3=42
+
+Multiblock limitation due to hardware::
+
+    CONFIG_MMCSD_MULTIBLOCK_LIMIT=128
+
+Use sched_yield instead of usleep due to long tick time::
+
+    CONFIG_MMCSD_CHECK_READY_STATUS_WITHOUT_SLEEP=y
+
+This configuration has been verified with an adapter (1.27 to 2.54mm T-type
+adapter, CN10P2) and an `external emmc module <https://semiconductor.samsung.com/jp/estorage/emmc/emmc-5-1/klm8g1getf-b041/>`_.
+
+Besides the connections to 3v3 and GND of ESP32S3 DevKit, pins of the adapter
+used in the verification are connected to ESP32S3 DevKit as following::
+
+    adapter pin           ESP32S3 GPIO
+        11      ===CMD==>       41
+        12      ===CLK==>       39
+        1       ===D0===>       40
+        2       ===D1===>       16
+        3       ===D2===>       8
+        4       ===D3===>       42
+
+Format and mount the SD/MMC device with following commands::
+
+    mkfatfs -F 32 -r /mnt /dev/mmcsd1
+    mount -t vfat /dev/mmcsd1 /mnt
+
+FAT filesystem is enabled in the default configuration. Other filesystems may
+also work.
+
 smp
 ---
 
@@ -620,9 +678,9 @@ https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/bootloade
         --disk-version 2.0 \
         ..../wasm_module_dir
 
-2. Build a NuttX binary as usual with this config.
+2. Build a NuttX binary and write it to the board as usual with this config.
 
-3. Write the NuttX binary and the filesystem image to the board::
+3. Write the filesystem image to the board::
 
       % esptool.py \
         -c esp32s3 \
@@ -632,7 +690,6 @@ https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/bootloade
         -fs detect \
         -fm dio \
         -ff 40m \
-        0x10000 nuttx.bin \
         0x180000 ..../littlefs.bin
 
 4. Mount the filesystem and run a wasm module on it::
@@ -735,3 +792,68 @@ To test the XTWDT(/dev/watchdog3) an interrupt handler needs to be
 implemented because XTWDT does not have system reset feature. To implement
 an interrupt handler `WDIOC_CAPTURE` command can be used. When interrupt
 rises, XTAL32K clock can be restored with `WDIOC_RSTCLK` command.
+
+adb
+---
+
+Basic NuttShell configuration console enabled over USB Device (USB ADB).
+
+You can run the configuration and compilation procedure::
+
+  $ ./tools/configure.sh esp32s3-devkit:adb
+  $ make -j16
+  $ make flash ESPTOOL_PORT=/dev/ttyACMx
+
+Then run the adb command::
+
+  $ adb -s 1234 shell
+  nsh> uname -a
+  NuttX 0.0.0  Nov 22 2024 11:41:43 xtensa esp32s3-devkit
+
+txtable
+-------
+
+Basic TXTABLE(Text based Partition Table) configuration console enabled over USB ADB.
+
+You can run the configuration and compilation procedure::
+
+  $ ./tools/configure.sh -l esp32s3-devkit:txtable
+  $ make -j16
+  $ make flash ESPTOOL_PORT=/dev/ttyACMx
+
+Then check the partition::
+
+  nsh> ls -l /dev/
+  /dev:
+   dr--r--r--           0 adb0/
+   crw-rw-rw-           0 console
+   frw-rw-rw-     1044480 data
+   frw-rw-rw-     1048576 esp32s3flash
+   c-w--w--w-           0 log
+   crw-rw-rw-           0 null
+   crw-rw-rw-           0 ptmx
+   dr--r--r--           0 pts/
+   brw-rw-rw-        1024 ram0
+   crw-rw-rw-           0 ttyS0
+   frw-rw-rw-        4096 txtable
+   crw-rw-rw-           0 zero
+
+usbmsc
+------
+
+Basic USBMSC(USB Mass Storage Class) configuration based on esp32s3-devkit:usb_device
+
+You can run the configuration and compilation procedure::
+
+  $ ./tools/configure.sh -l esp32s3-devkit:usbmsc
+  $ make flash ESPTOOL_PORT=/dev/ttyACMx -j16
+
+To test it, just run the following::
+
+  # Device
+  nsh> mkrd -m 10 -s 512 640
+  nsh> msconn
+
+  # Host
+  $ sudo mkfs.ext4 /dev/sdx
+  $ sudo mount /dev/sdx ./mnt/

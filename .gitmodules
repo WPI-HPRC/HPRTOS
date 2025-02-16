@@ -1,0 +1,6 @@
+[submodule "deps/libnmea"]
+	path = deps/libnmea
+	url = https://github.com/jacketizer/libnmea.git
+[submodule "nuttx/ubxlib"]
+	path = nuttx/ubxlib
+	url = https://github.com/u-blox/ubxlib.git

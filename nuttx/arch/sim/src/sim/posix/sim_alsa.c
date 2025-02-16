@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/sim/src/sim/posix/sim_alsa.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -301,6 +303,7 @@ static int sim_audio_close(struct sim_audio_s *priv)
   host_uninterruptible(snd_pcm_close, priv->pcm);
 
   priv->pcm = NULL;
+  priv->paused = false;
 
   return 0;
 }
@@ -309,7 +312,6 @@ static int sim_audio_getcaps(struct audio_lowerhalf_s *dev, int type,
                              struct audio_caps_s *caps)
 {
   struct sim_audio_s *priv = (struct sim_audio_s *)dev;
-  uint16_t *ptr;
   long val;
 
   caps->ac_format.hw  = 0;
@@ -370,16 +372,15 @@ static int sim_audio_getcaps(struct audio_lowerhalf_s *dev, int type,
 
               /* Report the Sample rates we support */
 
-              ptr  = (uint16_t *)caps->ac_controls.b;
-              *ptr = AUDIO_SAMP_RATE_8K |
-                     AUDIO_SAMP_RATE_11K |
-                     AUDIO_SAMP_RATE_12K |
-                     AUDIO_SAMP_RATE_16K |
-                     AUDIO_SAMP_RATE_22K |
-                     AUDIO_SAMP_RATE_24K |
-                     AUDIO_SAMP_RATE_32K |
-                     AUDIO_SAMP_RATE_44K |
-                     AUDIO_SAMP_RATE_48K;
+             caps->ac_controls.hw[0] = AUDIO_SAMP_RATE_8K |
+                                       AUDIO_SAMP_RATE_11K |
+                                       AUDIO_SAMP_RATE_12K |
+                                       AUDIO_SAMP_RATE_16K |
+                                       AUDIO_SAMP_RATE_22K |
+                                       AUDIO_SAMP_RATE_24K |
+                                       AUDIO_SAMP_RATE_32K |
+                                       AUDIO_SAMP_RATE_44K |
+                                       AUDIO_SAMP_RATE_48K;
               break;
 
             default:
@@ -562,11 +563,17 @@ static int sim_audio_stop(struct audio_lowerhalf_s *dev)
   priv->dev.upper(priv->dev.priv, AUDIO_CALLBACK_COMPLETE, NULL, OK);
 #endif
 
-  apb_free(priv->aux);
-  priv->aux = NULL;
+  if (priv->aux)
+    {
+      apb_free(priv->aux);
+      priv->aux = NULL;
+    }
 
-  priv->ops->uninit(priv->codec);
-  priv->ops = NULL;
+  if (priv->ops)
+    {
+      priv->ops->uninit(priv->codec);
+      priv->ops = NULL;
+    }
 
   return 0;
 }
@@ -629,6 +636,7 @@ static int sim_audio_flush(struct audio_lowerhalf_s *dev)
       struct ap_buffer_s *apb;
 
       apb = (struct ap_buffer_s *)dq_remfirst(&priv->pendq);
+      apb->flags &= ~AUDIO_APB_FINAL;
 #ifdef CONFIG_AUDIO_MULTI_SESSION
       priv->dev.upper(priv->dev.priv, AUDIO_CALLBACK_DEQUEUE, apb, OK, NULL);
 #else

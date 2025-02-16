@@ -1,6 +1,8 @@
 /****************************************************************************
  * include/nuttx/spinlock.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -33,10 +35,13 @@
 
 #include <nuttx/compiler.h>
 #include <nuttx/irq.h>
+#include <nuttx/arch.h>
 
 #if defined(CONFIG_TICKET_SPINLOCK) || defined(CONFIG_RW_SPINLOCK)
 #  include <nuttx/atomic.h>
 #endif
+
+#include <nuttx/spinlock_type.h>
 
 #undef EXTERN
 #if defined(__cplusplus)
@@ -46,50 +51,6 @@ extern "C"
 #else
 #define EXTERN extern
 #endif
-
-#if defined(CONFIG_RW_SPINLOCK)
-typedef int rwlock_t;
-#  define RW_SP_UNLOCKED      0
-#  define RW_SP_READ_LOCKED   1
-#  define RW_SP_WRITE_LOCKED -1
-#endif
-
-#ifndef CONFIG_SPINLOCK
-#  define SP_UNLOCKED 0  /* The Un-locked state */
-#  define SP_LOCKED   1  /* The Locked state */
-
-typedef uint8_t spinlock_t;
-#elif defined(CONFIG_TICKET_SPINLOCK)
-
-union spinlock_u
-{
-  struct
-  {
-    unsigned short owner;
-    unsigned short next;
-  } tickets;
-  unsigned int value;
-};
-typedef union spinlock_u spinlock_t;
-
-#  define SP_UNLOCKED (union spinlock_u){{0, 0}}
-#  define SP_LOCKED (union spinlock_u){{0, 1}}
-
-#else
-
-/* The architecture specific spinlock.h header file must also provide the
- * following:
- *
- *   SP_LOCKED   - A definition of the locked state value (usually 1)
- *   SP_UNLOCKED - A definition of the unlocked state value (usually 0)
- *   spinlock_t  - The type of a spinlock memory object.
- *
- * SP_LOCKED and SP_UNLOCKED must be constants of type spinlock_t.
- */
-
-#include <arch/spinlock.h>
-
-#endif /* CONFIG_SPINLOCK */
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -240,9 +201,8 @@ static inline spinlock_t up_testset(FAR volatile spinlock_t *lock)
 static inline_function void spin_lock_wo_note(FAR volatile spinlock_t *lock)
 {
 #ifdef CONFIG_TICKET_SPINLOCK
-  unsigned short ticket =
-    atomic_fetch_add((FAR atomic_ushort *)&lock->tickets.next, 1);
-  while (atomic_load((FAR atomic_ushort *)&lock->tickets.owner) != ticket)
+  int ticket = atomic_fetch_add(&lock->next, 1);
+  while (atomic_read(&lock->owner) != ticket)
 #else /* CONFIG_TICKET_SPINLOCK */
   while (up_testset(lock) == SP_LOCKED)
 #endif
@@ -322,25 +282,8 @@ static inline_function bool
 spin_trylock_wo_note(FAR volatile spinlock_t *lock)
 {
 #ifdef CONFIG_TICKET_SPINLOCK
-  unsigned short ticket =
-    atomic_load((FAR atomic_ushort *)&lock->tickets.next);
-
-  spinlock_t oldval =
-    {
-      {
-        ticket, ticket
-      }
-    };
-
-  spinlock_t newval =
-    {
-      {
-        ticket, ticket + 1
-      }
-    };
-
-  if (!atomic_compare_exchange_strong((FAR atomic_uint *)&lock->value,
-                                      &oldval.value, newval.value))
+  if (!atomic_cmpxchg(&lock->next, &lock->owner,
+                      atomic_read(&lock->next) + 1))
 #else /* CONFIG_TICKET_SPINLOCK */
   if (up_testset(lock) == SP_LOCKED)
 #endif /* CONFIG_TICKET_SPINLOCK */
@@ -428,7 +371,7 @@ spin_unlock_wo_note(FAR volatile spinlock_t *lock)
 {
   SP_DMB();
 #ifdef CONFIG_TICKET_SPINLOCK
-  atomic_fetch_add((FAR atomic_ushort *)&lock->tickets.owner, 1);
+  atomic_fetch_add(&lock->owner, 1);
 #else
   *lock = SP_UNLOCKED;
 #endif
@@ -487,30 +430,11 @@ static inline_function void spin_unlock(FAR volatile spinlock_t *lock)
 
 /* bool spin_islocked(FAR spinlock_t lock); */
 #ifdef CONFIG_TICKET_SPINLOCK
-#  define spin_is_locked(l) ((*l).tickets.owner != (*l).tickets.next)
+#  define spin_is_locked(l) \
+    (atomic_read(&(*l).owner) != atomic_read(&(*l).next))
 #else
 #  define spin_is_locked(l) (*(l) == SP_LOCKED)
 #endif
-
-/****************************************************************************
- * Name: spin_initialize
- *
- * Description:
- *   Initialize a non-reentrant spinlock object to its initial,
- *   unlocked state.
- *
- * Input Parameters:
- *   lock  - A reference to the spinlock object to be initialized.
- *   state - Initial state of the spinlock {SP_LOCKED or SP_UNLOCKED)
- *
- * Returned Value:
- *   None.
- *
- ****************************************************************************/
-
-/* void spin_initialize(FAR spinlock_t *lock, spinlock_t state); */
-
-#define spin_initialize(l,s) do { *(l) = (s); } while (0)
 
 /****************************************************************************
  * Name: spin_lock_irqsave_wo_note
@@ -529,7 +453,7 @@ irqstate_t spin_lock_irqsave_wo_note(FAR volatile spinlock_t *lock)
 
   if (NULL == lock)
     {
-      int me = up_cpu_index();
+      int me = this_cpu();
       if (0 == g_irq_spin_count[me])
         {
           spin_lock_wo_note(&g_irq_spin);
@@ -696,7 +620,7 @@ void spin_unlock_irqrestore_wo_note(FAR volatile spinlock_t *lock,
 {
   if (NULL == lock)
     {
-      int me = up_cpu_index();
+      int me = this_cpu();
       DEBUGASSERT(0 < g_irq_spin_count[me]);
       g_irq_spin_count[me]--;
 
@@ -810,15 +734,14 @@ static inline_function void read_lock(FAR volatile rwlock_t *lock)
 {
   while (true)
     {
-      int old = atomic_load((FAR atomic_int *)lock);
+      int old = atomic_read(lock);
       if (old <= RW_SP_WRITE_LOCKED)
         {
           DEBUGASSERT(old == RW_SP_WRITE_LOCKED);
           SP_DSB();
           SP_WFE();
         }
-      else if(atomic_compare_exchange_strong((FAR atomic_int *)lock,
-                                             &old, old + 1))
+      else if(atomic_cmpxchg(lock, &old, old + 1))
         {
           break;
         }
@@ -855,14 +778,13 @@ static inline_function bool read_trylock(FAR volatile rwlock_t *lock)
 {
   while (true)
     {
-      int old = atomic_load((FAR atomic_int *)lock);
+      int old = atomic_read(lock);
       if (old <= RW_SP_WRITE_LOCKED)
         {
           DEBUGASSERT(old == RW_SP_WRITE_LOCKED);
           return false;
         }
-      else if (atomic_compare_exchange_strong((FAR atomic_int *)lock,
-                                              &old, old + 1))
+      else if (atomic_cmpxchg(lock, &old, old + 1))
         {
           break;
         }
@@ -891,10 +813,10 @@ static inline_function bool read_trylock(FAR volatile rwlock_t *lock)
 
 static inline_function void read_unlock(FAR volatile rwlock_t *lock)
 {
-  DEBUGASSERT(atomic_load((FAR atomic_int *)lock) >= RW_SP_READ_LOCKED);
+  DEBUGASSERT(atomic_read(lock) >= RW_SP_READ_LOCKED);
 
   SP_DMB();
-  atomic_fetch_sub((FAR atomic_int *)lock, 1);
+  atomic_fetch_sub(lock, 1);
   SP_DSB();
   SP_SEV();
 }
@@ -928,8 +850,7 @@ static inline_function void write_lock(FAR volatile rwlock_t *lock)
 {
   int zero = RW_SP_UNLOCKED;
 
-  while (!atomic_compare_exchange_strong((FAR atomic_int *)lock,
-                                         &zero, RW_SP_WRITE_LOCKED))
+  while (!atomic_cmpxchg(lock, &zero, RW_SP_WRITE_LOCKED))
     {
       SP_DSB();
       SP_WFE();
@@ -967,8 +888,7 @@ static inline_function bool write_trylock(FAR volatile rwlock_t *lock)
 {
   int zero = RW_SP_UNLOCKED;
 
-  if (atomic_compare_exchange_strong((FAR atomic_int *)lock,
-                                     &zero, RW_SP_WRITE_LOCKED))
+  if (atomic_cmpxchg(lock, &zero, RW_SP_WRITE_LOCKED))
     {
       SP_DMB();
       return true;
@@ -999,10 +919,10 @@ static inline_function void write_unlock(FAR volatile rwlock_t *lock)
 {
   /* Ensure this cpu already get write lock */
 
-  DEBUGASSERT(atomic_load((FAR atomic_int *)lock) == RW_SP_WRITE_LOCKED);
+  DEBUGASSERT(atomic_read(lock) == RW_SP_WRITE_LOCKED);
 
   SP_DMB();
-  atomic_store((FAR atomic_int *)lock, RW_SP_UNLOCKED);
+  atomic_set(lock, RW_SP_UNLOCKED);
   SP_DSB();
   SP_SEV();
 }
@@ -1012,25 +932,19 @@ static inline_function void write_unlock(FAR volatile rwlock_t *lock)
  *
  * Description:
  *   If SMP is enabled:
- *     If the argument lock is not specified (i.e. NULL), disable local
- *     interrupts and take the global read write spinlock (g_irq_rw_spin)
- *     and increase g_irq_rw_spin.
- *
- *     If the argument lock is specified,
+ *     The argument lock should be specified,
  *     disable local interrupts and take the lock spinlock and return
  *     the interrupt state.
  *
  *     NOTE: This API is very simple to protect data (e.g. H/W register
- *     or internal data structure) in SMP mode. But do not use this API
+ *     or internal data structure) in SMP mode. Do not use this API
  *     with kernel APIs which suspend a caller thread. (e.g. nxsem_wait)
  *
  *   If SMP is not enabled:
  *     This function is equivalent to up_irq_save().
  *
  * Input Parameters:
- *   lock - Caller specific spinlock. If specified NULL, g_irq_spin is used
- *          and can be nested. Otherwise, nested call for the same lock
- *          would cause a deadlock
+ *   lock - Caller specific spinlock, not NULL.
  *
  * Returned Value:
  *   An opaque, architecture-specific value that represents the state of
@@ -1049,11 +963,7 @@ irqstate_t read_lock_irqsave(FAR rwlock_t *lock);
  *
  * Description:
  *   If SMP is enabled:
- *     If the argument lock is not specified (i.e. NULL),
- *     decrement the call counter (g_irq_rw_spin) and restore the interrupt
- *     state as it was prior to the previous call to read_lock_irqsave(NULL).
- *
- *     If the argument lock is specified, release the lock and
+ *     The argument lock should be specified, release the lock and
  *     restore the interrupt state as it was prior to the previous call to
  *     read_lock_irqsave(lock).
  *
@@ -1061,7 +971,7 @@ irqstate_t read_lock_irqsave(FAR rwlock_t *lock);
  *     This function is equivalent to up_irq_restore().
  *
  * Input Parameters:
- *   lock - Caller specific spinlock. If specified NULL, g_irq_spin is used.
+ *   lock - Caller specific spinlock, not NULL.
  *
  *   flags - The architecture-specific value that represents the state of
  *           the interrupts prior to the call to read_lock_irqsave(lock);
@@ -1082,13 +992,7 @@ void read_unlock_irqrestore(FAR rwlock_t *lock, irqstate_t flags);
  *
  * Description:
  *   If SMP is enabled:
- *     If the argument lock is not specified (i.e. NULL),
- *     disable local interrupts and take the global spinlock (g_irq_rw_spin)
- *     if the call counter (g_irq_write_spin_count[cpu]) equals to 0. Then
- *     the counter on the CPU is incremented to allow nested calls and return
- *     the interrupt state.
- *
- *     If the argument lock is specified,
+ *     The argument lock should be specified,
  *     disable local interrupts and take the lock spinlock and return
  *     the interrupt state.
  *
@@ -1100,9 +1004,7 @@ void read_unlock_irqrestore(FAR rwlock_t *lock, irqstate_t flags);
  *     This function is equivalent to up_irq_save().
  *
  * Input Parameters:
- *   lock - Caller specific spinlock. If specified NULL, g_irq_spin is used
- *          and can be nested. Otherwise, nested call for the same lock
- *          would cause a deadlock
+ *   lock - Caller specific spinlock, not NULL.
  *
  * Returned Value:
  *   An opaque, architecture-specific value that represents the state of
@@ -1121,13 +1023,7 @@ irqstate_t write_lock_irqsave(FAR rwlock_t *lock);
  *
  * Description:
  *   If SMP is enabled:
- *     If the argument lock is not specified (i.e. NULL),
- *     decrement the call counter (g_irq_rw_spin_count[cpu]) and if it
- *     decrements to zero then release the spinlock (g_irq_rw_spin) and
- *     restore the interrupt state as it was prior to the previous call to
- *     write_lock_irqsave(NULL).
- *
- *     If the argument lock is specified, release the lock and
+ *     The argument lock should be specified, release the lock and
  *     restore the interrupt state as it was prior to the previous call to
  *     write_lock_irqsave(lock).
  *
@@ -1135,7 +1031,7 @@ irqstate_t write_lock_irqsave(FAR rwlock_t *lock);
  *     This function is equivalent to up_irq_restore().
  *
  * Input Parameters:
- *   lock - Caller specific spinlock. If specified NULL, g_irq_spin is used.
+ *   lock - Caller specific spinlock, not NULL.
  *
  *   flags - The architecture-specific value that represents the state of
  *           the interrupts prior to the call to write_lock_irqsave(lock);

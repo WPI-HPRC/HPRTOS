@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/wireless/ieee80211/bcm43xxx/bcmf_sdio.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -465,7 +467,7 @@ int bcmf_bus_setup_interrupts(FAR struct bcmf_sdio_dev_s *sbus)
 
   /* Configure gpio interrupt pin */
 
-  bcmf_board_setup_oob_irq(sbus->minor, bcmf_oob_irq, (void *)sbus);
+  bcmf_board_setup_oob_irq(sbus->minor, bcmf_oob_irq, (FAR void *)sbus);
 
   /* Enable function 2 interrupt */
 

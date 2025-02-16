@@ -1,6 +1,7 @@
 /****************************************************************************
  * fs/mnemofs/mnemofs_lru.c
- * LRU cache of mnemofs.
+ *
+ * SPDX-License-Identifier: Apache-2.0 or BSD-3-Clause
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -74,6 +75,7 @@
 #include <sys/param.h>
 
 #include "mnemofs.h"
+#include "fs_heap.h"
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -193,8 +195,8 @@ static void lru_nodesearch(FAR const struct mfs_sb_s * const sb,
   if (found)
     {
       finfo("Node search ended with match of node %p at depth %u"
-            " for CTZ of %u size with range [%u, %u).", n, n->depth, n->sz,
-            n->range_min, n->range_max);
+            " for CTZ of %" PRIu32 " size with range [%" PRIu32 ", %" PRIi32
+            ").", n, n->depth, n->sz, n->range_min, n->range_max);
     }
   else
     {
@@ -265,8 +267,8 @@ static bool lru_isnodefull(FAR struct mfs_sb_s * const sb,
 
 static void lru_free_delta(FAR struct mfs_delta_s *delta)
 {
-  kmm_free(delta->upd);
-  kmm_free(delta);
+  fs_heap_free(delta->upd);
+  fs_heap_free(delta);
 }
 
 /****************************************************************************
@@ -286,8 +288,8 @@ static void lru_free_delta(FAR struct mfs_delta_s *delta)
  *             (false).
  *
  * Returned Value:
- *  0   - OK
- *  < 0 - Error
+ *   0   - OK
+ *   < 0 - Error
  *
  ****************************************************************************/
 
@@ -325,9 +327,9 @@ static int lru_nodeflush(FAR struct mfs_sb_s * const sb,
 
   if (rm_node)
     {
-      finfo("Deleting node. Old size: %u.", list_length(&MFS_LRU(sb)));
+      finfo("Deleting node. Old size: %zu.", list_length(&MFS_LRU(sb)));
       list_delete_init(&node->list);
-      finfo("Deleted node. New size: %u.", list_length(&MFS_LRU(sb)));
+      finfo("Deleted node. New size: %zu.", list_length(&MFS_LRU(sb)));
     }
   else
     {
@@ -391,7 +393,7 @@ static int lru_wrtooff(FAR struct mfs_sb_s * const sb, const mfs_t data_off,
 
   if (node == NULL)
     {
-      node = kmm_zalloc(sizeof(*node));
+      node = fs_heap_zalloc(sizeof(*node));
       if (predict_false(node == NULL))
         {
           found = false;
@@ -399,7 +401,7 @@ static int lru_wrtooff(FAR struct mfs_sb_s * const sb, const mfs_t data_off,
           goto errout;
         }
 
-      node->path = kmm_zalloc(depth * sizeof(struct mfs_path_s));
+      node->path = fs_heap_zalloc(depth * sizeof(struct mfs_path_s));
       if (predict_false(node->path == NULL))
         {
           found = false;
@@ -428,13 +430,13 @@ static int lru_wrtooff(FAR struct mfs_sb_s * const sb, const mfs_t data_off,
                                         struct mfs_node_s, list);
           list_delete_init(&last_node->list);
           list_add_tail(&MFS_LRU(sb), &node->list);
-          finfo("LRU flushing node complete, now only %u nodes",
+          finfo("LRU flushing node complete, now only %zu nodes",
                 list_length(&MFS_LRU(sb)));
         }
       else
         {
           list_add_tail(&MFS_LRU(sb), &node->list);
-          finfo("Node inserted into LRU, and it now %u node(s).",
+          finfo("Node inserted into LRU, and it now %zu node(s).",
                 list_length(&MFS_LRU(sb)));
         }
     }
@@ -455,7 +457,7 @@ static int lru_wrtooff(FAR struct mfs_sb_s * const sb, const mfs_t data_off,
   /* Add delta to node. */
 
   finfo("Adding delta to the node.");
-  delta = kmm_zalloc(sizeof(*delta));
+  delta = fs_heap_zalloc(sizeof(*delta));
   if (predict_false(delta == NULL))
     {
       ret = -ENOMEM;
@@ -466,7 +468,7 @@ static int lru_wrtooff(FAR struct mfs_sb_s * const sb, const mfs_t data_off,
 
   if (op == MFS_LRU_UPD)
     {
-      delta->upd = kmm_zalloc(bytes);
+      delta->upd = fs_heap_zalloc(bytes);
       if (predict_false(delta->upd == NULL))
         {
           ret = -ENOMEM;
@@ -502,22 +504,22 @@ static int lru_wrtooff(FAR struct mfs_sb_s * const sb, const mfs_t data_off,
         }
     }
 
-  finfo("Delta attached to node %p. Now there are %lu nodes and the node has"
-        " %lu deltas. Node with range [%u, %u).", node,
-        list_length(&MFS_LRU(sb)), list_length(&node->delta),
-        node->range_min, node->range_max);
+  finfo("Delta attached to node %p. Now there are %zu nodes and the"
+        " node has %zu deltas. Node with range [%" PRIu32 ", %"
+        PRIu32 ").", node, list_length(&MFS_LRU(sb)),
+        list_length(&node->delta), node->range_min, node->range_max);
 
   return ret;
 
 errout_with_delta:
   list_delete(&delta->list);
-  kmm_free(delta);
+  fs_heap_free(delta);
 
 errout_with_node:
   if (!found && node != NULL)
     {
       list_delete(&node->list);
-      kmm_free(node);
+      fs_heap_free(node);
     }
 
 errout:
@@ -622,7 +624,7 @@ errout:
 static void lru_node_free(FAR struct mfs_node_s *node)
 {
   mfs_free_patharr(node->path);
-  kmm_free(node);
+  fs_heap_free(node);
 }
 
 static bool lru_sort_cmp(FAR struct mfs_node_s * const node,
@@ -730,7 +732,7 @@ int mfs_lru_flush(FAR struct mfs_sb_s * const sb)
  * big), the stack depth for this will be 7.
  */
 
-  finfo("Sorting the LRU. No. of nodes: %u.", list_length(&MFS_LRU(sb)));
+  finfo("Sorting the LRU. No. of nodes: %zu", list_length(&MFS_LRU(sb)));
 
   lru_sort(sb, MFS_LRU(sb).next, MFS_LRU(sb).prev);
   MFS_FLUSH(sb) = true;
@@ -761,7 +763,7 @@ int mfs_lru_flush(FAR struct mfs_sb_s * const sb)
             {
               finfo("Adding parent to LRU");
 
-              tmp = kmm_zalloc(sizeof(struct mfs_node_s));
+              tmp = fs_heap_zalloc(sizeof(struct mfs_node_s));
               if (predict_false(tmp == NULL))
                 {
                   ret = -ENOMEM;
@@ -774,7 +776,7 @@ int mfs_lru_flush(FAR struct mfs_sb_s * const sb)
               /* TODO: Time fields. in tmp. */
 
               tmp->depth = node->depth - 1;
-              tmp->path  = kmm_zalloc((node->depth - 1)
+              tmp->path  = fs_heap_zalloc((node->depth - 1)
                                       * sizeof(struct mfs_path_s));
               if (predict_false(tmp->path == NULL))
                 {
@@ -948,9 +950,9 @@ errout:
   return ret;
 }
 
-int mfs_lru_updatedinfo(FAR const struct mfs_sb_s * const sb,
-                        FAR struct mfs_path_s * const path,
-                        const mfs_t depth)
+int mfs_lru_getupdatedinfo(FAR const struct mfs_sb_s * const sb,
+                           FAR struct mfs_path_s * const path,
+                           const mfs_t depth)
 {
   int                    ret  = OK;
   bool                   found;

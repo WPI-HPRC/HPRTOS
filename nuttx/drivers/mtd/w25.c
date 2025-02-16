@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/mtd/w25.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -652,7 +654,7 @@ static bool w25_is_erased(struct w25_dev_s *priv, off_t address, off_t size)
     {
       /* Check if all bytes of page is in erased state. */
 
-      w25_byteread(priv, (unsigned char *)buf, address, W25_PAGE_SIZE);
+      w25_byteread(priv, (FAR unsigned char *)buf, address, W25_PAGE_SIZE);
 
       for (i = 0; i < W25_PAGE_SIZE / sizeof(uint32_t); i++)
         {

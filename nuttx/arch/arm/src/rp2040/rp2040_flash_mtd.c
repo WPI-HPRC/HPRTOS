@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/rp2040/rp2040_flash_mtd.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -93,7 +95,7 @@
                            / FLASH_SECTOR_SIZE
 
 #ifdef CONFIG_SMP
-#  define OTHER_CPU (up_cpu_index() == 0 ? 1 : 0)
+#  define OTHER_CPU (this_cpu() == 0 ? 1 : 0)
 #endif
 
 /****************************************************************************

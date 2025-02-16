@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/spi/spi_driver.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -99,7 +101,9 @@ static const struct file_operations g_spidrvr_fops =
   spidrvr_ioctl,   /* ioctl */
   NULL,            /* mmap */
   NULL,            /* truncate */
-  NULL             /* poll */
+  NULL,            /* poll */
+  NULL,            /* readv */
+  NULL             /* writev */
 #ifndef CONFIG_DISABLE_PSEUDOFS_OPERATIONS
   , spidrvr_unlink /* unlink */
 #endif
@@ -369,7 +373,7 @@ int spi_register(FAR struct spi_dev_s *spi, int bus)
 
       /* Create the character device name */
 
-      snprintf(devname, DEVNAME_FMTLEN, DEVNAME_FMT, bus);
+      snprintf(devname, sizeof(devname), DEVNAME_FMT, bus);
       ret = register_driver(devname, &g_spidrvr_fops, 0666, priv);
       if (ret < 0)
         {

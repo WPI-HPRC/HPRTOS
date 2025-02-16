@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/xtensa/esp32/common/scripts/mcuboot_sections.ld
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -174,6 +176,9 @@ SECTIONS
     *libarch.a:*mmu_hal.*(.text .text.* .literal .literal.*)
     *libarch.a:*uart_hal.*(.text .text.* .literal .literal.*)
     *libarch.a:*esp_loader.*(.text .text.* .literal .literal.*)
+
+    *libc.a:sq_remlast.*(.literal .text .literal.* .text.*)
+
     *(.wifirxiram .wifirxiram.*)
     *(.wifirxiram .wifi0iram.*)
     *(.wifislpiram .wifislpiram.*)
@@ -313,7 +318,9 @@ SECTIONS
   .rtc.data :
   {
     *(.rtc.data)
+    *(.rtc.data.*)
     *(.rtc.rodata)
+    *(.rtc.rodata.*)
 
    /* Whatever is left from the RTC memory is used as a special heap. */
 

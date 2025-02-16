@@ -186,8 +186,8 @@
  * Private Functions Declaration
  ****************************************************************************/
 
-static void spiflash_start(void);
-static void spiflash_end(void);
+void spiflash_start(void);
+void spiflash_end(void);
 static void spi_flash_disable_cache(void);
 static void spi_flash_restore_cache(void);
 #ifdef CONFIG_SMP
@@ -241,7 +241,7 @@ static sem_t g_disable_non_iram_isr_on_core[CONFIG_SMP_NCPUS];
 
 static void spiflash_suspend_cache(void)
 {
-  int cpu = up_cpu_index();
+  int cpu = this_cpu();
 #ifdef CONFIG_SMP
   int other_cpu = cpu ? 0 : 1;
 #endif
@@ -261,7 +261,7 @@ static void spiflash_suspend_cache(void)
 
 static void spiflash_resume_cache(void)
 {
-  int cpu = up_cpu_index();
+  int cpu = this_cpu();
 #ifdef CONFIG_SMP
   int other_cpu = cpu ? 0 : 1;
 #endif
@@ -279,7 +279,7 @@ static void spiflash_resume_cache(void)
  *
  ****************************************************************************/
 
-static void spiflash_start(void)
+void spiflash_start(void)
 {
   struct tcb_s *tcb = this_task();
   int saved_priority = tcb->sched_priority;
@@ -294,7 +294,7 @@ static void spiflash_start(void)
 
   nxsched_set_priority(tcb, SCHED_PRIORITY_MAX);
 
-  cpu = up_cpu_index();
+  cpu = this_cpu();
 #ifdef CONFIG_SMP
   other_cpu = cpu == 1 ? 0 : 1;
 #endif
@@ -308,7 +308,7 @@ static void spiflash_start(void)
     {
       g_flash_op_can_start = false;
 
-      cpu = up_cpu_index();
+      cpu = this_cpu();
       other_cpu = cpu ? 0 : 1;
 
       nxsem_post(&g_disable_non_iram_isr_on_core[other_cpu]);
@@ -341,9 +341,9 @@ static void spiflash_start(void)
  *
  ****************************************************************************/
 
-static void spiflash_end(void)
+void spiflash_end(void)
 {
-  const int cpu = up_cpu_index();
+  const int cpu = this_cpu();
 #ifdef CONFIG_SMP
   const int other_cpu = cpu ? 0 : 1;
 #endif
@@ -821,7 +821,7 @@ static void spi_flash_restore_cache(void)
 static int spi_flash_op_block_task(int argc, char *argv[])
 {
   struct tcb_s *tcb = this_task();
-  int cpu = up_cpu_index();
+  int cpu = this_cpu();
 
   for (; ; )
     {
@@ -1373,4 +1373,25 @@ bool esp32s3_flash_encryption_enabled(void)
     }
 
   return enabled;
+}
+
+/****************************************************************************
+ * Name: esp32s3_get_flash_address_mapped_as_text
+ *
+ * Description:
+ *   Get flash address which is currently mapped as text
+ *
+ * Input Parameters:
+ *   None
+ *
+ * Returned Value:
+ *   flash address which is currently mapped as text
+ *
+ ****************************************************************************/
+
+uint32_t esp32s3_get_flash_address_mapped_as_text(void)
+{
+  uint32_t i = MMU_ADDR2PAGE((uint32_t)_stext) -
+               MMU_ADDR2PAGE(SOC_MMU_IBUS_VADDR_BASE);
+  return (FLASH_MMU_TABLE[i] & MMU_ADDRESS_MASK) * MMU_PAGE_SIZE;
 }

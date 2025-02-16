@@ -1,6 +1,8 @@
 /****************************************************************************
  * include/sys/types.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -230,6 +232,8 @@ typedef int32_t      off_t;
 typedef int32_t      fpos_t;
 #endif
 
+typedef off_t        loff_t;
+
 /* blksize_t is a signed integer value used for file block sizes */
 
 typedef int16_t      blksize_t;
@@ -316,7 +320,7 @@ typedef CODE int (*main_t)(int argc, FAR char *argv[]);
 enum
 {
   ERROR = -1,
-  OK = 0,
+  OK = 0
 };
 
 /****************************************************************************

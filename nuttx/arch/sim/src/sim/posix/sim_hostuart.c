@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/sim/src/sim/posix/sim_hostuart.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -55,11 +57,16 @@ static void setrawmode(int fd)
 
   /* Switch to raw mode */
 
-  raw.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR |
-                   ICRNL | IXON);
-  raw.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
-  raw.c_cflag &= ~(CSIZE | PARENB);
-  raw.c_cflag |= CS8;
+  cfmakeraw(&raw);
+
+  /* Disable output processing, We need to exclude stdout to prevent the
+   * terminal configuration from being changed after an abnormal exit.
+   */
+
+  if (fd == 0)
+    {
+      raw.c_oflag |= OPOST;
+    }
 
   tcsetattr(fd, TCSANOW, &raw);
 }

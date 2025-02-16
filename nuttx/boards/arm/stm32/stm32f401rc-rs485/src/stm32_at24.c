@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/arm/stm32/stm32f401rc-rs485/src/stm32_at24.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -56,7 +58,7 @@
 
 int stm32_at24_init(char *path)
 {
-  FAR struct i2c_master_s *i2c;
+  struct i2c_master_s *i2c;
   static bool initialized = false;
   int ret;
 

@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/risc-v/src/esp32c3-legacy/esp32c3_ice40.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -159,11 +161,10 @@ ice40_get_status(struct ice40_dev_s *dev)
  *
  ****************************************************************************/
 
-FAR struct ice40_dev_s *
-esp32c3_ice40_initialize(const uint16_t cdone_gpio,
-                          const uint16_t crst_gpio,
-                          const uint16_t cs_gpio,
-                          const uint16_t spi_port)
+struct ice40_dev_s *esp32c3_ice40_initialize(const uint16_t cdone_gpio,
+                                             const uint16_t crst_gpio,
+                                             const uint16_t cs_gpio,
+                                             const uint16_t spi_port)
 {
   struct esp32c3_ice40_dev_s *ice40_ptr;
 

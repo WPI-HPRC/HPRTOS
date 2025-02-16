@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/sim/src/sim/sim_lcd.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -507,7 +509,8 @@ int board_lcd_initialize(void)
 #ifdef CONFIG_SIM_X11FB
   ret = sim_x11initialize(CONFIG_SIM_FBWIDTH, CONFIG_SIM_FBHEIGHT,
                           (void**)&g_planeinfo.buffer, &g_fblen,
-                          &g_planeinfo.bpp, &g_stride, CONFIG_LCD_FBCOUNT);
+                          &g_planeinfo.bpp, &g_stride, CONFIG_LCD_FBCOUNT,
+                          0);
 #endif
 
   return ret;

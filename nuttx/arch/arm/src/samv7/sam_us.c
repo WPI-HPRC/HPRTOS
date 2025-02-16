@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/samv7/sam_us.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -177,7 +179,7 @@ int sam_read_user_signature(void *buffer, size_t buflen)
 
   /* sam_eefc_readsequence requires read length in bit words. */
 
-  nwords = (buflen + sizeof(uint32_t) / sizeof(uint32_t));
+  nwords = (buflen + sizeof(uint32_t)) / sizeof(uint32_t);
   sam_eefc_readsequence(FCMD_STUS, FCMD_SPUS, g_page_buffer, nwords);
 
   /* Copy local buffer to void *buffer provided by the user. */

@@ -1,23 +1,16 @@
 /****************************************************************************
  * arch/arm/src/stm32f7/stm32_i2c.c
- * STM32 I2C Hardware Layer - Device Driver
  *
- *   Copyright (C) 2011 Uros Platise. All rights reserved.
- *   Author: Uros Platise <uros.platise@isotel.eu>
- *
- * With extensions and modifications for the F1, F2, and F4 by:
- *
- *   Copyright (C) 2016-2017 Gregory Nutt. All rights reserved.
- *   Authors: Gregory Nutt <gnutt@nuttx.org>
- *            John Wharington
- *            David Sidrane <david_s5@nscdg.com>
- *            Bob Feretich <bob.feretich@rafresearch.com>
- *
- * Major rewrite of ISR and supporting methods, including support
- * for NACK and RELOAD by:
- *
- *   Copyright (c) 2016 Doug Vetter.  All rights reserved.
- *   Author: Doug Vetter <oss@aileronlabs.com>
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-FileCopyrightText: 2011 Uros Platise. All rights reserved.
+ * SPDX-FileCopyrightText: 2016-2017 Gregory Nutt. All rights reserved.
+ * SPDX-FileCopyrightText: 2016 Doug Vetter.  All rights reserved.
+ * SPDX-FileContributor: Uros Platise <uros.platise@isotel.eu>
+ * SPDX-FileContributor: Gregory Nutt <gnutt@nuttx.org>
+ * SPDX-FileContributor: John Wharington
+ * SPDX-FileContributor: David Sidrane <david_s5@nscdg.com>
+ * SPDX-FileContributor: Bob Feretich <bob.feretich@rafresearch.com>
+ * SPDX-FileContributor: Doug Vetter <oss@aileronlabs.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1151,8 +1144,8 @@ static void stm32_i2c_traceevent(struct stm32_i2c_priv_s *priv,
 
       /* Initialize the new trace entry */
 
-      trace->event  = event;
-      trace->parm   = parm;
+      trace->event = event;
+      trace->parm  = parm;
 
       /* Bump up the trace index (unless we are out of trace entries) */
 
@@ -2025,9 +2018,9 @@ static int stm32_i2c_isr_process(struct stm32_i2c_priv_s *priv)
               i2cinfo("TCR: DISABLE RELOAD: NBYTES = dcnt = %i msgc = %i\n",
                       priv->dcnt, priv->msgc);
 
-              stm32_i2c_disable_reload(priv);
-
               stm32_i2c_set_bytes_to_transfer(priv, priv->dcnt);
+
+              stm32_i2c_disable_reload(priv);
             }
 
           i2cinfo("TCR: EXIT dcnt = %i msgc = %i status 0x%08" PRIx32 "\n",

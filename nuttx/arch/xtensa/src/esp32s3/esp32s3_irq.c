@@ -412,7 +412,7 @@ static void esp32s3_free_cpuint(int cpuint)
   bitmask  = 1ul << cpuint;
 
 #ifdef CONFIG_SMP
-  if (up_cpu_index() != 0)
+  if (this_cpu() != 0)
     {
       freeints = &g_cpu1_freeints;
     }
@@ -528,11 +528,7 @@ void up_irqinitialize(void)
 
   /* Attach the software interrupt */
 
-  irq_attach(XTENSA_IRQ_SWINT, (xcpt_t)xtensa_swint, NULL);
-
-  /* Enable the software CPU interrupt. */
-
-  up_enable_irq(XTENSA_IRQ_SWINT);
+  irq_attach(XTENSA_IRQ_SYSCALL, xtensa_swint, NULL);
 }
 
 /****************************************************************************
@@ -565,7 +561,7 @@ void up_disable_irq(int irq)
        */
 
 #ifdef CONFIG_SMP
-      int me = up_cpu_index();
+      int me = this_cpu();
       if (me != cpu)
         {
           /* It was the other CPU that enabled this interrupt. */
@@ -615,7 +611,7 @@ void up_enable_irq(int irq)
        * we are just overwriting the cpu part of the map.
        */
 
-      int cpu = up_cpu_index();
+      int cpu = this_cpu();
 
       /* Enable the CPU interrupt now for internal CPU. */
 
@@ -709,7 +705,7 @@ int esp32s3_cpuint_initialize(void)
 #ifdef CONFIG_SMP
   /* Which CPU are we initializing */
 
-  cpu = up_cpu_index();
+  cpu = this_cpu();
   DEBUGASSERT(cpu >= 0 && cpu < CONFIG_SMP_NCPUS);
 #endif
 
@@ -1002,7 +998,7 @@ uint32_t *xtensa_int_decode(uint32_t cpuints, uint32_t *regs)
 #endif
   /* Select PRO or APP CPU interrupt mapping table */
 
-  cpu = up_cpu_index();
+  cpu = this_cpu();
 
 #ifdef CONFIG_SMP
   if (cpu != 0)
@@ -1093,7 +1089,7 @@ void esp32s3_irq_noniram_disable(void)
   uint32_t non_iram_ints;
 
   irqstate = enter_critical_section();
-  cpu = up_cpu_index();
+  cpu = this_cpu();
   non_iram_ints = g_non_iram_int_mask[cpu];
 
   ASSERT(!g_non_iram_int_disabled_flag[cpu]);
@@ -1129,7 +1125,7 @@ void esp32s3_irq_noniram_enable(void)
   uint32_t non_iram_ints;
 
   irqstate = enter_critical_section();
-  cpu = up_cpu_index();
+  cpu = this_cpu();
   non_iram_ints = g_non_iram_int_disabled[cpu];
 
   ASSERT(g_non_iram_int_disabled_flag[cpu]);

@@ -1,6 +1,8 @@
 /****************************************************************************
  * fs/vfs/fs_open.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -33,9 +35,11 @@
 #include <assert.h>
 #include <stdarg.h>
 
+#include <nuttx/sched.h>
 #include <nuttx/cancelpt.h>
 #include <nuttx/fs/fs.h>
 
+#include "sched/sched.h"
 #include "inode/inode.h"
 #include "driver/driver.h"
 #include "notify/notify.h"
@@ -77,8 +81,8 @@ static int inode_checkflags(FAR struct inode *inode, int oflags)
       return -ENXIO;
     }
 
-  if (((oflags & O_RDOK) != 0 && !ops->read && !ops->ioctl) ||
-      ((oflags & O_WROK) != 0 && !ops->write && !ops->ioctl))
+  if (((oflags & O_RDOK) != 0 && !ops->readv && !ops->read && !ops->ioctl) ||
+      ((oflags & O_WROK) != 0 && !ops->writev && !ops->write && !ops->ioctl))
     {
       return -EACCES;
     }
@@ -197,7 +201,11 @@ static int file_vopen(FAR struct file *filep, FAR const char *path,
 
       /* Get the file structure of the opened character driver proxy */
 
+#ifdef CONFIG_BCH_DEVICE_READONLY
+      ret = block_proxy(filep, path, O_RDOK);
+#else
       ret = block_proxy(filep, path, oflags);
+#endif
 #ifdef CONFIG_FS_NOTIFY
       if (ret >= 0)
         {
@@ -253,7 +261,7 @@ static int file_vopen(FAR struct file *filep, FAR const char *path,
       ret = -ENXIO;
     }
 
-  if (ret == -EISDIR)
+  if (ret == -EISDIR && ((oflags & O_WRONLY) == 0))
     {
       ret = dir_allocate(filep, desc.relpath);
     }
@@ -437,7 +445,7 @@ int nx_open(FAR const char *path, int oflags, ...)
   /* Let nx_vopen() do all of the work */
 
   va_start(ap, oflags);
-  fd = nx_vopen(nxsched_self(), path, oflags, ap);
+  fd = nx_vopen(this_task(), path, oflags, ap);
   va_end(ap);
 
   return fd;
@@ -467,7 +475,7 @@ int open(FAR const char *path, int oflags, ...)
   /* Let nx_vopen() do most of the work */
 
   va_start(ap, oflags);
-  fd = nx_vopen(nxsched_self(), path, oflags, ap);
+  fd = nx_vopen(this_task(), path, oflags, ap);
   va_end(ap);
 
   /* Set the errno value if any errors were reported by nx_open() */

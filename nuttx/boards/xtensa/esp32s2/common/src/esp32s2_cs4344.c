@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/xtensa/esp32s2/common/src/esp32s2_cs4344.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -131,7 +133,7 @@ int esp32s2_cs4344_initialize(void)
 
       /* Create a device name */
 
-      snprintf(devname, 12, "pcm0");
+      snprintf(devname, sizeof(devname), "pcm0");
 
       /* Finally, we can register the PCM/CS4344/I2S audio device.
        *

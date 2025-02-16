@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/eeprom/spi_xx25xx.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -324,7 +326,7 @@ static inline void ee25xx_unlock(FAR struct spi_dev_s *dev)
  * Name: ee25xx_sendcmd
  *
  * Description: Send command and address as one transaction to take advantage
- * of possible faster DMA transfers. Sending byte per byte is FAR FAR slower.
+ * of possible faster DMA transfers. Sending byte per byte is far far slower.
  *
  ****************************************************************************/
 

@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/armv7-a/arm_pgalloc.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -36,6 +38,7 @@
 
 #include "mmu.h"
 #include "pgalloc.h"
+#include "sched/sched.h"
 
 #ifdef CONFIG_BUILD_KERNEL
 
@@ -182,7 +185,7 @@ static int get_pgtable(arch_addrenv_t *addrenv, uintptr_t vaddr)
 
 uintptr_t pgalloc(uintptr_t brkaddr, unsigned int npages)
 {
-  struct tcb_s *tcb = nxsched_self();
+  struct tcb_s *tcb = this_task();
   struct arch_addrenv_s *addrenv;
   uint32_t *l2table;
   irqstate_t flags;

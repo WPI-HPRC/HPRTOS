@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/bch/bchlib_setup.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -53,7 +55,7 @@
  *
  ****************************************************************************/
 
-int bchlib_setup(const char *blkdev, bool readonly, FAR void **handle)
+int bchlib_setup(FAR const char *blkdev, bool readonly, FAR void **handle)
 {
   FAR struct bchlib_s *bch;
   struct geometry geo;

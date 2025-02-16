@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/nrf52/nrf52_usbd.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -1255,7 +1257,7 @@ static void nrf52_epout_complete(struct nrf52_ep_s *privep)
       return;
     }
 
-  uinfo("EP%d: len=%d xfrd=%d\n", privep->epphy, privreq->req.len,
+  uinfo("EP%d: len=%zu xfrd=%zu\n", privep->epphy, privreq->req.len,
         privreq->req.xfrd);
 
   /* Return the completed read request to the class driver and mark the
@@ -1345,7 +1347,7 @@ static void nrf52_epout_receive(struct nrf52_ep_s *privep)
       return;
     }
 
-  uinfo("EP%d: len=%d xfrd=%d\n", privep->epphy,
+  uinfo("EP%d: len=%zu xfrd=%zu\n", privep->epphy,
         privreq->req.len, privreq->req.xfrd);
   usbtrace(TRACE_READ(privep->epphy), bcnt);
 

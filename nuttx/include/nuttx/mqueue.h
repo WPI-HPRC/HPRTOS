@@ -1,6 +1,8 @@
 /****************************************************************************
  * include/nuttx/mqueue.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -37,7 +39,7 @@
 #include <mqueue.h>
 #include <poll.h>
 
-#if CONFIG_MQ_MAXMSGSIZE > 0
+#if defined(CONFIG_MQ_MAXMSGSIZE) && (CONFIG_MQ_MAXMSGSIZE > 0)
 
 /****************************************************************************
  * Pre-processor Definitions

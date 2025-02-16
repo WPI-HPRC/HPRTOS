@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/sensors/mlx90614.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -127,7 +129,7 @@ static int mlx90614_read_word(FAR struct mlx90614_dev_s *priv, uint8_t cmd,
 
   /* Point "buffer" to checkcrc[3] to fill it with received bytes */
 
-  buffer = (uint8_t *) &checkcrc[3];
+  buffer = (FAR uint8_t *)&checkcrc[3];
 #endif
 
   /* Set up the I2C configuration */

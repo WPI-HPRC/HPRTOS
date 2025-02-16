@@ -1,6 +1,8 @@
 /****************************************************************************
  * fs/hostfs/hostfs.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -45,6 +47,7 @@
 
 #include "inode/inode.h"
 #include "hostfs.h"
+#include "fs_heap.h"
 
 /****************************************************************************
  * Pre-processor Definitions
@@ -67,58 +70,59 @@ struct hostfs_dir_s
  ****************************************************************************/
 
 static int     hostfs_open(FAR struct file *filep, FAR const char *relpath,
-                        int oflags, mode_t mode);
+                           int oflags, mode_t mode);
 static int     hostfs_close(FAR struct file *filep);
 static ssize_t hostfs_read(FAR struct file *filep, FAR char *buffer,
-                        size_t buflen);
+                           size_t buflen);
 static ssize_t hostfs_write(FAR struct file *filep, FAR const char *buffer,
-                        size_t buflen);
+                            size_t buflen);
 static off_t   hostfs_seek(FAR struct file *filep, off_t offset,
-                        int whence);
+                           int whence);
 static int     hostfs_ioctl(FAR struct file *filep, int cmd,
-                        unsigned long arg);
+                            unsigned long arg);
 
 static int     hostfs_sync(FAR struct file *filep);
 static int     hostfs_dup(FAR const struct file *oldp,
-                        FAR struct file *newp);
+                          FAR struct file *newp);
 static int     hostfs_fstat(FAR const struct file *filep,
-                        FAR struct stat *buf);
+                            FAR struct stat *buf);
 static int     hostfs_fchstat(FAR const struct file *filep,
-                        FAR const struct stat *buf, int flags);
+                              FAR const struct stat *buf, int flags);
 static int     hostfs_ftruncate(FAR struct file *filep,
-                        off_t length);
+                                off_t length);
 
 static int     hostfs_opendir(FAR struct inode *mountpt,
-                        FAR const char *relpath,
-                        FAR struct fs_dirent_s **dir);
+                              FAR const char *relpath,
+                          FAR struct fs_dirent_s **dir);
 static int     hostfs_closedir(FAR struct inode *mountpt,
-                        FAR struct fs_dirent_s *dir);
+                               FAR struct fs_dirent_s *dir);
 static int     hostfs_readdir(FAR struct inode *mountpt,
-                        FAR struct fs_dirent_s *dir,
-                        FAR struct dirent *entry);
+                              FAR struct fs_dirent_s *dir,
+                          FAR struct dirent *entry);
 static int     hostfs_rewinddir(FAR struct inode *mountpt,
-                        FAR struct fs_dirent_s *dir);
+                                FAR struct fs_dirent_s *dir);
 
 static int     hostfs_bind(FAR struct inode *blkdriver,
-                        FAR const void *data, FAR void **handle);
+                           FAR const void *data, FAR void **handle);
 static int     hostfs_unbind(FAR void *handle, FAR struct inode **blkdriver,
-                        unsigned int flags);
+                             unsigned int flags);
 static int     hostfs_statfs(FAR struct inode *mountpt,
-                        FAR struct statfs *buf);
+                             FAR struct statfs *buf);
 
 static int     hostfs_unlink(FAR struct inode *mountpt,
-                        FAR const char *relpath);
+                             FAR const char *relpath);
 static int     hostfs_mkdir(FAR struct inode *mountpt,
-                        FAR const char *relpath, mode_t mode);
-static int     hostfs_rmdir(FAR struct inode *mountpt, const char *relpath);
+                            FAR const char *relpath, mode_t mode);
+static int     hostfs_rmdir(FAR struct inode *mountpt,
+                            FAR const char *relpath);
 static int     hostfs_rename(FAR struct inode *mountpt,
-                        FAR const char *oldrelpath,
-                        FAR const char *newrelpath);
+                             FAR const char *oldrelpath,
+                             FAR const char *newrelpath);
 static int     hostfs_stat(FAR struct inode *mountpt,
-                        FAR const char *relpath, FAR struct stat *buf);
+                           FAR const char *relpath, FAR struct stat *buf);
 static int     hostfs_chstat(FAR struct inode *mountpt,
-                        FAR const char *relpath,
-                        FAR const struct stat *buf, int flags);
+                             FAR const char *relpath,
+                             FAR const struct stat *buf, int flags);
 
 /****************************************************************************
  * Private Data
@@ -146,6 +150,8 @@ const struct mountpt_operations g_hostfs_operations =
   NULL,                 /* mmap */
   hostfs_ftruncate,     /* ftruncate */
   NULL,                 /* poll */
+  NULL,                 /* readv */
+  NULL,                 /* writev */
 
   hostfs_sync,          /* sync */
   hostfs_dup,           /* dup */
@@ -245,6 +251,7 @@ static int hostfs_open(FAR struct file *filep, FAR const char *relpath,
   FAR struct hostfs_mountpt_s *fs;
   FAR struct hostfs_ofile_s  *hf;
   char path[HOSTFS_MAX_PATH];
+  size_t len;
   int ret;
 
   /* Sanity checks */
@@ -270,7 +277,8 @@ static int hostfs_open(FAR struct file *filep, FAR const char *relpath,
 
   /* Allocate memory for the open file */
 
-  hf = kmm_malloc(sizeof(*hf) + strlen(relpath));
+  len = strlen(relpath);
+  hf = fs_heap_malloc(sizeof(*hf) + len);
   if (hf == NULL)
     {
       ret = -ENOMEM;
@@ -322,14 +330,14 @@ static int hostfs_open(FAR struct file *filep, FAR const char *relpath,
   hf->fnext = fs->fs_head;
   hf->crefs = 1;
   hf->oflags = oflags;
-  strcpy(hf->relpath, relpath);
+  memcpy(hf->relpath, relpath, len + 1);
   fs->fs_head = hf;
 
   ret = OK;
   goto errout_with_lock;
 
 errout_with_buffer:
-  kmm_free(hf);
+  fs_heap_free(hf);
 
 errout_with_lock:
   nxmutex_unlock(&g_lock);
@@ -423,7 +431,7 @@ static int hostfs_close(FAR struct file *filep)
   /* Now free the pointer */
 
   filep->f_priv = NULL;
-  kmm_free(hf);
+  fs_heap_free(hf);
 
 okout:
   nxmutex_unlock(&g_lock);
@@ -854,7 +862,7 @@ static int hostfs_opendir(FAR struct inode *mountpt, FAR const char *relpath,
   /* Recover our private data from the inode instance */
 
   fs = mountpt->i_private;
-  hdir = kmm_zalloc(sizeof(struct hostfs_dir_s));
+  hdir = fs_heap_zalloc(sizeof(struct hostfs_dir_s));
   if (hdir == NULL)
     {
       return -ENOMEM;
@@ -889,7 +897,7 @@ errout_with_lock:
   nxmutex_unlock(&g_lock);
 
 errout_with_hdir:
-  kmm_free(hdir);
+  fs_heap_free(hdir);
   return ret;
 }
 
@@ -927,7 +935,7 @@ static int hostfs_closedir(FAR struct inode *mountpt,
   host_closedir(hdir->dir);
 
   nxmutex_unlock(&g_lock);
-  kmm_free(hdir);
+  fs_heap_free(hdir);
   return OK;
 }
 
@@ -1022,8 +1030,8 @@ static int hostfs_bind(FAR struct inode *blkdriver, FAR const void *data,
 {
   FAR struct hostfs_mountpt_s *fs;
   FAR char *options;
-  char *saveptr;
-  char *ptr;
+  FAR char *saveptr;
+  FAR char *ptr;
   int len;
   int ret;
 
@@ -1037,7 +1045,7 @@ static int hostfs_bind(FAR struct inode *blkdriver, FAR const void *data,
   /* Create an instance of the mountpt state structure */
 
   fs = (FAR struct hostfs_mountpt_s *)
-    kmm_zalloc(sizeof(struct hostfs_mountpt_s));
+    fs_heap_zalloc(sizeof(struct hostfs_mountpt_s));
 
   if (fs == NULL)
     {
@@ -1048,10 +1056,10 @@ static int hostfs_bind(FAR struct inode *blkdriver, FAR const void *data,
    *  "fs=whatever", remote dir
    */
 
-  options = strdup(data);
+  options = fs_heap_strdup(data);
   if (!options)
     {
-      kmm_free(fs);
+      fs_heap_free(fs);
       return -ENOMEM;
     }
 
@@ -1066,14 +1074,14 @@ static int hostfs_bind(FAR struct inode *blkdriver, FAR const void *data,
       ptr = strtok_r(NULL, ",", &saveptr);
     }
 
-  lib_free(options);
+  fs_heap_free(options);
 
   /* Take the lock for the mount */
 
   ret = nxmutex_lock(&g_lock);
   if (ret < 0)
     {
-      kmm_free(fs);
+      fs_heap_free(fs);
       return ret;
     }
 
@@ -1147,7 +1155,7 @@ static int hostfs_unbind(FAR void *handle, FAR struct inode **blkdriver,
     }
 
   nxmutex_unlock(&g_lock);
-  kmm_free(fs);
+  fs_heap_free(fs);
   return ret;
 }
 

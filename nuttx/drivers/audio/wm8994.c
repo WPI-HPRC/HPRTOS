@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/audio/wm8994.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -36,6 +38,7 @@
 #include <fixedmath.h>
 #include <debug.h>
 
+#include <nuttx/arch.h>
 #include <nuttx/irq.h>
 #include <nuttx/kmalloc.h>
 #include <nuttx/clock.h>
@@ -242,7 +245,7 @@ uint16_t wm8994_readreg(FAR struct wm8994_dev_s *priv, uint16_t regaddr)
       msg[0].frequency = priv->lower->frequency;
       msg[0].addr      = priv->lower->address;
       msg[0].flags     = 0;
-      msg[0].buffer    = (uint8_t *)&buffer;
+      msg[0].buffer    = (FAR uint8_t *)&buffer;
       msg[0].length    = 2;
 
       /* Followed by the read data */
@@ -655,8 +658,6 @@ static int wm8994_getcaps(FAR struct audio_lowerhalf_s *dev, int type,
   DEBUGASSERT(caps && caps->ac_len >= sizeof(struct audio_caps_s));
   audinfo("type=%d ac_type=%d\n", type, caps->ac_type);
 
-  uint16_t *ptr;
-
   /* Fill in the caller's structure based on requested info */
 
   caps->ac_format.hw  = 0;
@@ -716,8 +717,7 @@ static int wm8994_getcaps(FAR struct audio_lowerhalf_s *dev, int type,
 
               /* Report the Sample rates we support */
 
-              ptr  = (uint16_t *)caps->ac_controls.b;
-              *ptr =
+              caps->ac_controls.hw[0] =
                 AUDIO_SAMP_RATE_8K | AUDIO_SAMP_RATE_11K |
                 AUDIO_SAMP_RATE_16K | AUDIO_SAMP_RATE_22K |
                 AUDIO_SAMP_RATE_32K | AUDIO_SAMP_RATE_44K |

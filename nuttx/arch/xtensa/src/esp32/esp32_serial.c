@@ -1056,7 +1056,7 @@ static int esp32_attach(struct uart_dev_s *dev)
 
   /* Set up to receive peripheral interrupts on the current CPU */
 
-  priv->cpu = up_cpu_index();
+  priv->cpu = this_cpu();
   priv->cpuint = esp32_setup_irq(priv->cpu, priv->config->periph,
                                  1, ESP32_CPUINT_LEVEL);
   if (priv->cpuint < 0)
@@ -1186,7 +1186,7 @@ static void dma_attach(uint8_t dma_chan)
 
   /* Set up to receive peripheral interrupts on the current CPU */
 
-  cpu = up_cpu_index();
+  cpu = this_cpu();
   dma_cpuint = esp32_setup_irq(cpu, periph, 1, ESP32_CPUINT_LEVEL);
   if (dma_cpuint < 0)
     {
@@ -1210,7 +1210,7 @@ static void dma_attach(uint8_t dma_chan)
 }
 
 /****************************************************************************
- * Name: esp32_interrupt
+ * Name: esp32_interrupt_dma
  *
  * Description:
  *   DMA interrupt.
@@ -2114,29 +2114,17 @@ void xtensa_serialinit(void)
  *
  ****************************************************************************/
 
-int up_putc(int ch)
+void up_putc(int ch)
 {
 #ifdef HAVE_SERIAL_CONSOLE
   uint32_t intena;
 
   esp32_disableallints(CONSOLE_DEV.priv, &intena);
 
-  /* Check for LF */
-
-  if (ch == '\n')
-    {
-      /* Add CR */
-
-      while (!esp32_txready(&CONSOLE_DEV));
-      esp32_send(&CONSOLE_DEV, '\r');
-    }
-
   while (!esp32_txready(&CONSOLE_DEV));
   esp32_send(&CONSOLE_DEV, ch);
 
   esp32_restoreuartint(CONSOLE_DEV.priv, intena);
 #endif
-
-  return ch;
 }
 #endif /* USE_SERIALDRIVER */

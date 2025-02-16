@@ -1,16 +1,10 @@
 /****************************************************************************
  * include/nuttx/net/netdev.h
- * Defines architecture-specific device driver interfaces to the NuttX
- * network.
  *
- *   Copyright (C) 2007, 2009, 2011-2018 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
- *
- * Derived largely from portions of uIP with has a similar BSD-styple
- * license:
- *
- *   Copyright (c) 2001-2003, Adam Dunkels.
- *   All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-FileCopyrightText: 2007, 2009, 2011-2018 Gregory Nutt. All rights reserved.
+ * SPDX-FileCopyrightText: 2001-2003, Adam Dunkels. All rights reserved.
+ * SPDX-FileContributor: Gregory Nutt <gnutt@nuttx.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,6 +114,11 @@
        } \
      while (0)
 
+#define _NETDEV_BYTES(dev,name) \
+    do { \
+        (dev)->d_statistics.name += (dev)->d_len; \
+    } while (0)
+
 #  if CONFIG_NETDEV_STATISTICS_LOG_PERIOD > 0
 #    define NETDEV_STATISTICS_WORK LPWORK
 #    define _NETDEV_STATISTIC_LOG(dev,name) \
@@ -139,7 +138,12 @@
 #    define _NETDEV_STATISTIC_LOG(dev,name) _NETDEV_STATISTIC(dev,name)
 #  endif
 
-#  define NETDEV_RXPACKETS(dev)   _NETDEV_STATISTIC_LOG(dev,rx_packets)
+#  define NETDEV_RXPACKETS(dev) \
+    do { \
+        _NETDEV_STATISTIC_LOG(dev,rx_packets); \
+        _NETDEV_BYTES(dev,rx_bytes); \
+    } while (0)
+
 #  define NETDEV_RXFRAGMENTS(dev) _NETDEV_STATISTIC(dev,rx_fragments)
 #  define NETDEV_RXERRORS(dev)    _NETDEV_ERROR(dev,rx_errors)
 #  ifdef CONFIG_NET_IPv4
@@ -159,11 +163,15 @@
 #  endif
 #  define NETDEV_RXDROPPED(dev)   _NETDEV_STATISTIC(dev,rx_dropped)
 
-#  define NETDEV_TXPACKETS(dev)   _NETDEV_STATISTIC_LOG(dev,tx_packets)
+#  define NETDEV_TXPACKETS(dev) \
+    do { \
+        _NETDEV_STATISTIC_LOG(dev,tx_packets); \
+        _NETDEV_BYTES(dev,tx_bytes); \
+    } while (0)
+
 #  define NETDEV_TXDONE(dev)      _NETDEV_STATISTIC(dev,tx_done)
 #  define NETDEV_TXERRORS(dev)    _NETDEV_ERROR(dev,tx_errors)
 #  define NETDEV_TXTIMEOUTS(dev)  _NETDEV_ERROR(dev,tx_timeouts)
-
 #  define NETDEV_ERRORS(dev)      _NETDEV_STATISTIC(dev,errors)
 
 #else
@@ -235,6 +243,7 @@ struct netdev_statistics_s
   uint32_t rx_arp;         /* Number of Rx ARP packets received */
 #endif
   uint32_t rx_dropped;     /* Unsupported Rx packets received */
+  uint64_t rx_bytes;       /* Number of bytes received */
 
   /* Tx Status */
 
@@ -242,6 +251,7 @@ struct netdev_statistics_s
   uint32_t tx_done;        /* Number of packets completed */
   uint32_t tx_errors;      /* Number of receive errors (incl timeouts) */
   uint32_t tx_timeouts;    /* Number of Tx timeout errors */
+  uint64_t tx_bytes;       /* Number of bytes send */
 
   /* Other status */
 
@@ -274,13 +284,19 @@ struct netdev_varaddr_s
 };
 #endif
 
-#ifdef CONFIG_NET_IPv6
 struct netdev_ifaddr6_s
 {
   net_ipv6addr_t addr; /* Host IPv6 address */
   net_ipv6addr_t mask; /* Network IPv6 subnet mask */
 };
-#endif
+
+#ifdef CONFIG_NETDEV_RSS
+struct netdev_rss_s
+{
+  int      cpu;  /* CPU ID */
+  uint32_t hash; /* Hash value with packet */
+};
+#endif // CONFIG_NETDEV_RSS
 
 /* This structure collects information that is specific to a specific network
  * interface driver.  If the hardware platform supports only a single
@@ -514,16 +530,16 @@ struct net_driver_s
 
   /* Driver callbacks */
 
-  int (*d_ifup)(FAR struct net_driver_s *dev);
-  int (*d_ifdown)(FAR struct net_driver_s *dev);
-  int (*d_txavail)(FAR struct net_driver_s *dev);
+  CODE int (*d_ifup)(FAR struct net_driver_s *dev);
+  CODE int (*d_ifdown)(FAR struct net_driver_s *dev);
+  CODE int (*d_txavail)(FAR struct net_driver_s *dev);
 #ifdef CONFIG_NET_MCASTGROUP
-  int (*d_addmac)(FAR struct net_driver_s *dev, FAR const uint8_t *mac);
-  int (*d_rmmac)(FAR struct net_driver_s *dev, FAR const uint8_t *mac);
+  CODE int (*d_addmac)(FAR struct net_driver_s *dev, FAR const uint8_t *mac);
+  CODE int (*d_rmmac)(FAR struct net_driver_s *dev, FAR const uint8_t *mac);
 #endif
 #ifdef CONFIG_NETDEV_IOCTL
-  int (*d_ioctl)(FAR struct net_driver_s *dev, int cmd,
-                 unsigned long arg);
+  CODE int (*d_ioctl)(FAR struct net_driver_s *dev, int cmd,
+                      unsigned long arg);
 #endif
 
   /* Drivers may attached device-specific, private information */
@@ -871,6 +887,48 @@ uint16_t net_chksum(FAR uint16_t *data, uint16_t len);
 uint16_t net_chksum_iob(uint16_t sum, FAR struct iob_s *iob,
                         uint16_t offset);
 
+#ifdef CONFIG_NET_IPv4
+
+/****************************************************************************
+ * Name: ipv4_upperlayer_header_chksum
+ *
+ * Description:
+ *   Perform the checksum calculation over the IPv4, protocol headers,
+ *   IP source and destination addresses
+ *
+ * Input Parameters:
+ *   dev   - The network driver instance. The packet data is in the d_buf
+ *           of the device.
+ *   proto - The protocol being supported
+ *
+ * Returned Value:
+ *   The calculated checksum with pseudo-header and IP source and
+ *   destination addresses
+ *
+ ****************************************************************************/
+
+uint16_t ipv4_upperlayer_header_chksum(FAR struct net_driver_s *dev,
+                                       uint8_t proto);
+
+/****************************************************************************
+ * Name: ipv4_upperlayer_payload_chksum
+ *
+ * Description:
+ *   Perform the checksum calculation over the iob data payload
+ *
+ * Input Parameters:
+ *   dev   - The network driver instance. The packet data is in the d_buf
+ *           of the device.
+ *   sum   - The default checksum
+ *
+ * Returned Value:
+ *   The calculated checksum with iob data payload and default checksum
+ *
+ ****************************************************************************/
+
+uint16_t ipv4_upperlayer_payload_chksum(FAR struct net_driver_s *dev,
+                                        uint16_t sum);
+
 /****************************************************************************
  * Name: ipv4_upperlayer_chksum
  *
@@ -888,9 +946,56 @@ uint16_t net_chksum_iob(uint16_t sum, FAR struct iob_s *iob,
  *
  ****************************************************************************/
 
-#ifdef CONFIG_NET_IPv4
 uint16_t ipv4_upperlayer_chksum(FAR struct net_driver_s *dev, uint8_t proto);
 #endif /* CONFIG_NET_IPv4 */
+
+#ifdef CONFIG_NET_IPv6
+
+/****************************************************************************
+ * Name: ipv6_upperlayer_header_chksum
+ *
+ * Description:
+ *   Perform the checksum calculation over the IPv6, protocol headers,
+ *   IP source and destination addresses.
+ *
+ * Input Parameters:
+ *   dev   - The network driver instance.  The packet data is in the d_buf
+ *           of the device.
+ *   proto - The protocol being supported
+ *   iplen - The size of the IPv6 header.  This may be larger than
+ *           IPv6_HDRLEN the IPv6 header if IPv6 extension headers are
+ *           present.
+ *
+ * Returned Value:
+ *   The calculated checksum
+ *
+ ****************************************************************************/
+
+uint16_t ipv6_upperlayer_header_chksum(FAR struct net_driver_s *dev,
+                                       uint8_t proto, unsigned int iplen);
+
+/****************************************************************************
+ * Name: ipv6_upperlayer_payload_chksum
+ *
+ * Description:
+ *   Perform the checksum calculation over the iob data payload and
+ *   default checksum.
+ *
+ * Input Parameters:
+ *   dev   - The network driver instance.  The packet data is in the d_buf
+ *           of the device.
+ *   proto - The protocol being supported
+ *   iplen - The size of the IPv6 header.  This may be larger than
+ *           IPv6_HDRLEN the IPv6 header if IPv6 extension headers are
+ *           present.
+ *
+ * Returned Value:
+ *   The calculated checksum
+ *
+ ****************************************************************************/
+
+uint16_t ipv6_upperlayer_payload_chksum(FAR struct net_driver_s *dev,
+                                        unsigned int iplen, uint16_t sum);
 
 /****************************************************************************
  * Name: ipv6_upperlayer_chksum
@@ -912,7 +1017,6 @@ uint16_t ipv4_upperlayer_chksum(FAR struct net_driver_s *dev, uint8_t proto);
  *
  ****************************************************************************/
 
-#ifdef CONFIG_NET_IPv6
 uint16_t ipv6_upperlayer_chksum(FAR struct net_driver_s *dev,
                                 uint8_t proto, unsigned int iplen);
 #endif /* CONFIG_NET_IPv6 */

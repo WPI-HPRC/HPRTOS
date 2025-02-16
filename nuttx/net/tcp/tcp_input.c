@@ -1,6 +1,7 @@
 /****************************************************************************
  * net/tcp/tcp_input.c
- * Handling incoming TCP input
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
  *
  *   Copyright (C) 2007-2014, 2017-2019, 2020 Gregory Nutt. All rights
  *     reserved.
@@ -722,6 +723,7 @@ static void tcp_input(FAR struct net_driver_s *dev, uint8_t domain,
 
   tcpiplen = iplen + TCP_HDRLEN;
 
+#ifdef CONFIG_NET_TCP_CHECKSUMS
   /* Start of TCP input header processing code. */
 
   if (tcp_chksum(dev) != 0xffff)
@@ -735,6 +737,7 @@ static void tcp_input(FAR struct net_driver_s *dev, uint8_t domain,
       nwarn("WARNING: Bad TCP checksum\n");
       goto drop;
     }
+#endif
 
   /* Demultiplex this segment. First check any active connections. */
 
@@ -898,8 +901,6 @@ found:
 
   if ((tcp->flags & TCP_RST) != 0)
     {
-      FAR struct tcp_conn_s *listener = NULL;
-
       /* An RST received during the 3-way connection handshake requires
        * little more clean-up.
        */
@@ -908,33 +909,6 @@ found:
         {
           conn->tcpstateflags = TCP_CLOSED;
           nwarn("WARNING: RESET in TCP_SYN_RCVD\n");
-
-          /* Notify the listener for the connection of the reset event */
-
-#ifdef CONFIG_NET_IPv6
-#  ifdef CONFIG_NET_IPv4
-          if (domain == PF_INET6)
-#  endif
-            {
-              net_ipv6addr_copy(&uaddr.ipv6.laddr, IPv6BUF->destipaddr);
-            }
-#endif
-
-#ifdef CONFIG_NET_IPv4
-#  ifdef CONFIG_NET_IPv6
-          if (domain == PF_INET)
-#  endif
-            {
-              net_ipv4addr_copy(uaddr.ipv4.laddr,
-                                net_ip4addr_conv32(IPv4BUF->destipaddr));
-            }
-#endif
-
-#if defined(CONFIG_NET_IPv4) && defined(CONFIG_NET_IPv6)
-          listener = tcp_findlistener(&uaddr, conn->lport, domain);
-#else
-          listener = tcp_findlistener(&uaddr, conn->lport);
-#endif
 
           /* We must free this TCP connection structure; this connection
            * will never be established.  There should only be one reference
@@ -952,15 +926,10 @@ found:
 
           /* Notify this connection of the reset event */
 
-          listener = conn;
+          tcp_callback(dev, conn, TCP_ABORT);
         }
 
-      /* Perform the TCP_ABORT callback and drop the packet */
-
-      if (listener != NULL)
-        {
-          tcp_callback(dev, listener, TCP_ABORT);
-        }
+      /* Drop the packet */
 
       goto drop;
     }
@@ -1028,6 +997,7 @@ found:
     {
       uint32_t unackseq;
       uint32_t ackseq;
+      int timeout;
 
       /* The next sequence number is equal to the current sequence
        * number (sndseq) plus the size of the outstanding, unacknowledged
@@ -1137,9 +1107,20 @@ found:
 
       flags |= TCP_ACKDATA;
 
+      /* Check if no packet need to retransmission, clear timer. */
+
+      if (conn->tx_unacked == 0 && conn->tcpstateflags == TCP_ESTABLISHED)
+        {
+          timeout = 0;
+        }
+      else
+        {
+          timeout = conn->rto;
+        }
+
       /* Reset the retransmission timer. */
 
-      tcp_update_retrantimer(conn, conn->rto);
+      tcp_update_retrantimer(conn, timeout);
     }
 
   /* Check if the sequence number of the incoming packet is what we are
@@ -1158,6 +1139,27 @@ found:
 
       seq = tcp_getsequence(tcp->seqno);
       rcvseq = tcp_getsequence(conn->rcvseq);
+
+      /* According to RFC793, Section 3.4, Page 33.
+       * In the SYN_SENT state, if receive a ACK without SYN,
+       * we should reset the connection and retransmit the SYN.
+       */
+
+      if (((conn->tcpstateflags & TCP_STATE_MASK) == TCP_SYN_SENT) &&
+          ((tcp->flags & TCP_SYN) == 0 && (tcp->flags & TCP_ACK) != 0))
+        {
+          /* Send the RST to close the half-open connection. */
+
+          tcp_reset(dev, conn);
+
+          /* Retransmit the SYN as soon as possible in order to establish
+           * the tcp connection.
+           */
+
+          tcp_update_retrantimer(conn, 1);
+
+          return;
+        }
 
       if (seq != rcvseq)
         {
@@ -1178,7 +1180,7 @@ found:
                   return;
                 }
             }
-          else
+          else if ((conn->tcpstateflags & TCP_STATE_MASK) <= TCP_ESTABLISHED)
             {
 #ifdef CONFIG_NET_TCP_OUT_OF_ORDER
               /* Queue out-of-order segments. */
@@ -1211,10 +1213,6 @@ found:
           /* Window updated, set the acknowledged flag. */
 
           flags |= TCP_ACKDATA;
-
-          /* Reset the retransmission timer. */
-
-          tcp_update_retrantimer(conn, conn->rto);
         }
     }
 
@@ -1619,6 +1617,12 @@ found:
              */
 
             conn->tcpstateflags = TCP_CLOSED;
+
+            /* In the TCP_FIN_WAIT_1, we need call tcp_close_eventhandler to
+             * release nofosegs, that we received in this state.
+             */
+
+            tcp_callback(dev, conn, TCP_CLOSE);
             tcp_reset(dev, conn);
             return;
           }
@@ -1652,6 +1656,12 @@ found:
              */
 
             conn->tcpstateflags = TCP_CLOSED;
+
+            /* In the TCP_FIN_WAIT_2, we need call tcp_close_eventhandler to
+             * release nofosegs, that we received in this state.
+             */
+
+            tcp_callback(dev, conn, TCP_CLOSE);
             tcp_reset(dev, conn);
             return;
           }

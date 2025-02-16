@@ -1,6 +1,8 @@
 # ##############################################################################
 # libs/libc/wqueue/CMakeLists.txt
 #
+# SPDX-License-Identifier: Apache-2.0
+#
 # Licensed to the Apache Software Foundation (ASF) under one or more contributor
 # license agreements.  See the NOTICE file distributed with this work for
 # additional information regarding copyright ownership.  The ASF licenses this
@@ -19,6 +21,5 @@
 # ##############################################################################
 
 if(CONFIG_LIB_USRWORK)
-  target_sources(c PRIVATE work_usrthread.c work_queue.c work_cancel.c
-                           work_signal.c work_lock.c)
+  target_sources(c PRIVATE work_usrthread.c work_queue.c work_cancel.c)
 endif()

@@ -1,6 +1,8 @@
 /****************************************************************************
  * net/can/can_callback.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -138,7 +140,7 @@ uint16_t can_callback(FAR struct net_driver_s *dev,
            * create timestamp and copy to iob
            */
 
-          if (conn->timestamp)
+          if (_SO_GETOPT(conn->sconn.s_options, SO_TIMESTAMP))
             {
               struct timeval tv;
               FAR struct timespec *ts = (FAR struct timespec *)&tv;

@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/imx6/imx_cpuboot.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -238,7 +240,7 @@ void imx_cpu_enable(void)
  *
  * Input Parameters:
  *   cpu - The CPU index.  This is the same value that would be obtained by
- *      calling up_cpu_index();
+ *      calling this_cpu();
  *
  * Returned Value:
  *   Does not return.

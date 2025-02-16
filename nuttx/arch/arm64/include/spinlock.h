@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm64/include/spinlock.h
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -87,7 +89,7 @@
 typedef uint64_t spinlock_t;
 
 #if defined(CONFIG_ARCH_HAVE_TESTSET)
-static inline_function spinlock_t up_testset(FAR volatile spinlock_t *lock)
+static inline_function spinlock_t up_testset(volatile spinlock_t *lock)
 {
   spinlock_t ret = SP_LOCKED;
 

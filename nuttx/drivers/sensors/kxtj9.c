@@ -1,6 +1,8 @@
 /****************************************************************************
  * drivers/sensors/kxtj9.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -427,7 +429,7 @@ static int kxtj9_read_sensor_data(FAR struct kxtj9_dev_s *priv,
       return ret;
     }
 
-  kxtj9_reg_read(priv, XOUT_L, (uint8_t *)acc_data, 6);
+  kxtj9_reg_read(priv, XOUT_L, (FAR uint8_t *)acc_data, 6);
 
   /* 12 bit resolution, get rid of the lowest 4 bits */
 

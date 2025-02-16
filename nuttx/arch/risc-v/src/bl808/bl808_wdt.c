@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/risc-v/src/bl808/bl808_wdt.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -72,17 +74,17 @@ struct bl808_wdt_s
  * Private Function Prototypes
  ****************************************************************************/
 
-int bl808_wdt_start(FAR struct watchdog_lowerhalf_s *lower);
-int bl808_wdt_stop(FAR struct watchdog_lowerhalf_s *lower);
-int bl808_wdt_keepalive(FAR struct watchdog_lowerhalf_s *lower);
-int bl808_wdt_getstatus(FAR struct watchdog_lowerhalf_s *lower,
-                          FAR struct watchdog_status_s *status);
-int bl808_wdt_settimeout(FAR struct watchdog_lowerhalf_s *lower,
-                           uint32_t timeout);
-xcpt_t bl808_wdt_capture(FAR struct watchdog_lowerhalf_s *lower,
-                       CODE xcpt_t callback);
-int bl808_wdt_ioctl(FAR struct watchdog_lowerhalf_s *lower,
-                      int cmd, unsigned long arg);
+int bl808_wdt_start(struct watchdog_lowerhalf_s *lower);
+int bl808_wdt_stop(struct watchdog_lowerhalf_s *lower);
+int bl808_wdt_keepalive(struct watchdog_lowerhalf_s *lower);
+int bl808_wdt_getstatus(struct watchdog_lowerhalf_s *lower,
+                        struct watchdog_status_s *status);
+int bl808_wdt_settimeout(struct watchdog_lowerhalf_s *lower,
+                         uint32_t timeout);
+xcpt_t bl808_wdt_capture(struct watchdog_lowerhalf_s *lower,
+                         xcpt_t callback);
+int bl808_wdt_ioctl(struct watchdog_lowerhalf_s *lower,
+                    int cmd, unsigned long arg);
 
 /****************************************************************************
  * Private Data
@@ -161,7 +163,7 @@ static int __wdt_interrupt(int irq, void *context, void *arg)
  *
  ****************************************************************************/
 
-int bl808_wdt_start(FAR struct watchdog_lowerhalf_s *lower)
+int bl808_wdt_start(struct watchdog_lowerhalf_s *lower)
 {
   struct bl808_wdt_s *priv = (struct bl808_wdt_s *)lower;
 
@@ -196,7 +198,7 @@ int bl808_wdt_start(FAR struct watchdog_lowerhalf_s *lower)
  *
  ****************************************************************************/
 
-int bl808_wdt_stop(FAR struct watchdog_lowerhalf_s *lower)
+int bl808_wdt_stop(struct watchdog_lowerhalf_s *lower)
 {
   struct bl808_wdt_s *priv = (struct bl808_wdt_s *)lower;
 
@@ -228,7 +230,7 @@ int bl808_wdt_stop(FAR struct watchdog_lowerhalf_s *lower)
  *
  ****************************************************************************/
 
-int bl808_wdt_keepalive(FAR struct watchdog_lowerhalf_s *lower)
+int bl808_wdt_keepalive(struct watchdog_lowerhalf_s *lower)
 {
   struct bl808_wdt_s *priv = (struct bl808_wdt_s *)lower;
 
@@ -263,8 +265,8 @@ int bl808_wdt_keepalive(FAR struct watchdog_lowerhalf_s *lower)
  *
  ****************************************************************************/
 
-int bl808_wdt_getstatus(FAR struct watchdog_lowerhalf_s *lower,
-                          FAR struct watchdog_status_s *status)
+int bl808_wdt_getstatus(struct watchdog_lowerhalf_s *lower,
+                        struct watchdog_status_s *status)
 {
   struct bl808_wdt_s *priv = (struct bl808_wdt_s *)lower;
 
@@ -295,8 +297,8 @@ int bl808_wdt_getstatus(FAR struct watchdog_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-int bl808_wdt_settimeout(FAR struct watchdog_lowerhalf_s *lower,
-                           uint32_t timeout)
+int bl808_wdt_settimeout(struct watchdog_lowerhalf_s *lower,
+                         uint32_t timeout)
 {
   struct bl808_wdt_s *priv = (struct bl808_wdt_s *)lower;
 
@@ -342,8 +344,8 @@ int bl808_wdt_settimeout(FAR struct watchdog_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-xcpt_t bl808_wdt_capture(FAR struct watchdog_lowerhalf_s *lower,
-                         CODE xcpt_t callback)
+xcpt_t bl808_wdt_capture(struct watchdog_lowerhalf_s *lower,
+                         xcpt_t callback)
 {
   struct bl808_wdt_s *priv = (struct bl808_wdt_s *)lower;
   xcpt_t prev_callback = priv->callback;
@@ -396,8 +398,8 @@ xcpt_t bl808_wdt_capture(FAR struct watchdog_lowerhalf_s *lower,
  *
  ****************************************************************************/
 
-int bl808_wdt_ioctl(FAR struct watchdog_lowerhalf_s *lower,
-                      int cmd, unsigned long arg)
+int bl808_wdt_ioctl(struct watchdog_lowerhalf_s *lower,
+                    int cmd, unsigned long arg)
 {
   /* No additional ioctl commands implemented */
 

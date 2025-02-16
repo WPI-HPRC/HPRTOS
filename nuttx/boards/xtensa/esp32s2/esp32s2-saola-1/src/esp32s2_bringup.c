@@ -1,6 +1,8 @@
 /****************************************************************************
  * boards/xtensa/esp32s2/esp32s2-saola-1/src/esp32s2_bringup.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -50,6 +52,10 @@
 #  include "esp32s2_tim_lowerhalf.h"
 #endif
 
+#ifdef CONFIG_ESPRESSIF_WIFI
+#  include "esp32s2_board_wlan.h"
+#endif
+
 #ifdef CONFIG_ESP32S2_I2C
 #  include "esp32s2_i2c.h"
 #endif
@@ -94,6 +100,15 @@
 
 #ifdef CONFIG_ESPRESSIF_TEMP
 #  include "espressif/esp_temperature_sensor.h"
+#endif
+
+#ifdef CONFIG_ESP_PCNT
+#  include "espressif/esp_pcnt.h"
+#  include "esp32s2_board_pcnt.h"
+#endif
+
+#ifdef CONFIG_SYSTEM_NXDIAG_ESPRESSIF_CHIP_WO_TOOL
+#  include "espressif/esp_nxdiag.h"
 #endif
 
 #include "esp32s2-saola-1.h"
@@ -167,7 +182,7 @@ int esp32s2_bringup(void)
     }
 #endif /* CONFIG_ESP32S2_LEDC */
 
-#ifdef CONFIG_ESP32S2_SPIFLASH
+#ifdef CONFIG_ESPRESSIF_SPIFLASH
   ret = board_spiflash_init();
   if (ret)
     {
@@ -302,6 +317,19 @@ int esp32s2_bringup(void)
     }
 #endif
 
+#ifdef CONFIG_ESPRESSIF_WIRELESS
+
+#ifdef CONFIG_ESPRESSIF_WIFI
+  ret = board_wlan_init();
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: Failed to initialize wireless subsystem=%d\n",
+             ret);
+    }
+#endif
+
+#endif
+
 #ifdef CONFIG_SENSORS_BMP180
   /* Try to register BMP180 device in I2C0 */
 
@@ -394,6 +422,14 @@ int esp32s2_bringup(void)
     }
 #endif
 
+#ifdef CONFIG_ESP_PCNT
+  ret = board_pcnt_initialize();
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: board_pcnt_initialize failed: %d\n", ret);
+    }
+#endif
+
 #ifdef CONFIG_RTC_DRIVER
   /* Instantiate the ESP32 RTC driver */
 
@@ -402,6 +438,14 @@ int esp32s2_bringup(void)
     {
       syslog(LOG_ERR,
              "ERROR: Failed to Instantiate the RTC driver: %d\n", ret);
+    }
+#endif
+
+#ifdef CONFIG_SYSTEM_NXDIAG_ESPRESSIF_CHIP_WO_TOOL
+  ret = esp_nxdiag_initialize();
+  if (ret < 0)
+    {
+      syslog(LOG_ERR, "ERROR: esp_nxdiag_initialize failed: %d\n", ret);
     }
 #endif
 

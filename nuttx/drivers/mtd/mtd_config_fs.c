@@ -1,6 +1,9 @@
 /****************************************************************************
  * drivers/mtd/mtd_config_fs.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * SPDX-FileCopyrightText: 2018 Laczen
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -15,12 +18,6 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
  * License for the specific language governing permissions and limitations
  * under the License.
- *
- * NVS: non volatile storage in flash
- *
- * Copyright (c) 2018 Laczen
- *
- * SPDX-License-Identifier: Apache-2.0
  *
  ****************************************************************************/
 
@@ -62,7 +59,7 @@
  * so we make a buffer to do compare or move.
  */
 
-#define NVS_BUFFER_SIZE                 32
+#define NVS_BUFFER_SIZE                 MAX(NVS_ALIGN_UP(32), NVS_ALIGN_SIZE)
 
 /* If data is written after last ate, and power loss happens,
  * we need to find a clean offset by skipping dirty data.
@@ -93,7 +90,8 @@
 struct nvs_fs
 {
   FAR struct mtd_dev_s  *mtd;          /* MTD device */
-  struct mtd_geometry_s geo;
+  uint32_t              blocksize;     /* Size of one nvs block */
+  uint32_t              nblocks;       /* Number of nvs blocks */
   uint8_t               erasestate;    /* Erased value */
   uint32_t              ate_wra;       /* Next alloc table entry
                                         * Write address
@@ -203,7 +201,7 @@ static int nvs_flash_wrt(FAR struct nvs_fs *fs, uint32_t addr,
   off_t offset;
   int ret;
 
-  offset = fs->geo.erasesize * (addr >> ADDR_BLOCK_SHIFT);
+  offset = fs->blocksize * (addr >> ADDR_BLOCK_SHIFT);
   offset += addr & ADDR_OFFS_MASK;
 
   ret = MTD_WRITE(fs->mtd, offset, len, data);
@@ -229,16 +227,29 @@ static int nvs_flash_rd(FAR struct nvs_fs *fs, uint32_t addr,
   off_t offset;
   int ret;
 
-  offset = fs->geo.erasesize * (addr >> ADDR_BLOCK_SHIFT);
+  offset = fs->blocksize * (addr >> ADDR_BLOCK_SHIFT);
   offset += addr & ADDR_OFFS_MASK;
 
   ret = MTD_READ(fs->mtd, offset, len, data);
-  if (ret < 0)
+  if (ret == -EBADMSG)
     {
-      return ret;
+      /* ECC fail first time
+       * try again to avoid transient electronic interference
+       */
+
+      ret = MTD_READ(fs->mtd, offset, len, data);
+      if (ret == -EBADMSG)
+        {
+          /* ECC fail second time
+           * fill ~erasestate to trigger recovery process
+           */
+
+          memset(data, ~fs->erasestate, len);
+          ret = 0;
+        }
     }
 
-  return OK;
+  return ret < 0 ? ret : 0;
 }
 
 /****************************************************************************
@@ -461,7 +472,9 @@ static int nvs_flash_erase_block(FAR struct nvs_fs *fs, uint32_t addr)
   int rc;
 
   finfo("Erasing addr %" PRIx32 "\n", addr);
-  rc = MTD_ERASE(fs->mtd, addr >> ADDR_BLOCK_SHIFT, 1);
+  rc = MTD_ERASE(fs->mtd,
+                 CONFIG_MTD_BLOCKSIZE_MULTIPLE * (addr >> ADDR_BLOCK_SHIFT),
+                 CONFIG_MTD_BLOCKSIZE_MULTIPLE);
   if (rc < 0)
     {
       ferr("Erasing failed %d\n", rc);
@@ -549,7 +562,7 @@ static int nvs_ate_valid(FAR struct nvs_fs *fs,
                          FAR const struct nvs_ate *entry)
 {
   if (nvs_ate_crc8_check(entry) ||
-      entry->offset >= (fs->geo.erasesize - sizeof(struct nvs_ate)))
+      entry->offset >= (fs->blocksize - sizeof(struct nvs_ate)))
     {
       return 0;
     }
@@ -579,7 +592,7 @@ static int nvs_close_ate_valid(FAR struct nvs_fs *fs,
       return 0;
     }
 
-  if ((fs->geo.erasesize - entry->offset) % sizeof(struct nvs_ate))
+  if ((fs->blocksize - entry->offset) % sizeof(struct nvs_ate))
     {
       return 0;
     }
@@ -788,7 +801,7 @@ static int nvs_prev_ate(FAR struct nvs_fs *fs, FAR uint32_t *addr,
 
   *addr += sizeof(struct nvs_ate);
   if (((*addr) & ADDR_OFFS_MASK) !=
-      (fs->geo.erasesize - sizeof(struct nvs_ate)))
+      (fs->blocksize - sizeof(struct nvs_ate)))
     {
       return 0;
     }
@@ -797,7 +810,7 @@ static int nvs_prev_ate(FAR struct nvs_fs *fs, FAR uint32_t *addr,
 
   if (((*addr) >> ADDR_BLOCK_SHIFT) == 0)
     {
-      *addr += ((fs->geo.neraseblocks - 1) << ADDR_BLOCK_SHIFT);
+      *addr += ((fs->nblocks - 1) << ADDR_BLOCK_SHIFT);
     }
   else
     {
@@ -847,9 +860,9 @@ static int nvs_prev_ate(FAR struct nvs_fs *fs, FAR uint32_t *addr,
 static void nvs_block_advance(FAR struct nvs_fs *fs, FAR uint32_t *addr)
 {
   *addr += (1 << ADDR_BLOCK_SHIFT);
-  if ((*addr >> ADDR_BLOCK_SHIFT) == fs->geo.neraseblocks)
+  if ((*addr >> ADDR_BLOCK_SHIFT) == fs->nblocks)
     {
-      *addr -= (fs->geo.neraseblocks << ADDR_BLOCK_SHIFT);
+      *addr -= (fs->nblocks << ADDR_BLOCK_SHIFT);
     }
 }
 
@@ -875,7 +888,7 @@ static int nvs_block_close(FAR struct nvs_fs *fs)
     (fs->ate_wra + sizeof(struct nvs_ate)) & ADDR_OFFS_MASK;
 
   fs->ate_wra &= ADDR_BLOCK_MASK;
-  fs->ate_wra += fs->geo.erasesize - sizeof(struct nvs_ate);
+  fs->ate_wra += fs->blocksize - sizeof(struct nvs_ate);
 
   nvs_ate_crc8_update(&close_ate);
 
@@ -950,7 +963,7 @@ static int nvs_gc(FAR struct nvs_fs *fs)
 
   sec_addr = (fs->ate_wra & ADDR_BLOCK_MASK);
   nvs_block_advance(fs, &sec_addr);
-  gc_addr = sec_addr + fs->geo.erasesize - sizeof(struct nvs_ate);
+  gc_addr = sec_addr + fs->blocksize - sizeof(struct nvs_ate);
 
   finfo("gc: set, sec_addr %" PRIx32 ", gc_addr %" PRIx32 "\n", sec_addr,
         gc_addr);
@@ -1068,8 +1081,9 @@ static int nvs_startup(FAR struct nvs_fs *fs)
   uint32_t second_addr;
   uint32_t last_addr;
   struct nvs_ate second_ate;
+  struct mtd_geometry_s geo;
 
-  /* Initialize addr to 0 for the case fs->geo.neraseblocks == 0. This
+  /* Initialize addr to 0 for the case fs->nblocks == 0. This
    * should never happen but both
    * Coverity and GCC believe the contrary.
    */
@@ -1087,7 +1101,7 @@ static int nvs_startup(FAR struct nvs_fs *fs)
    */
 
   rc = MTD_IOCTL(fs->mtd, MTDIOC_GEOMETRY,
-                 (unsigned long)((uintptr_t)&(fs->geo)));
+                 (unsigned long)((uintptr_t)&(geo)));
   if (rc < 0)
     {
       ferr("ERROR: MTD ioctl(MTDIOC_GEOMETRY) failed: %d\n", rc);
@@ -1102,9 +1116,12 @@ static int nvs_startup(FAR struct nvs_fs *fs)
       return rc;
     }
 
+  fs->blocksize = CONFIG_MTD_BLOCKSIZE_MULTIPLE * geo.erasesize;
+  fs->nblocks = geo.neraseblocks / CONFIG_MTD_BLOCKSIZE_MULTIPLE;
+
   /* Check the number of blocks, it should be at least 2. */
 
-  if (fs->geo.neraseblocks < 2)
+  if (fs->nblocks < 2)
     {
       ferr("Configuration error - block count\n");
       return -EINVAL;
@@ -1114,10 +1131,10 @@ static int nvs_startup(FAR struct nvs_fs *fs)
    * a closed block, this is where NVS can write.
    */
 
-  for (i = 0; i < fs->geo.neraseblocks; i++)
+  for (i = 0; i < fs->nblocks; i++)
     {
       addr = (i << ADDR_BLOCK_SHIFT) +
-        (uint16_t)(fs->geo.erasesize - sizeof(struct nvs_ate));
+        (uint16_t)(fs->blocksize - sizeof(struct nvs_ate));
       rc = nvs_flash_cmp_const(fs, addr, fs->erasestate,
                                sizeof(struct nvs_ate));
       fwarn("rc=%d\n", rc);
@@ -1143,12 +1160,12 @@ static int nvs_startup(FAR struct nvs_fs *fs)
 
   /* All blocks are closed, this is not a nvs fs */
 
-  if (closed_blocks == fs->geo.neraseblocks)
+  if (closed_blocks == fs->nblocks)
     {
       return -EDEADLK;
     }
 
-  if (i == fs->geo.neraseblocks)
+  if (i == fs->nblocks)
     {
       /* None of the blocks where closed, in most cases we can set
        * the address to the first block, except when there are only
@@ -1224,7 +1241,7 @@ static int nvs_startup(FAR struct nvs_fs *fs)
 
   addr = fs->ate_wra & ADDR_BLOCK_MASK;
   nvs_block_advance(fs, &addr);
-  rc = nvs_flash_cmp_const(fs, addr, fs->erasestate, fs->geo.erasesize);
+  rc = nvs_flash_cmp_const(fs, addr, fs->erasestate, fs->blocksize);
   if (rc < 0)
     {
       return rc;
@@ -1241,7 +1258,7 @@ static int nvs_startup(FAR struct nvs_fs *fs)
 
       addr = fs->ate_wra + sizeof(struct nvs_ate);
       while ((addr & ADDR_OFFS_MASK) <
-             (fs->geo.erasesize - sizeof(struct nvs_ate)))
+             (fs->blocksize - sizeof(struct nvs_ate)))
         {
           rc = nvs_flash_ate_rd(fs, addr, &gc_done_ate);
           if (rc)
@@ -1279,7 +1296,7 @@ static int nvs_startup(FAR struct nvs_fs *fs)
         }
 
       fs->ate_wra &= ADDR_BLOCK_MASK;
-      fs->ate_wra += (fs->geo.erasesize - 2 * sizeof(struct nvs_ate));
+      fs->ate_wra += (fs->blocksize - 2 * sizeof(struct nvs_ate));
       fs->data_wra = (fs->ate_wra & ADDR_BLOCK_MASK);
       finfo("GC when data_wra=0x%" PRIx32 "\n", fs->data_wra);
       rc = nvs_gc(fs);
@@ -1313,7 +1330,7 @@ static int nvs_startup(FAR struct nvs_fs *fs)
    * valid data (this also avoids closing a block without any data).
    */
 
-  if (((fs->ate_wra + 2 * sizeof(struct nvs_ate)) == fs->geo.erasesize) &&
+  if (((fs->ate_wra + 2 * sizeof(struct nvs_ate)) == fs->blocksize) &&
       (fs->data_wra != (fs->ate_wra & ADDR_BLOCK_MASK)))
     {
       rc = nvs_flash_erase_block(fs, fs->ate_wra);
@@ -1411,13 +1428,13 @@ end:
    */
 
   if ((!rc) && ((fs->ate_wra & ADDR_OFFS_MASK) ==
-      (fs->geo.erasesize - 2 * sizeof(struct nvs_ate))))
+      (fs->blocksize - 2 * sizeof(struct nvs_ate))))
     {
       rc = nvs_add_gc_done_ate(fs);
     }
 
   finfo("%" PRIu32 " Eraseblocks of %" PRIu32 " bytes\n",
-        fs->geo.neraseblocks, fs->geo.erasesize);
+        fs->nblocks, fs->blocksize);
   finfo("alloc wra: %" PRIu32 ", 0x%" PRIx32 "\n",
         (fs->ate_wra >> ADDR_BLOCK_SHIFT), (fs->ate_wra & ADDR_OFFS_MASK));
   finfo("data wra: %" PRIu32 ", 0x%" PRIx32 "\n",
@@ -1581,7 +1598,7 @@ static ssize_t nvs_write(FAR struct nvs_fs *fs,
   finfo("key_size=%zu, len=%zu, data_size = %zu\n", key_size,
                                                     pdata->len, data_size);
 
-  if ((data_size > (fs->geo.erasesize - 3 * sizeof(struct nvs_ate))) ||
+  if ((data_size > (fs->blocksize - 3 * sizeof(struct nvs_ate))) ||
       ((pdata->len > 0) && (pdata->configdata == NULL)))
     {
       return -EINVAL;
@@ -1696,7 +1713,7 @@ static ssize_t nvs_write(FAR struct nvs_fs *fs,
   block_to_write_befor_gc = fs->ate_wra >> ADDR_BLOCK_SHIFT;
   while (1)
     {
-      if (gc_count == fs->geo.neraseblocks)
+      if (gc_count == fs->nblocks)
         {
           /* Gc'ed all blocks, no extra space will be created
            * by extra gc.
@@ -1716,10 +1733,10 @@ static ssize_t nvs_write(FAR struct nvs_fs *fs,
 
               /* If gc touched second latest ate, search for it again */
 
-              if (gc_count >= fs->geo.neraseblocks - 1 -
-                  (block_to_write_befor_gc + fs->geo.neraseblocks -
+              if (gc_count >= fs->nblocks - 1 -
+                  (block_to_write_befor_gc + fs->nblocks -
                   (hist_addr >> ADDR_BLOCK_SHIFT))
-                  % fs->geo.neraseblocks)
+                  % fs->nblocks)
                 {
                   rc = nvs_read_entry(fs, key, key_size, NULL, 0,
                                      &hist_addr);

@@ -1,6 +1,8 @@
 /****************************************************************************
  * arch/arm/src/lc823450/lc823450_cpustart.c
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.  The
@@ -63,13 +65,13 @@
  * Public Data
  ****************************************************************************/
 
-extern volatile spinlock_t g_cpu_wait[CONFIG_SMP_NCPUS];
+static volatile spinlock_t g_cpu_wait[CONFIG_SMP_NCPUS];
 
 /****************************************************************************
  * Private Functions
  ****************************************************************************/
 
-extern int lc823450_pause_handler(int irq, void *c, void *arg);
+extern int lc823450_smp_call_handler(int irq, void *c, void *arg);
 
 /****************************************************************************
  * Name: cpu1_boot
@@ -85,7 +87,7 @@ extern int lc823450_pause_handler(int irq, void *c, void *arg);
 
 static void cpu1_boot(void)
 {
-  int cpu = up_cpu_index();
+  int cpu = this_cpu();
 
   DPRINTF("cpu = %d\n", cpu);
 
@@ -106,8 +108,8 @@ static void cpu1_boot(void)
       up_enable_irq(LC823450_IRQ_MEMFAULT);
 #endif
 
-      irq_attach(LC823450_IRQ_CTXM3_01, lc823450_pause_handler, NULL);
-      up_enable_irq(LC823450_IRQ_CTXM3_01);
+      irq_attach(LC823450_IRQ_SMP_CALL_01, lc823450_smp_call_handler, NULL);
+      up_enable_irq(LC823450_IRQ_SMP_CALL_01);
     }
 
   spin_unlock(&g_cpu_wait[0]);
@@ -193,8 +195,8 @@ int up_cpu_start(int cpu)
 
   /* IRQ setup CPU1->CPU0 */
 
-  irq_attach(LC823450_IRQ_CTXM3_11, lc823450_pause_handler, NULL);
-  up_enable_irq(LC823450_IRQ_CTXM3_11);
+  irq_attach(LC823450_IRQ_SMP_CALL_11, lc823450_smp_call_handler, NULL);
+  up_enable_irq(LC823450_IRQ_SMP_CALL_11);
 
   spin_lock(&g_cpu_wait[0]);
 
